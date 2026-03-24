@@ -280,6 +280,9 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
   </div>
   <div class="nav-right">
+    <button id="deploy-btn" onclick="deployToGitHub()" style="background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.8);border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:Calibri,sans-serif;display:flex;align-items:center;gap:4px;transition:all .15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">
+      🚀 Deploy
+    </button>
     <div class="nav-avatar" id="nav-avatar" onclick="doLogout()" style="cursor:pointer" title="Sair">AD</div>
   </div>
 </nav>
@@ -358,6 +361,63 @@ tr.tr-click:hover td{background:#F5F7FA}
 </div>
 
 <script>
+// ================================================================
+// DEPLOY TO GITHUB
+// ================================================================
+const GITHUB_REPO = 'CarSanFer/sigo-aceitar';
+const GITHUB_FILE = 'index.html';
+
+async function deployToGitHub() {
+  const token = localStorage.getItem('gh_token');
+  if (!token) {
+    const t = prompt('Personal Access Token do GitHub:\n(será guardado localmente neste browser)');
+    if (!t) return;
+    localStorage.setItem('gh_token', t.trim());
+  }
+  const ghToken = localStorage.getItem('gh_token');
+  const btn = document.getElementById('deploy-btn');
+  const origText = btn.innerHTML;
+  btn.innerHTML = '⏳ A fazer deploy...';
+  btn.disabled = true;
+
+  try {
+    const getResp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
+      headers: { 'Authorization': `Bearer ${ghToken}`, 'Accept': 'application/vnd.github+json' }
+    });
+    if (!getResp.ok && getResp.status !== 404) throw new Error('Erro ao aceder ao repositório. Verifica o token.');
+    const existing = getResp.ok ? await getResp.json() : null;
+    const sha = existing?.sha;
+
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const encoded = btoa(unescape(encodeURIComponent(html)));
+
+    const putResp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${ghToken}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: `Deploy SIGO — ${new Date().toLocaleString('pt-PT')}`,
+        content: encoded,
+        ...(sha ? { sha } : {})
+      })
+    });
+    if (!putResp.ok) {
+      const err = await putResp.json();
+      throw new Error(err.message || 'Erro no deploy');
+    }
+    btn.innerHTML = '✅ Deployed!';
+    setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; }, 3000);
+  } catch(e) {
+    alert('Erro no deploy: ' + e.message);
+    btn.innerHTML = origText;
+    btn.disabled = false;
+  }
+}
+
+window.clearGHToken = function() {
+  localStorage.removeItem('gh_token');
+  alert('Token removido.');
+};
+
 // ================================================================
 // XLSX EXPORT — uses SheetJS via CDN
 // ================================================================
