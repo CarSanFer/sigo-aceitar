@@ -1539,8 +1539,17 @@ function renderFichaObra(app){
   const projs=DB.utilizadores.filter(u=>u.role==='projetista'&&Array.isArray(u.obras)&&u.obras.some(oid=>oid===o.id||String(oid)===String(o.id)));
   const rels=DB.relatorios.filter(r=>r.obra_id===o.id&&relVisivelParaUser(r)).sort((a,b)=>b.numero-a.numero||b.versao-a.versao);
   const prrs=o.prorrogacoes||[];
-  const desvAcum=prrs.reduce((s,p)=>s+(Number(p.novaDuracao)||0)-(Number(p.duracao)||0),0);
   const ultimoRel=rels[0];
+
+  // Calcular desvios de prorrogações
+  let desvAcumDias=0;
+  let fimAtual=o.fimPrevisto;
+  prrs.forEach(p=>{
+    const orig=Number(p.duracao||0);
+    const novo=Number(p.novaDuracao||0);
+    desvAcumDias+=(novo-orig);
+    if(p.novoFim) fimAtual=p.novoFim;
+  });
 
   // KPI card helper
   const kpi=(icon,label,val,sub='',cor='var(--navy)')=>`
@@ -1550,13 +1559,19 @@ function renderFichaObra(app){
       ${sub?`<div style="font-size:11px;color:var(--text-muted)">${sub}</div>`:''}
     </div>`;
 
+  // Avatar com foto
+  const avatar=(u)=>{
+    if(u.foto) return `<img src="${u.foto}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0">`;
+    return `<div style="width:28px;height:28px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;flex-shrink:0">${(u.nome||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>`;
+  };
+
   // Intervenientes section helper
   const intvSec=(titulo,users,extraFn=u=>u.funcao||'—')=>{
     if(!users.length) return `<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">${titulo}</div><div style="font-size:12px;color:var(--text-muted);font-style:italic">Não definido</div></div>`;
     return `<div style="margin-bottom:12px">
       <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border-light)">${titulo}</div>
       ${users.map(u=>`<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border-light)">
-        <div style="width:28px;height:28px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;flex-shrink:0">${(u.nome||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+        ${avatar(u)}
         <div style="flex:1;min-width:0">
           <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${u.nome}</div>
           <div style="font-size:11px;color:var(--text-muted)">${extraFn(u)}</div>
@@ -1572,7 +1587,7 @@ function renderFichaObra(app){
   <div class="page-header">
     <div>
       <div class="page-title"><span class="code-pill" style="font-size:13px">${o.codigo}</span>${o.sigla} — ${o.nome}</div>
-      <div style="margin-top:6px;display:flex;gap:8px;align-items:center">
+      <div style="margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         ${estadoBadge(o.estado)}
         ${cli?`<span style="font-size:12px;color:var(--text-muted)">Cliente: <strong>${cli.nome}</strong></span>`:''}
         ${o.morada?`<span style="font-size:12px;color:var(--text-muted)">📍 ${o.morada}${o.localidade?', '+o.localidade:''}</span>`:''}
@@ -1585,14 +1600,45 @@ function renderFichaObra(app){
   </div>
 
   <!-- KPIs -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:18px">
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px;margin-bottom:18px">
     ${kpi('💰','Valor de Obra',o.valorObra?Number(o.valorObra).toLocaleString('pt-PT',{minimumFractionDigits:2})+' €':'—','','var(--gold)')}
-    ${kpi('📅','Início Previsto',fmtDate(o.inicioPrevisto)||'—',o.inicioReal?'Real: '+fmtDate(o.inicioReal):'')}
-    ${kpi('🏁','Fim Previsto',fmtDate(o.fimPrevisto)||'—',o.prazo?o.prazo+' dias':'')}
-    ${kpi('🔄','Prorrogações',prrs.length?prrs.length:'0',desvAcum?'Desvio: '+(desvAcum>0?'+':'')+desvAcum+' d':'Sem desvio',prrs.length?'var(--danger)':'var(--success)')}
+    ${kpi('📅','Início Previsto',fmtDate(o.inicioPrevisto)||'—',o.inicioReal?'Real: '+fmtDate(o.inicioReal):'Sem data real')}
+    ${kpi('🏁','Fim Previsto',fmtDate(o.fimPrevisto)||'—',o.prazo?'Prazo: '+o.prazo+' d':'')}
+    ${kpi('🔄','Fim Atual',prrs.length&&fimAtual!==o.fimPrevisto?fmtDate(fimAtual):fmtDate(o.fimPrevisto)||'—',desvAcumDias?'Desvio acum.: '+(desvAcumDias>0?'+':'')+desvAcumDias+' d':'Sem desvio',desvAcumDias>0?'var(--danger)':prrs.length?'var(--success)':'var(--navy)')}
     ${kpi('📊','Afetação',o.afetacao!=null?o.afetacao+'%':'—','')}
-    ${kpi('📋','Último Relatório',ultimoRel?relNumero(ultimoRel):' — ',ultimoRel?fmtMesAno(ultimoRel.mes,ultimoRel.ano)+' · '+(ultimoRel.estado==='disponibilizado'?'Disponibilizado':ultimoRel.estado==='aprovado'?'Aprovado':ultimoRel.estado==='revisao'?'Em Revisão':'Rascunho'):'Sem relatórios','var(--navy)')}
+    ${kpi('📋','Último Rel.',ultimoRel?relNumero(ultimoRel):'—',ultimoRel?fmtMesAno(ultimoRel.mes,ultimoRel.ano):'Sem relatórios','var(--navy)')}
   </div>
+
+  <!-- PRORROGAÇÕES (se existirem) -->
+  ${prrs.length?`<div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--gold)">
+      Prorrogações (${prrs.length})
+      <span style="font-size:11px;font-weight:400;color:${desvAcumDias>0?'var(--danger)':'var(--success)'};margin-left:8px">Desvio acumulado: ${desvAcumDias>0?'+':''}${desvAcumDias} dias</span>
+    </div>
+    <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr style="background:var(--navy)">
+        <th style="padding:6px 10px;color:rgba(255,255,255,.8);text-align:left">Nº</th>
+        <th style="padding:6px 10px;color:rgba(255,255,255,.8);text-align:left">Data</th>
+        <th style="padding:6px 10px;color:rgba(255,255,255,.8);text-align:right">Dur. Original</th>
+        <th style="padding:6px 10px;color:rgba(255,255,255,.8);text-align:right">Nova Dur.</th>
+        <th style="padding:6px 10px;color:rgba(255,255,255,.8);text-align:right">Desvio</th>
+        <th style="padding:6px 10px;color:rgba(255,255,255,.8);text-align:left">Novo Fim</th>
+      </tr></thead>
+      <tbody>${prrs.map((p,i)=>{
+        const orig=Number(p.duracao||0);
+        const novo=Number(p.novaDuracao||0);
+        const dev=novo-orig;
+        return `<tr style="${i%2?'background:var(--bg)':''}">
+          <td style="padding:5px 10px;border-bottom:1px solid var(--border-light)">${i+1}</td>
+          <td style="padding:5px 10px;border-bottom:1px solid var(--border-light)">${p.data?fmtDate(p.data):'—'}</td>
+          <td style="padding:5px 10px;border-bottom:1px solid var(--border-light);text-align:right">${orig?orig+' d':'—'}</td>
+          <td style="padding:5px 10px;border-bottom:1px solid var(--border-light);text-align:right;font-weight:700">${novo?novo+' d':'—'}</td>
+          <td style="padding:5px 10px;border-bottom:1px solid var(--border-light);text-align:right;color:${dev>0?'var(--danger)':'var(--success)'}">${dev?((dev>0?'+':'')+dev+' d'):'—'}</td>
+          <td style="padding:5px 10px;border-bottom:1px solid var(--border-light)">${p.novoFim?fmtDate(p.novoFim):'—'}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>
+  </div>`:''}
 
   <!-- CORPO: Intervenientes + Relatórios -->
   <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px">
