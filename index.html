@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
-    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -365,7 +365,7 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
       </div>
     </div>
-    <div onclick="go('obras','_vpg7vcj')" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="go('obras','_vpg7vcj')" style="background: var(--bg-card); border-color: var(--gold); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#0F6E56;padding:10px 14px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">5J07 · CES</div>
         <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Cesae</div>
@@ -996,7 +996,11 @@ function render(){
   const app=$('app');
   if(relRelId){ renderFichaRelatorio(app); return; }
   if(relObraId){ renderCapaObra(app); return; }
-  if(fichObraId){ renderFichaObra(app); return; }
+  if(fichObraId){ 
+    try{ renderFichaObra(app); }
+    catch(e){ console.error('renderFichaObra error:',e); app.innerHTML='<div style="padding:20px;color:red">Erro: '+e.message+'</div>'; }
+    return; 
+  }
   renderObras(app);
 }
 
@@ -1062,7 +1066,7 @@ function renderCapaObra(app){
   if(!o){relObraId=null;render();return;}
   const rels=DB.relatorios.filter(r=>r.obra_id===o.id&&relVisivelParaUser(r)).sort((a,b)=>b.numero-a.number||b.versao-a.versao);
   const canCreate=currentUser?.role==='fiscalizacao'||canAdmin();
-  const cli=DB.clientes.find(c=>c.id===o.cliente);
+  const cli=DB.empresas.find(e=>e.role==='cliente'&&(e.obras||[]).includes(o.id));
   app.innerHTML=`
   <button class="back-btn" onclick="relObraId=null;render()">← Voltar a Relatórios</button>
   <div class="page-header">
@@ -1529,7 +1533,7 @@ function renderDashboard(app){
     </div>
     <div class="stat-card" onclick="go('clientes')">
       <div class="stat-label">Clientes</div>
-      <div class="stat-value">${DB.clientes.length}</div>
+      <div class="stat-value">${DB.empresas.filter(e=>e.role==='cliente').length}</div>
     </div>
     <div class="stat-card" onclick="go('utilizadores')">
       <div class="stat-label">Utilizadores</div>
@@ -1724,7 +1728,7 @@ function renderObras(app){
 function renderFichaObra(app){
   const o=obraById(fichObraId);
   if(!o){fichObraId=null;render();return;}
-  const cli=DB.clientes.find(c=>c.id===o.cliente)||DB.empresas.find(e=>e.role==='cliente'&&(e.obras||[]).includes(o.id));
+  const cli=DB.empresas.find(e=>e.role==='cliente'&&(e.obras||[]).includes(o.id));
   const donos=DB.utilizadores.filter(u=>u.role==='dono_obra'&&Array.isArray(u.obras)&&u.obras.some(oid=>oid===o.id||String(oid)===String(o.id)));
   const fisc=DB.utilizadores.filter(u=>(u.role==='fiscalizacao'||u.role==='superadmin')&&(u.obras==='todas'||(Array.isArray(u.obras)&&u.obras.some(oid=>oid===o.id||String(oid)===String(o.id)))));
   const emps=DB.utilizadores.filter(u=>u.role==='empreiteiro'&&Array.isArray(u.obras)&&u.obras.some(oid=>oid===o.id||String(oid)===String(o.id)));
@@ -1822,11 +1826,11 @@ function renderFichaObra(app){
   <div style="margin-bottom:10px">
     ${box(
       boxTop('Desvios')+
-      row('Início (Real − Previsto)', desvInicio, desvInicioDias>0?'var(--danger)':'var(--success)')+
+      row('Início (Real − Previsto)', desvInicio||'—', desvInicioDias!=null&&desvInicioDias>0?'var(--danger)':desvInicioDias!=null?'var(--success)':'var(--text-muted)')+
       divider+
-      prrs.map((p,i)=>row('Fim (Previsto − Prorrogação '+(i+1)+')', desvFimPrrs[i], desvFimPrrs[i]&&desvFimPrrs[i].startsWith('+')?'var(--danger)':'var(--success)')).join('')+
+      prrs.map((p,i)=>{const d=desvFimPrrs[i]; return row('Fim (Previsto − Prorrogação '+(i+1)+')', d||'—', d&&d.startsWith('+')?'var(--danger)':d?'var(--success)':'var(--text-muted)');}).join('')+
       divider+
-      row('Real (Real − Inicial)', desvReal, desvReal&&desvReal.startsWith('+')?'var(--danger)':'var(--success)')
+      row('Real (Real − Inicial)', desvReal||'—', desvReal&&desvReal.startsWith('+')?'var(--danger)':desvReal?'var(--success)':'var(--text-muted)')
     )}
   </div>
 
@@ -2180,7 +2184,7 @@ window.saveEditObra=async function(id){
 function renderClientes(app){
   app.innerHTML=`
   <div class="page-header">
-    <div><div class="page-title">Clientes</div><div class="page-count">${DB.clientes.length} registos</div></div>
+    <div><div class="page-title">Clientes</div><div class="page-count">${DB.empresas.filter(e=>e.role==='cliente').length} registos</div></div>
     <div class="page-actions">
       <button class="btn btn-outline btn-sm" onclick="exportXLSX(DB.clientes,'SID_Clientes',[{key:'nome',label:'Nome'},{key:'nif',label:'NIF'},{key:'morada',label:'Morada'},{key:'codigoPostal',label:'Cód. Postal'},{key:'localidade',label:'Localidade'}])">⬇ xlsx</button>
       <button class="btn btn-outline btn-sm" onclick="openImport('clientes')">⬆ xlsx</button>
@@ -3077,7 +3081,7 @@ window.chatAnswer=function(q){
     return `${DB.utilizadores.filter(u=>u.ativo).length} utilizadores activos.`;
   }
   if(ql.includes('cliente')){
-    return `${DB.clientes.length} clientes registados: ${DB.clientes.map(c=>c.nome).join(', ')}.`;
+    return `${DB.empresas.filter(e=>e.role==='cliente').length} clientes registados: ${DB.clientes.map(c=>c.nome).join(', ')}.`;
   }
   if(ql.includes('ajuda')||ql.includes('help')||ql.includes('o que podes')){
     return 'Posso responder sobre: obras em curso/suspensas/concluídas, fiscalização de obras, valor total, utilizadores, clientes. Experimente: "fiscal da obra AB" ou "obras em preparação".';
@@ -3090,15 +3094,7 @@ window.chatAnswer=function(q){
 };
 
 showLogin();
-</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
+</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
 
 
-<div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
-        <div id="yt_article_summary_widget" class="yt_article_summary_widget"><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1.40123 27.3686C-0.44103 25.5284 -0.441033 22.5449 1.4012 20.7047L16.5971 5.52573L24.0098 12.9301L5.47818 31.4409L1.40123 27.3686Z" fill="#FF4E74"></path>
-        <path d="M35.1286 24.0367L16.5972 5.5258L20.6741 1.45341C22.5164 -0.386772 25.5033 -0.386775 27.3455 1.45341L42.5415 16.6323L35.1286 24.0367Z" fill="#FFF85E"></path>
-        <path d="M24.0099 35.143L42.5416 16.6323L46.6183 20.7046C48.4606 22.5448 48.4606 25.5284 46.6183 27.3686L31.4224 42.5476L24.0099 35.143Z" fill="#76FF54"></path>
-        <path d="M27.3454 46.6198C25.5032 48.4601 22.5163 48.4601 20.674 46.6198L5.47815 31.4409L12.8908 24.0366L31.4223 42.5476L27.3454 46.6198Z" fill="#5C94FF"></path>
-    </svg></div>
-        <div id="yt_article_summary_close_button" class="yt_article_summary_close_button">×</div>
-    </div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div></body></html>
+</body></html>
