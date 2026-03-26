@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
-    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -649,7 +649,7 @@ const sb = {
 const DB = {
   obras: [], clientes: [], empreiteiros: [], subempreiteiros: [],
   especialidades: [], tiposDoc: [], utilizadores: [], auditoria: [],
-  relatorios: [],
+  relatorios: [], empresas: [],
   intervenientes: { donosObra: [], fiscalizacao: [], equipaObra: [], projetistas: [] },
 };
 
@@ -717,7 +717,7 @@ async function loadDB() {
   try {
     // Load each table independently so one failure doesn't block the rest
     const safe = async (table) => { try { const d=await sb.get(table); console.log('Loaded '+table+':', d.length,'rows'); return d; } catch(e) { console.error('FAILED to load '+table+':', e.message); return []; }};
-    const [obras, utils, clientes, emps, subs, esps, tdocs, rels] = await Promise.all([
+    const [obras, utils, clientes, emps, subs, esps, tdocs, rels, empresas] = await Promise.all([
       safe('obras'),
       safe('utilizadores'),
       safe('clientes'),
@@ -726,6 +726,7 @@ async function loadDB() {
       safe('especialidades'),
       safe('tipos_doc'),
       safe('relatorios'),
+      safe('empresas'),
     ]);
     DB.obras = obras.map(mapObra);
     DB.utilizadores = utils.map(mapUtil);
@@ -735,6 +736,13 @@ async function loadDB() {
     DB.especialidades = esps;
     DB.tiposDoc = tdocs;
     DB.relatorios = rels;
+    DB.empresas = empresas.map(e=>({
+      ...e,
+      representantes: typeof e.representantes==='string'?JSON.parse(e.representantes||'[]'):e.representantes||[],
+      obras: typeof e.obras==='string'?JSON.parse(e.obras||'[]'):e.obras||[],
+      documentos: typeof e.documentos==='string'?JSON.parse(e.documentos||'{}'):e.documentos||{},
+      obras_data: typeof e.obras_data==='string'?JSON.parse(e.obras_data||'{}'):e.obras_data||{},
+    }));
     DB.intervenientes.donosObra = DB.utilizadores.filter(u=>u.role==='dono_obra');
     DB.intervenientes.fiscalizacao = DB.utilizadores.filter(u=>u.role==='fiscalizacao'||u.role==='superadmin');
     DB.intervenientes.projetistas = DB.utilizadores.filter(u=>u.role==='projetista');
@@ -1066,7 +1074,7 @@ function renderCapaObra(app){
   if(!o){relObraId=null;render();return;}
   const rels=DB.relatorios.filter(r=>r.obra_id===o.id&&relVisivelParaUser(r)).sort((a,b)=>b.numero-a.number||b.versao-a.versao);
   const canCreate=currentUser?.role==='fiscalizacao'||canAdmin();
-  const cli=DB.empresas.find(e=>e.role==='cliente'&&(e.obras||[]).includes(o.id));
+  const cli=(DB.empresas||[]).find(e=>e.role==='cliente'&&(e.obras||[]).includes(o.id));
   app.innerHTML=`
   <button class="back-btn" onclick="relObraId=null;render()">← Voltar a Relatórios</button>
   <div class="page-header">
@@ -1533,7 +1541,7 @@ function renderDashboard(app){
     </div>
     <div class="stat-card" onclick="go('clientes')">
       <div class="stat-label">Clientes</div>
-      <div class="stat-value">${DB.empresas.filter(e=>e.role==='cliente').length}</div>
+      <div class="stat-value">${(DB.empresas||[]).filter(e=>e.role==='cliente').length}</div>
     </div>
     <div class="stat-card" onclick="go('utilizadores')">
       <div class="stat-label">Utilizadores</div>
@@ -1728,7 +1736,7 @@ function renderObras(app){
 function renderFichaObra(app){
   const o=obraById(fichObraId);
   if(!o){fichObraId=null;render();return;}
-  const cli=DB.empresas.find(e=>e.role==='cliente'&&(e.obras||[]).includes(o.id));
+  const cli=(DB.empresas||[]).find(e=>e.role==='cliente'&&(e.obras||[]).includes(o.id));
   const donos=DB.utilizadores.filter(u=>u.role==='dono_obra'&&Array.isArray(u.obras)&&u.obras.some(oid=>oid===o.id||String(oid)===String(o.id)));
   const fisc=DB.utilizadores.filter(u=>(u.role==='fiscalizacao'||u.role==='superadmin')&&(u.obras==='todas'||(Array.isArray(u.obras)&&u.obras.some(oid=>oid===o.id||String(oid)===String(o.id)))));
   const emps=DB.utilizadores.filter(u=>u.role==='empreiteiro'&&Array.isArray(u.obras)&&u.obras.some(oid=>oid===o.id||String(oid)===String(o.id)));
@@ -2184,7 +2192,7 @@ window.saveEditObra=async function(id){
 function renderClientes(app){
   app.innerHTML=`
   <div class="page-header">
-    <div><div class="page-title">Clientes</div><div class="page-count">${DB.empresas.filter(e=>e.role==='cliente').length} registos</div></div>
+    <div><div class="page-title">Clientes</div><div class="page-count">${(DB.empresas||[]).filter(e=>e.role==='cliente').length} registos</div></div>
     <div class="page-actions">
       <button class="btn btn-outline btn-sm" onclick="exportXLSX(DB.clientes,'SID_Clientes',[{key:'nome',label:'Nome'},{key:'nif',label:'NIF'},{key:'morada',label:'Morada'},{key:'codigoPostal',label:'Cód. Postal'},{key:'localidade',label:'Localidade'}])">⬇ xlsx</button>
       <button class="btn btn-outline btn-sm" onclick="openImport('clientes')">⬆ xlsx</button>
@@ -3081,7 +3089,7 @@ window.chatAnswer=function(q){
     return `${DB.utilizadores.filter(u=>u.ativo).length} utilizadores activos.`;
   }
   if(ql.includes('cliente')){
-    return `${DB.empresas.filter(e=>e.role==='cliente').length} clientes registados: ${DB.clientes.map(c=>c.nome).join(', ')}.`;
+    return `${(DB.empresas||[]).filter(e=>e.role==='cliente').length} clientes registados: ${(DB.clientes||[]).map(c=>c.nome).join(', ')}.`;
   }
   if(ql.includes('ajuda')||ql.includes('help')||ql.includes('o que podes')){
     return 'Posso responder sobre: obras em curso/suspensas/concluídas, fiscalização de obras, valor total, utilizadores, clientes. Experimente: "fiscal da obra AB" ou "obras em preparação".';
