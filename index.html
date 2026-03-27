@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
-    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -271,45 +271,96 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
   </div>
   <div class="nav-right">
-    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.8); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
+    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border-width: 1px; border-style: solid; border-color: var(--gold); border-image: initial; color: var(--gold); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
     <div class="nav-avatar" id="nav-avatar" onclick="doLogout()" style="cursor:pointer" title="Carlos Ferreira (superadmin) — Clique para sair">CF</div>
   </div>
 </nav>
 
 <div class="content" id="app">
-  <button class="back-btn" onclick="relObraId=null;render()">← Voltar a Relatórios</button>
-  <div class="page-header">
-    <div>
-      <div class="page-title"><span class="code-pill" style="font-size:13px">5J07</span>CES — Cesae</div>
-      <div style="margin-top:4px"><span class="badge b-em-curso">Em Curso</span></div>
+    <button class="back-btn" onclick="relTab='capa';render()">← Voltar ao Relatório</button>
+    <div class="page-header">
+      <div>
+        <div class="page-title">001.0 — Março 2026 · Atas de Reunião</div>
+        <div style="margin-top:4px;display:flex;gap:8px;align-items:center"><span class="badge b-prep">Rascunho</span>
+          <span style="font-size:12px;color:var(--text-muted)">CES — Cesae</span>
+        </div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-outline btn-sm" onclick="sincronizarNAS('_e00ucmu','ar')">🔄 Sincronizar NAS</button>
+        
+        <label style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1px solid var(--border-light);border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:700;background:var(--bg)">
+          📎 Importar Ata<input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarAR('_e00ucmu',this)" multiple="">
+        </label>
+        <button class="btn btn-gold" onclick="guardarRelatorio('_e00ucmu')">💾 Guardar</button>
+        
+        <button class="btn btn-outline" onclick="gerarDashboardAR('_e00ucmu')">📊 Dashboard</button>
+        
+        
+        <span style="font-size:12px;font-weight:700;color:#0F6E56">✓ Validado</span>
+           <button class="btn btn-outline btn-sm" style="font-size:11px" onclick="submeterModulo('_e00ucmu','ar')">↩ Reverter</button>
+      </div>
     </div>
-    <div class="page-actions">
+    <div class="table-card"><div class="ficha-body" style="padding:14px"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:14px">
+    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid #185FA5">
+        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Normal</div>
+        <div style="font-size:22px;font-weight:400;color:#185FA5">4</div>
+      </div><div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid #B91C1C">
+        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Alerta crítico</div>
+        <div style="font-size:22px;font-weight:400;color:#B91C1C">0</div>
+      </div>
+    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid var(--navy)">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total</div>
+      <div style="font-size:22px;font-weight:400;color:var(--navy)">4</div>
     </div>
-  </div>
-  <!-- Capa: dados resumo da obra -->
-  <div style="display:grid;grid-template-columns:1.5fr 1.25fr 1.25fr;border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;background:var(--bg-card)">
-    <div style="border-bottom:1px solid var(--border-light);padding:6px 10px;display:flex;align-items:center;gap:10px"><span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;min-width:100px">Cliente</span><span style="font-size:13px">cl1</span></div>
-    <div style="border-bottom:1px solid var(--border-light);padding:6px 10px;display:flex;align-items:center;gap:10px"><span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;min-width:100px">Valor de Obra</span><span style="font-size:13px">3&nbsp;714&nbsp;999,00€</span></div>
-    <div style="border-bottom:1px solid var(--border-light);padding:6px 10px;display:flex;align-items:center;gap:10px"><span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;min-width:100px">Afetação</span><span style="font-size:13px">—</span></div>
-    <div style="border-bottom:1px solid var(--border-light);padding:6px 10px;display:flex;align-items:center;gap:10px"><span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;min-width:100px">Início Previsto</span><span style="font-size:13px">03/11/2025</span></div>
-    <div style="border-bottom:1px solid var(--border-light);padding:6px 10px;display:flex;align-items:center;gap:10px"><span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;min-width:100px">Fim Previsto</span><span style="font-size:13px">17/11/2026</span></div>
-    <div style="border-bottom:1px solid var(--border-light);padding:6px 10px;display:flex;align-items:center;gap:10px"><span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;min-width:100px">Duração</span><span style="font-size:13px">379 d</span></div>
-  </div>
-  <!-- Lista de relatórios -->
-  <div class="table-card"><div class="table-wrap"><table>
-    <thead><tr><th>Referência</th><th>Período</th><th>Estado</th><th>Criado por</th><th>Data</th><th>Ações</th></tr></thead>
-    <tbody><tr class="tr-click" onclick="relRelId='_e00ucmu';relTab='capa';render()">
-      <td><strong>001.0</strong></td>
-      <td>Março 2026</td>
-      <td><span class="badge b-prep">Rascunho</span></td>
-      <td style="font-size:12px;color:var(--text-muted)">Carlos Ferreira</td>
-      <td style="font-size:12px">24/03/2026</td>
-      <td onclick="event.stopPropagation()"><div class="actions-cell">
-        <button class="btn-icon del" onclick="confirmDel('relatorio','_e00ucmu','001.0')">🗑️</button>
-      </div></td>
-    </tr>
-    </tbody>
-  </table></div></div></div>
+  </div><div style="font-size:11px;color:var(--text-muted);margin-bottom:8px" id="ar-import-status-_e00ucmu">❌ Erro: fetch failed</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px"><div style="position:relative;background:var(--bg-card);border:2px solid #0F6E56;border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#0F6E56'" onmouseout="this.style.borderColor='#0F6E56'">
+      <div onclick="abrirAR(0,'_e00ucmu','true')" style="background:#E6F1FB;border-bottom:2px solid #185FA5;padding:8px 12px">
+        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#185FA5">Ata 009.0</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">02/03/2026</div>
+      </div>
+      <div onclick="abrirAR(0,'_e00ucmu','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
+        <span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:#185FA522;color:#185FA5">Normal</span>
+        <div style="color:var(--text);margin-top:4px;font-weight:700">Pedidos de Esclarecimento e atrasos na obra por falta de esclarecimentos dos projetistas</div>
+      </div>
+      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
+        
+      </div>
+    </div><div style="position:relative;background:var(--bg-card);border:2px solid #0F6E56;border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#0F6E56'" onmouseout="this.style.borderColor='#0F6E56'">
+      <div onclick="abrirAR(1,'_e00ucmu','true')" style="background:#E6F1FB;border-bottom:2px solid #185FA5;padding:8px 12px">
+        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#185FA5">Ata 010.0</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">09/03/2026</div>
+      </div>
+      <div onclick="abrirAR(1,'_e00ucmu','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
+        <span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:#185FA522;color:#185FA5">Normal</span>
+        <div style="color:var(--text);margin-top:4px;font-weight:700">Pedidos de Esclarecimento e atrasos nos projetos por falta de respostas dos projetistas</div>
+      </div>
+      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
+        
+      </div>
+    </div><div style="position:relative;background:var(--bg-card);border:2px solid #0F6E56;border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#0F6E56'" onmouseout="this.style.borderColor='#0F6E56'">
+      <div onclick="abrirAR(2,'_e00ucmu','true')" style="background:#E6F1FB;border-bottom:2px solid #185FA5;padding:8px 12px">
+        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#185FA5">Ata 011.0</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">16/03/2026</div>
+      </div>
+      <div onclick="abrirAR(2,'_e00ucmu','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
+        <span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:#185FA522;color:#185FA5">Normal</span>
+        <div style="color:var(--text);margin-top:4px;font-weight:700">Obra praticamente parada por falta de decisões e pedidos de esclarecimento pendentes com projetistas</div>
+      </div>
+      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
+        
+      </div>
+    </div><div style="position: relative; background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div onclick="abrirAR(3,'_e00ucmu','true')" style="background:#E6F1FB;border-bottom:2px solid #185FA5;padding:8px 12px">
+        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#185FA5">Ata 012.0</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">23/03/2026</div>
+      </div>
+      <div onclick="abrirAR(3,'_e00ucmu','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
+        <span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:#185FA522;color:#185FA5">Normal</span>
+        <div style="color:var(--text);margin-top:4px;font-weight:700">Obra praticamente parada por falta de decisões e prazo não será cumprido</div>
+      </div>
+      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
+        
+      </div>
+    </div></div></div></div></div>
 </div>
 
 <!-- FLOATING CHATBOT -->
@@ -1071,6 +1122,7 @@ function renderFichaRelatorio(app){
         </div>
       </div>
       <div class="page-actions">
+        ${(relTab==='rv'||relTab==='ar')&&podeEditar?`<button class="btn btn-outline btn-sm" onclick="sincronizarNAS('${r.id}','${relTab}')">🔄 Sincronizar NAS</button>`:''}
         ${relTab==='rv'&&podeEditar?`<label style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1px solid var(--border-light);border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:700;background:var(--bg)">
           📎 Importar RV<input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarRV('${r.id}',this)" multiple>
         </label>`:''}
@@ -1080,12 +1132,13 @@ function renderFichaRelatorio(app){
         ${podeEditar?`<button class="btn btn-gold" onclick="guardarRelatorio('${r.id}')">💾 Guardar</button>`:''}
         ${relTab==='rv'?`<button class="btn btn-outline" onclick="gerarDashboardRV('${r.id}')">📊 Dashboard</button>`:''}
         ${relTab==='ar'?`<button class="btn btn-outline" onclick="gerarDashboardAR('${r.id}')">📊 Dashboard</button>`:''}
-        ${(relTab==='rv'||relTab==='ar')&&(currentUser?.role==='fiscalizacao'||canAdmin())&&(r.conteudo?.modulos?.[relTab]||'em_curso')==='em_curso'?
+        ${(currentUser?.role==='fiscalizacao'||canAdmin())&&(r.conteudo?.modulos?.[relTab]||'em_curso')==='em_curso'?
           `<button class="btn btn-outline btn-sm" style="border-color:#185FA5;color:#185FA5" onclick="submeterModulo('${r.id}','${relTab}')">→ Submeter</button>`:''}
-        ${(relTab==='rv'||relTab==='ar')&&canAdmin()&&(r.conteudo?.modulos?.[relTab]||'em_curso')==='em_aprovacao'?
+        ${canAdmin()&&(r.conteudo?.modulos?.[relTab]||'em_curso')==='em_aprovacao'?
           `<button class="btn btn-sm" style="background:#0F6E56;color:#fff;border:none;cursor:pointer;font-family:Calibri,sans-serif;font-size:13px;font-weight:700;padding:5px 11px;border-radius:var(--radius)" onclick="validarModulo('${r.id}','${relTab}')">✓ Validar</button>`:''}
-        ${(relTab==='rv'||relTab==='ar')&&canAdmin()&&(r.conteudo?.modulos?.[relTab]||'em_curso')==='validado'?
-          `<span style="font-size:12px;font-weight:700;color:#0F6E56">✓ Validado</span>`:''}
+        ${canAdmin()&&(r.conteudo?.modulos?.[relTab]||'em_curso')==='validado'?
+          `<span style="font-size:12px;font-weight:700;color:#0F6E56">✓ Validado</span>
+           <button class="btn btn-outline btn-sm" style="font-size:11px" onclick="submeterModulo('${r.id}','${relTab}')">↩ Reverter</button>`:''}
       </div>
     </div>
     <div class="table-card"><div class="ficha-body" style="padding:14px">${body}</div></div>`;
@@ -1788,8 +1841,57 @@ window.validarModulo=async function(relId,key){
   render();
 };
 
-window.publicarRV=function(relId){submeterModulo(relId,'rv');};
-window.publicarAR=function(relId){submeterModulo(relId,'ar');};
+window.sincronizarNAS=async function(relId,tipo){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  const o=DB.obras.find(x=>x.id===r.obra_id);if(!o)return;
+  const statusEl=document.getElementById((tipo==='rv'?'rv':'ar')+'-import-status-'+relId);
+  if(statusEl)statusEl.textContent='🔄 A sincronizar com a NAS...';
+  try{
+    const resp=await fetch('https://sigo-aceitar.vercel.app/api/ler-documento',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        action:'sincronizar',
+        obraCodigo:o.codigo,
+        obraNome:o.nome,
+        mes:r.mes,
+        ano:r.ano,
+        tipo
+      })
+    });
+    const data=await resp.json();
+    if(!data.success)throw new Error(data.error||'Erro na sincronização');
+    if(!r.conteudo)r.conteudo={};
+    // Substituir tudo — limpar lista existente e reimportar
+    const resultados=data.resultados;
+    let okAR=0,okRV=0,erros=0;
+    if(resultados.ar?.length){
+      r.conteudo.ar={lista:[]};
+      for(const res of resultados.ar){
+        if(res.success){r.conteudo.ar.lista.push(res.data);okAR++;}
+        else{erros++;console.error('Erro AR:',res.fileName,res.error);}
+      }
+    }
+    if(resultados.rv?.length){
+      r.conteudo.rv={lista:[]};
+      for(const res of resultados.rv){
+        if(res.success){r.conteudo.rv.lista.push(res.data);okRV++;}
+        else{erros++;console.error('Erro RV:',res.fileName,res.error);}
+      }
+    }
+    await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+    const msg=`✅ Sincronizado — ${okAR} Atas, ${okRV} RVs`+(erros?` · ❌ ${erros} erro(s)`:'');
+    if(statusEl)statusEl.textContent=msg;
+    else alert(msg);
+    render();
+  }catch(e){
+    const msg='❌ Erro: '+e.message;
+    if(statusEl)statusEl.textContent=msg;
+    else alert(msg);
+    console.error(e);
+  }
+};
+
 
 window.aprovarRel=id=>mudarEstadoRel(id,'aprovado','A aprovar');
 window.disponibilizarRel=id=>mudarEstadoRel(id,'disponibilizado','A disponibilizar');
@@ -2236,7 +2338,7 @@ function renderFichaObra(app){
       <div style="font-size:18px;font-weight:400;color:#fff">${o.nome}</div>
       <div style="display:flex;gap:8px;align-items:center">
         ${o.relMensal&&(currentUser?.role==='fiscalizacao'||canAdmin())?`<button class="btn btn-gold" onclick="relObraId='${o.id}';relRelId=null;modalNovoRelatorio('${o.id}')">+ Novo Relatório</button>`:''}
-        ${o.relMensal?`<button class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.4)" onclick="relObraId='${o.id}';relRelId=null;render()">📋 Relatórios (${rels.length})</button>`:''}
+        ${o.relMensal&&rels.length?`<button class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.4)" onclick="relObraId='${o.id}';relRelId=null;render()">📋 Ver Relatórios (${rels.length})</button>`:''}
       </div>
     </div>
   </div>
@@ -3530,15 +3632,7 @@ window.chatAnswer=function(q){
 };
 
 showLogin();
-</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
+</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
 
 
-<div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
-        <div id="yt_article_summary_widget" class="yt_article_summary_widget"><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1.40123 27.3686C-0.44103 25.5284 -0.441033 22.5449 1.4012 20.7047L16.5971 5.52573L24.0098 12.9301L5.47818 31.4409L1.40123 27.3686Z" fill="#FF4E74"></path>
-        <path d="M35.1286 24.0367L16.5972 5.5258L20.6741 1.45341C22.5164 -0.386772 25.5033 -0.386775 27.3455 1.45341L42.5415 16.6323L35.1286 24.0367Z" fill="#FFF85E"></path>
-        <path d="M24.0099 35.143L42.5416 16.6323L46.6183 20.7046C48.4606 22.5448 48.4606 25.5284 46.6183 27.3686L31.4224 42.5476L24.0099 35.143Z" fill="#76FF54"></path>
-        <path d="M27.3454 46.6198C25.5032 48.4601 22.5163 48.4601 20.674 46.6198L5.47815 31.4409L12.8908 24.0366L31.4223 42.5476L27.3454 46.6198Z" fill="#5C94FF"></path>
-    </svg></div>
-        <div id="yt_article_summary_close_button" class="yt_article_summary_close_button">×</div>
-    </div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div></body></html>
+</body></html>
