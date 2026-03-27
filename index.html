@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
-    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -276,134 +276,7 @@ tr.tr-click:hover td{background:#F5F7FA}
   </div>
 </nav>
 
-<div class="content" id="app">
-  <div class="page-header">
-    <div><div class="page-title">Obras</div><div class="page-count">3 obra(s)</div></div>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center">
-    <input class="filter-select" style="flex:1;max-width:320px" placeholder="Pesquisar obra, sigla ou código..." value="" oninput="obrasSearch=this.value;render()">
-    <select class="filter-select" onchange="obrasFilter=this.value;render()">
-      <option selected="">Todos os Estados</option><option>Em Curso</option><option>Concluída</option><option>Suspensa</option><option>Em Preparação</option>
-    </select>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
-    <div onclick="go('obras','_48gp4b2')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#0F6E56;padding:10px 14px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">4F14 · AB</div>
-        <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Anselmo Braamcamp</div>
-      </div>
-      <div style="padding:10px 14px">
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Valor de Obra</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);color:var(--gold)">4&nbsp;040&nbsp;000,00 €</span>
-    </div>
-        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Previsto</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
-    </div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Real</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
-    </div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Fim Previsto</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
-    </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Prorrogações</span>
-          <span style="font-size:12px;font-weight:400;color:var(--text-muted)">0</span>
-        </div>
-        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Último Relatório</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
-    </div>
-      </div>
-    </div>
-    <div onclick="go('obras','_kfit6zb')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#0F6E56;padding:10px 14px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">5B25 · LSD</div>
-        <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Largo de São Domingos</div>
-      </div>
-      <div style="padding:10px 14px">
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Valor de Obra</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);color:var(--gold)">1&nbsp;105&nbsp;518,48 €</span>
-    </div>
-        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Previsto</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
-    </div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Real</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
-    </div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Fim Previsto</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
-    </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Prorrogações</span>
-          <span style="font-size:12px;font-weight:400;color:var(--text-muted)">0</span>
-        </div>
-        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Último Relatório</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
-    </div>
-      </div>
-    </div>
-    <div onclick="go('obras','_vpg7vcj')" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#0F6E56;padding:10px 14px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">5J07 · CES</div>
-        <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Cesae</div>
-      </div>
-      <div style="padding:10px 14px">
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Valor de Obra</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);color:var(--gold)">3&nbsp;714&nbsp;999,00 €</span>
-    </div>
-        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Previsto</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">03/11/2025</span>
-    </div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Real</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">17/11/2025</span>
-    </div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Fim Previsto</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">25/01/2027</span>
-    </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Prorrogações</span>
-          <span style="font-size:12px;font-weight:400;color:var(--danger)">2 prorrogações</span>
-        </div>
-        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
-        
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Último Relatório</span>
-      <span style="font-size:12px;font-weight:400;color:var(--text);">Março 2026</span>
-    </div>
-      </div>
-    </div></div></div>
+<div class="content" id="app"><div style="padding:20px;color:red">Erro: duracaoReal is not defined</div></div>
 </div>
 
 <!-- FLOATING CHATBOT -->
@@ -1786,7 +1659,7 @@ function renderFichaObra(app){
     </div>`;
   };
 
-  // Caixas de prorrogações
+  // Caixas de prorrogações — campos alinhados com Contrato
   const prrsBoxes=prrs.map((p,i)=>{
     let duracaoAtualizada='—';
     if(p.novoFim&&o.fimPrevisto&&o.prazo){
@@ -1795,11 +1668,40 @@ function renderFichaObra(app){
     }
     return box(
       boxTop('Prorrogação '+(i+1),'#854F0B')+
-      row('Data', fmtDate(p.data))+
-      row('Novo Fim Previsto', fmtDate(p.novoFim))+
-      row('Nova Duração', duracaoAtualizada)
+      row('Data', fmtDate(p.data))+ // alinha com Início Real
+      row('Fim Previsto', fmtDate(p.novoFim))+ // alinha com Fim Previsto
+      row('Duração', duracaoAtualizada) // alinha com Duração
     );
   }).join('');
+
+  // Helpers de alinhamento
+  const sp=`<div style="height:22px;padding:3px 0"></div>`;
+
+  // Caixa de desvios — alinha com prorrogações
+  const desviosBox=box(
+    boxTop('Desvios')+
+    sp+divider+sp+
+    row('Real − Previsto', desvInicio||'—', desvInicioDias!=null&&desvInicioDias>0?'var(--danger)':desvInicioDias!=null?'var(--success)':'var(--text-muted)')+
+    prrs.map((p,i)=>{const d=desvFimPrrs[i]; return row('Prorrogação '+(i+1), d||'—', d&&d.startsWith('+')?'var(--danger)':d?'var(--success)':'var(--text-muted)');}).join('')
+  );
+
+  // Caixa Real — Fim alinha com Fim Previsto, Duração com Duração
+  const realBox=box(
+    boxTop('Real')+
+    sp+divider+sp+sp+
+    row('Fim', fmtDate(o.fimReal)||'—')+
+    row('Duração', duracaoReal)+
+    row('Desvio', desvReal||'—', desvReal&&desvReal.startsWith('+')?'var(--danger)':desvReal?'var(--success)':'var(--text-muted)')
+  );
+
+  // Caixa Empresa (Cliente + Empreiteiro)
+  const empEmpresas=(DB.empresas||[]).filter(e=>e.role==='empreiteiro'&&(e.obras||[]).includes(o.id));
+  const empresaBox=box(
+    boxTop('Empresa')+
+    `<div style="margin-bottom:6px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Cliente</div><div style="font-size:12px">${cli?cli.nome:'—'}</div></div>`+
+    divider+
+    `<div style="margin-top:6px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Empreiteiro</div><div style="font-size:12px">${empEmpresas.length?empEmpresas.map(e=>e.nome).join(', '):'—'}</div></div>`
+  );
 
   app.innerHTML=`
   <button class="back-btn" onclick="fichObraId=null;render()">← Voltar a Obras</button>
@@ -1816,9 +1718,10 @@ function renderFichaObra(app){
     </div>
   </div>
 
-  <!-- LINHA 1: Contrato + Prorrogações -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:10px">
-    ${box(
+  <!-- LINHA 1: Empresa + Contrato + Prorrogações + Desvios + Real -->
+  <div style="display:flex;gap:10px;margin-bottom:10px;overflow-x:auto;align-items:flex-start">
+    <div style="min-width:180px;flex:1">${empresaBox}</div>
+    <div style="min-width:180px;flex:1">${box(
       boxTop('Contrato')+
       row('Valor de Obra', o.valorObra?Number(o.valorObra).toLocaleString('pt-PT',{minimumFractionDigits:2})+' €':null, 'var(--gold)')+
       divider+
@@ -1826,27 +1729,29 @@ function renderFichaObra(app){
       row('Início Real', fmtDate(o.inicioReal))+
       row('Fim Previsto', fmtDate(o.fimPrevisto))+
       row('Duração', o.prazo?o.prazo+' d':null)
-    )}
-    ${prrsBoxes}
+    )}</div>
+    ${prrs.map((p,i)=>{
+      let duracaoAtualizada='—';
+      if(p.novoFim&&o.fimPrevisto&&o.prazo){
+        const diff=Math.round((new Date(p.novoFim)-new Date(o.fimPrevisto))/86400000);
+        duracaoAtualizada=(Number(o.prazo)+diff)+' d';
+      }
+      return '<div style="min-width:180px;flex:1">'+box(
+        boxTop('Prorrogação '+(i+1),'#854F0B')+
+        sp+divider+sp+
+        row('Data', fmtDate(p.data))+
+        row('Fim Previsto', fmtDate(p.novoFim))+
+        row('Duração', duracaoAtualizada)
+      )+'</div>';
+    }).join('')}
+    <div style="min-width:180px;flex:1">${desviosBox}</div>
+    <div style="min-width:180px;flex:1">${realBox}</div>
   </div>
 
-  <!-- LINHA 2: Desvios -->
-  <div style="margin-bottom:10px">
-    ${box(
-      boxTop('Desvios')+
-      row('Início (Real − Previsto)', desvInicio||'—', desvInicioDias!=null&&desvInicioDias>0?'var(--danger)':desvInicioDias!=null?'var(--success)':'var(--text-muted)')+
-      divider+
-      prrs.map((p,i)=>{const d=desvFimPrrs[i]; return row('Fim (Previsto − Prorrogação '+(i+1)+')', d||'—', d&&d.startsWith('+')?'var(--danger)':d?'var(--success)':'var(--text-muted)');}).join('')+
-      divider+
-      row('Real (Real − Inicial)', desvReal||'—', desvReal&&desvReal.startsWith('+')?'var(--danger)':desvReal?'var(--success)':'var(--text-muted)')
-    )}
-  </div>
-
-  <!-- LINHA 3: Intervenientes + Relatórios -->
+  <!-- LINHA 2: Intervenientes + Relatórios -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
     ${box(
       boxTop('Intervenientes')+
-      (cli?`<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Cliente</div><div style="font-size:13px">${cli.nome}</div></div>`:'')+
       intvSec('Dono de Obra',donos)+
       intvSec('Fiscalização',fisc)+
       intvSec('Empreiteiros',emps)+
