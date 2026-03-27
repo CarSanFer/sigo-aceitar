@@ -251,7 +251,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6B7280;margin-bottom:4px">Password</label>
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
-    <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px">Password incorrecta.</div>
+    <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
     <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
@@ -271,25 +271,113 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
   </div>
   <div class="nav-right">
-    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.8); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
+    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border-width: 1px; border-style: solid; border-color: var(--gold); border-image: initial; color: var(--gold); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
     <div class="nav-avatar" id="nav-avatar" onclick="doLogout()" style="cursor:pointer" title="Carlos Ferreira (superadmin) — Clique para sair">CF</div>
   </div>
 </nav>
 
 <div class="content" id="app">
-    <button class="back-btn" onclick="relTab='capa';render()">← Voltar ao Relatório</button>
-    <div class="page-header">
-      <div>
-        <div class="page-title">001.0 — Março 2026 · Trabalhos</div>
-        <div style="margin-top:4px;display:flex;gap:8px;align-items:center"><span class="badge b-em-curso">Em Revisão</span>
-          <span style="font-size:12px;color:var(--text-muted)">CES — Cesae</span>
-        </div>
-      </div>
-      <div class="page-actions">
-        <button class="btn btn-gold" onclick="guardarRelatorio('_e00ucmu')">💾 Guardar</button>
+  <button class="back-btn" onclick="relRelId=null;render()">← Voltar à Capa</button>
+  <div class="page-header">
+    <div>
+      <div class="page-title">001.0 — Março 2026</div>
+      <div style="margin-top:4px;display:flex;gap:8px;align-items:center"><span class="badge b-em-curso">Em Revisão</span>
+        <span style="font-size:12px;color:var(--text-muted)">CES — Cesae</span>
       </div>
     </div>
-    <div class="table-card"><div class="ficha-body" style="padding:14px"></div></div></div>
+    <div class="page-actions">
+      <button class="btn btn-gold" onclick="guardarRelatorio('_e00ucmu')">💾 Guardar</button>
+      
+      <button class="btn btn-gold btn-sm" onclick="aprovarRel('_e00ucmu')">✓ Aprovar</button>
+      
+      <button class="btn btn-outline btn-sm" onclick="reverterRel('_e00ucmu')">↩ Reverter para Rascunho</button>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+    <div onclick="relTab='trabalhos';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">TRB</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Trabalhos</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 campos</div>
+    </div>
+    <div onclick="relTab='valores';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">VAL</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Valores</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 autos</div>
+    </div>
+    <div onclick="relTab='prazo';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PZO</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Prazo</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 campos</div>
+    </div>
+    <div onclick="relTab='ptq';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PTQ</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Plano Quinzenal</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+    </div>
+    <div onclick="relTab='pb';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PB</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Pedidos de Betonagem</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+    </div>
+    <div onclick="relTab='pe';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PE</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Pedidos de Esclarecimento</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+    </div>
+    <div onclick="relTab='pa';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PA</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Pedidos de Aprovação</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+    </div>
+    <div onclick="relTab='nc';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">NC</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Não Conformidades</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+    </div>
+    <div onclick="relTab='adj';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">ADJ</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Adjudicações</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+    </div>
+    <div onclick="relTab='ar';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">AR</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Atas de Reunião</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+    </div>
+    <div onclick="relTab='rv';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">RV</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Relatórios de Visita</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+    </div>
+    <div onclick="relTab='fotos';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">FOT</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Fotos</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 fotos</div>
+    </div></div></div>
 </div>
 
 <!-- FLOATING CHATBOT -->
