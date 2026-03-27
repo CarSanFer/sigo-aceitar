@@ -1321,7 +1321,7 @@ function relTabRV(r,edit){
         ${rv.temaPrincipal?`<div style="color:var(--text);margin-top:4px;font-weight:700">${rv.temaPrincipal}</div>`:''}
       </div>
       <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center">
-        <button onclick="event.stopPropagation();validarRV('${r.id}',${i})" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:none;cursor:pointer;background:${isVal?'#0F6E56':'var(--border-light)'};color:${isVal?'#fff':'var(--text-muted)'}">
+        <button onclick="event.stopPropagation();validarRV('${r.id}',${i})" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:none;cursor:pointer;background:${isVal?'#0F6E56':'#185FA5'};color:#fff">
           ${isVal?'✓ Validado':'Validar'}
         </button>
         ${edit==='true'?`<button onclick="event.stopPropagation();delRV('${r.id}',${i})" style="font-size:10px;color:var(--danger);background:none;border:none;cursor:pointer">✕</button>`:''}
@@ -1372,7 +1372,7 @@ function relTabAR(r,edit){
         ${ar.temaPrincipal?`<div style="color:var(--text);margin-top:4px;font-weight:700">${ar.temaPrincipal}</div>`:''}
       </div>
       <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center">
-        <button onclick="event.stopPropagation();validarAR('${r.id}',${i})" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:none;cursor:pointer;background:${isVal?'#0F6E56':'var(--border-light)'};color:${isVal?'#fff':'var(--text-muted)'}">
+        <button onclick="event.stopPropagation();validarAR('${r.id}',${i})" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:none;cursor:pointer;background:${isVal?'#0F6E56':'#185FA5'};color:#fff">
           ${isVal?'✓ Validado':'Validar'}
         </button>
         ${edit==='true'?`<button onclick="event.stopPropagation();delAR('${r.id}',${i})" style="font-size:10px;color:var(--danger);background:none;border:none;cursor:pointer">✕</button>`:''}
