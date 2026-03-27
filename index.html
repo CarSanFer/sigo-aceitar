@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px">Password incorrecta.</div>
-    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -271,7 +271,7 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
   </div>
   <div class="nav-right">
-    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border-width: 1px; border-style: solid; border-color: var(--gold); border-image: initial; color: var(--gold); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
+    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.8); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
     <div class="nav-avatar" id="nav-avatar" onclick="doLogout()" style="cursor:pointer" title="Carlos Ferreira (superadmin) — Clique para sair">CF</div>
   </div>
 </nav>
@@ -326,7 +326,7 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
       </div>
     </div>
-    <div onclick="go('obras','_kfit6zb')" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="go('obras','_kfit6zb')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#0F6E56;padding:10px 14px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">5B25 · LSD</div>
         <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Largo de São Domingos</div>
@@ -1015,7 +1015,7 @@ function render(){
 // ================================================================
 // STATE — RELATÓRIOS
 // ================================================================
-let relObraId=null, relRelId=null, relTab='Trabalhos';
+let relObraId=null, relRelId=null, relTab='capa';
 
 // ================================================================
 // RELATÓRIOS — HELPERS
@@ -1098,7 +1098,7 @@ function renderCapaObra(app){
   <!-- Lista de relatórios -->
   <div class="table-card"><div class="table-wrap"><table>
     <thead><tr><th>Referência</th><th>Período</th><th>Estado</th><th>Criado por</th><th>Data</th><th>Ações</th></tr></thead>
-    <tbody>${rels.length?rels.map(r=>`<tr class="tr-click" onclick="relRelId='${r.id}';relTab='Trabalhos';render()">
+    <tbody>${rels.length?rels.map(r=>`<tr class="tr-click" onclick="relRelId='${r.id}';relTab='capa';render()">
       <td><strong>${relNumero(r)}</strong></td>
       <td>${fmtMesAno(r.mes,r.ano)}</td>
       <td>${relBadge(r.estado)}</td>
@@ -1120,24 +1120,82 @@ function capaField(l,v){return `<div style="border-bottom:1px solid var(--border
 // ================================================================
 // RELATÓRIOS — FICHA DO RELATÓRIO
 // ================================================================
+const REL_MODULOS=[
+  {key:'trabalhos',  label:'Trabalhos',                sigla:'TRB', cor:'#1E3A5F'},
+  {key:'valores',    label:'Valores',                   sigla:'VAL', cor:'#1E3A5F'},
+  {key:'prazo',      label:'Prazo',                     sigla:'PZO', cor:'#1E3A5F'},
+  {key:'ptq',        label:'Plano Quinzenal',            sigla:'PTQ', cor:'#1E3A5F'},
+  {key:'pb',         label:'Pedidos de Betonagem',       sigla:'PB',  cor:'#1E3A5F'},
+  {key:'pe',         label:'Pedidos de Esclarecimento',  sigla:'PE',  cor:'#1E3A5F'},
+  {key:'pa',         label:'Pedidos de Aprovação',       sigla:'PA',  cor:'#1E3A5F'},
+  {key:'nc',         label:'Não Conformidades',          sigla:'NC',  cor:'#1E3A5F'},
+  {key:'adj',        label:'Adjudicações',               sigla:'ADJ', cor:'#1E3A5F'},
+  {key:'ar',         label:'Atas de Reunião',            sigla:'AR',  cor:'#1E3A5F'},
+  {key:'rv',         label:'Relatórios de Visita',       sigla:'RV',  cor:'#1E3A5F'},
+  {key:'fotos',      label:'Fotos',                     sigla:'FOT', cor:'#1E3A5F'},
+];
+
 function renderFichaRelatorio(app){
   const r=DB.relatorios.find(x=>x.id===relRelId);
   if(!r){relRelId=null;render();return;}
   const o=DB.obras.find(x=>x.id===r.obra_id);
-  const tabs=['Trabalhos','Valores','Prazo','Controlo Operacional','Fotos'];
   const podeEditar=canEditRel(r);
-  let body='';
-  if(relTab==='Trabalhos'){
-    body=relTabTrabalhos(r,podeEditar);
-  } else if(relTab==='Valores'){
-    body=relTabValores(r,podeEditar);
-  } else if(relTab==='Prazo'){
-    body=relTabPrazo(r,podeEditar);
-  } else if(relTab==='Controlo Operacional'){
-    body=relTabControlo(r,podeEditar);
-  } else if(relTab==='Fotos'){
-    body=relTabFotos(r,podeEditar);
+
+  // Se tem módulo seleccionado, mostra o conteúdo
+  if(relTab&&relTab!=='capa'){
+    const mod=REL_MODULOS.find(m=>m.key===relTab);
+    let body='';
+    if(relTab==='trabalhos') body=relTabTrabalhos(r,podeEditar);
+    else if(relTab==='valores') body=relTabValores(r,podeEditar);
+    else if(relTab==='prazo') body=relTabPrazo(r,podeEditar);
+    else if(relTab==='ptq') body=relTabLista(r,podeEditar,'ptq','Plano Quinzenal de Trabalhos');
+    else if(relTab==='pb') body=relTabLista(r,podeEditar,'pb','Pedidos de Betonagem');
+    else if(relTab==='pe') body=relTabLista(r,podeEditar,'pe','Pedidos de Esclarecimento');
+    else if(relTab==='pa') body=relTabLista(r,podeEditar,'pa','Pedidos de Aprovação');
+    else if(relTab==='nc') body=relTabLista(r,podeEditar,'nc','Não Conformidades');
+    else if(relTab==='adj') body=relTabLista(r,podeEditar,'adj','Adjudicações');
+    else if(relTab==='ar') body=relTabLista(r,podeEditar,'ar','Atas de Reunião');
+    else if(relTab==='rv') body=relTabLista(r,podeEditar,'rv','Relatórios de Visita');
+    else if(relTab==='fotos') body=relTabFotos(r,podeEditar);
+
+    app.innerHTML=`
+    <button class="back-btn" onclick="relTab='capa';render()">← Voltar ao Relatório</button>
+    <div class="page-header">
+      <div>
+        <div class="page-title">${relNumero(r)} — ${fmtMesAno(r.mes,r.ano)} · ${mod?mod.label:relTab}</div>
+        <div style="margin-top:4px;display:flex;gap:8px;align-items:center">${relBadge(r.estado)}
+          <span style="font-size:12px;color:var(--text-muted)">${o?o.sigla+' — '+o.nome:''}</span>
+        </div>
+      </div>
+      <div class="page-actions">
+        ${podeEditar?`<button class="btn btn-gold" onclick="guardarRelatorio('${r.id}')">💾 Guardar</button>`:''}
+      </div>
+    </div>
+    <div class="table-card"><div class="ficha-body" style="padding:14px">${body}</div></div>`;
+    return;
   }
+
+  // Capa — grid de caixas
+  const nItem=(d,key)=>(d?.[key]||[]).length;
+  const contagem=(key)=>{
+    const d=r.conteudo||{};
+    if(key==='trabalhos') return Object.values(d.trabalhos||{}).filter(v=>v&&v.trim()).length+' campos';
+    if(key==='valores') return ((d.valores?.autos||[]).length)+' autos';
+    if(key==='prazo') return Object.values(d.prazo||{}).filter(v=>v&&v.trim()).length+' campos';
+    if(key==='fotos') return (d.fotos||[]).length+' fotos';
+    return (d[key]?.lista||[]).length+' registos';
+  };
+
+  const cards=REL_MODULOS.map(m=>`
+    <div onclick="relTab='${m.key}';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s"
+      onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:${m.cor};padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">${m.sigla}</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">${m.label}</div>
+      </div>
+      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">${contagem(m.key)}</div>
+    </div>`).join('');
+
   app.innerHTML=`
   <button class="back-btn" onclick="relRelId=null;render()">← Voltar à Capa</button>
   <div class="page-header">
@@ -1155,11 +1213,79 @@ function renderFichaRelatorio(app){
       ${canAdmin()&&r.estado!=='rascunho'?`<button class="btn btn-outline btn-sm" onclick="reverterRel('${r.id}')">↩ Reverter para Rascunho</button>`:''}
     </div>
   </div>
-  <div class="table-card">
-    <div class="ficha-tabs">${tabs.map(t=>`<div class="ficha-tab ${relTab===t?'active':''}" onclick="relTab='${t}';render()">${t}</div>`).join('')}</div>
-    <div class="ficha-body">${body}</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">${cards}</div>`;
+}
+
+function relTabLista(r,edit,key,titulo){
+  const d=r.conteudo?.[key]||{};
+  const lista=d.lista||[];
+  return `
+  <div class="sec-div">${titulo} — Lista</div>
+  ${edit?`<div style="display:flex;gap:8px;margin-bottom:10px">
+    <input class="form-input" id="lst-${key}-txt" placeholder="Descrição..." style="flex:1">
+    <input class="form-input" id="lst-${key}-num" placeholder="Nº" style="width:80px">
+    <input class="form-input" id="lst-${key}-dt" type="date" style="width:140px">
+    <select class="filter-select" id="lst-${key}-st" style="width:120px">
+      <option value="Aberto">Aberto</option>
+      <option value="Em Análise">Em Análise</option>
+      <option value="Fechado">Fechado</option>
+    </select>
+    <button class="btn btn-outline btn-sm" onclick="addListaItem('${r.id}','${key}')">+ Adicionar</button>
+  </div>`:''}
+  <div class="table-wrap"><table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead><tr style="background:var(--navy)">
+      <th style="padding:6px 10px;color:rgba(255,255,255,.8);text-align:left">Nº</th>
+      <th style="padding:6px 10px;color:rgba(255,255,255,.8);text-align:left">Descrição</th>
+      <th style="padding:6px 10px;color:rgba(255,255,255,.8);text-align:left">Data</th>
+      <th style="padding:6px 10px;color:rgba(255,255,255,.8);text-align:left">Estado</th>
+      ${edit?'<th style="padding:6px 10px;width:40px"></th>':''}
+    </tr></thead>
+    <tbody>${lista.length?lista.map((item,i)=>`<tr>
+      <td style="padding:5px 10px;border-bottom:1px solid var(--border-light)">${item.num||'—'}</td>
+      <td style="padding:5px 10px;border-bottom:1px solid var(--border-light)">${item.txt||'—'}</td>
+      <td style="padding:5px 10px;border-bottom:1px solid var(--border-light)">${fmtDate(item.dt)||'—'}</td>
+      <td style="padding:5px 10px;border-bottom:1px solid var(--border-light)">
+        <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:${item.estado==='Fechado'?'#E1F5EE':item.estado==='Em Análise'?'#FEF9EC':'#E6F1FB'};color:${item.estado==='Fechado'?'#085041':item.estado==='Em Análise'?'#854F0B':'#0C447C'}">${item.estado||'Aberto'}</span>
+      </td>
+      ${edit?`<td style="padding:5px 10px;border-bottom:1px solid var(--border-light)"><button class="btn-icon del" onclick="delListaItem('${r.id}','${key}',${i})">✕</button></td>`:''}
+    </tr>`).join(''):`<tr><td colspan="${edit?5:4}" class="empty-state">Sem registos</td></tr>`}
+    </tbody>
+  </table></div>
+  <div class="sec-div" style="margin-top:14px">Dashboard</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px">
+    ${['Aberto','Em Análise','Fechado'].map(est=>{
+      const n=lista.filter(x=>(x.estado||'Aberto')===est).length;
+      return `<div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px 14px;text-align:center">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${est}</div>
+        <div style="font-size:24px;font-weight:400;color:${est==='Fechado'?'var(--success)':est==='Em Análise'?'var(--gold)':'var(--navy)'}">${n}</div>
+      </div>`;
+    }).join('')}
+    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px 14px;text-align:center">
+      <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Total</div>
+      <div style="font-size:24px;font-weight:400;color:var(--navy)">${lista.length}</div>
+    </div>
   </div>`;
 }
+
+window.addListaItem=function(relId,key){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  if(!r.conteudo)r.conteudo={};
+  if(!r.conteudo[key])r.conteudo[key]={lista:[]};
+  if(!r.conteudo[key].lista)r.conteudo[key].lista=[];
+  const txt=document.getElementById('lst-'+key+'-txt')?.value.trim();
+  const num=document.getElementById('lst-'+key+'-num')?.value.trim();
+  const dt=document.getElementById('lst-'+key+'-dt')?.value;
+  const estado=document.getElementById('lst-'+key+'-st')?.value||'Aberto';
+  if(!txt){alert('Introduz uma descrição.');return;}
+  r.conteudo[key].lista.push({txt,num,dt,estado});
+  render();
+};
+
+window.delListaItem=function(relId,key,idx){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  r.conteudo[key].lista.splice(idx,1);
+  render();
+};
 
 function relTabTrabalhos(r,edit){
   const d=r.conteudo?.trabalhos||{};
@@ -1335,7 +1461,7 @@ window.criarRelatorio=async function(obraId){
     DB.relatorios.push(novo);
     hideLoadingOverlay();
     closeModal();
-    relRelId=novo.id; relTab='Trabalhos'; render();
+    relRelId=novo.id; relTab='capa'; render();
   }catch(e){hideLoadingOverlay();alert('Erro: '+e.message);}
 };
 
@@ -1345,9 +1471,9 @@ window.criarRelatorio=async function(obraId){
 window.guardarRelatorio=async function(id){
   const r=DB.relatorios.find(x=>x.id===id);
   if(!r)return;
-  if(!r.conteudo)r.conteudo={trabalhos:{},valores:{cronograma:[],autos:[]},prazo:{},controlo:{},fotos:[]};
-  // Recolher dados do tab atual
-  if(relTab==='Trabalhos'){
+  if(!r.conteudo)r.conteudo={};
+  // Recolher dados do módulo actual
+  if(relTab==='trabalhos'){
     r.conteudo.trabalhos={
       previstos:$('rt-prev')?.value||'',
       executados:$('rt-exec')?.value||'',
@@ -1355,21 +1481,13 @@ window.guardarRelatorio=async function(id){
       futuros:$('rt-fut')?.value||'',
       recomendacoes:$('rt-rec')?.value||'',
     };
-  } else if(relTab==='Prazo'){
+  } else if(relTab==='prazo'){
     r.conteudo.prazo={
       balizamento:$('rp-bal')?.value||'',
       reflexao:$('rp-ref')?.value||'',
     };
-  } else if(relTab==='Controlo Operacional'){
-    r.conteudo.controlo={
-      betonagens:$('rc-bet')?.value||'',
-      aprovacoes:$('rc-apr')?.value||'',
-      esclarecimentos:$('rc-esc')?.value||'',
-      planos_quinzenais:$('rc-pqt')?.value||'',
-      nao_conformidades:$('rc-nc')?.value||'',
-      adjudicacoes:$('rc-adj')?.value||'',
-    };
   }
+  // Os módulos de lista guardam em tempo real via addListaItem/delListaItem
   try{
     showLoadingOverlay('A guardar...');
     await sb.patch('relatorios',id,{conteudo:JSON.stringify(r.conteudo)});
@@ -1747,11 +1865,11 @@ function renderFichaObra(app){
   // Desvios
   const desvInicioDias=o.inicioPrevisto&&o.inicioReal?Math.round((new Date(o.inicioReal)-new Date(o.inicioPrevisto))/86400000):null;
   const desvInicio=desvInicioDias!==null?(desvInicioDias>0?'+':'')+desvInicioDias+' d':null;
-  let desvReal=null;
-  if(o.inicioReal&&o.fimReal&&o.prazo){
+  let duracaoReal='—', desvReal=null;
+  if(o.inicioReal&&o.fimReal){
     const dr=Math.round((new Date(o.fimReal)-new Date(o.inicioReal))/86400000);
-    const dev=dr-Number(o.prazo);
-    desvReal=(dev>0?'+':'')+dev+' d';
+    duracaoReal=dr+' d';
+    if(o.prazo){ const dev=dr-Number(o.prazo); desvReal=(dev>0?'+':'')+dev+' d'; }
   }
   const desvFimPrrs=prrs.map((p,i)=>{
     const fimAnterior=i===0?o.fimPrevisto:(prrs[i-1].novoFim||o.fimPrevisto);
