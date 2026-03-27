@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
-    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -365,7 +365,7 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
       </div>
     </div>
-    <div onclick="go('obras','_vpg7vcj')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="go('obras','_vpg7vcj')" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#0F6E56;padding:10px 14px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">5J07 · CES</div>
         <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Cesae</div>
@@ -1338,7 +1338,7 @@ function relTabRV(r,edit){
       <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Carrega um ficheiro de Relatório de Visita — o Claude extrai os dados automaticamente</div>
       <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--navy);color:#fff;border-radius:var(--radius);cursor:pointer;font-size:12px">
         📎 Escolher ficheiro
-        <input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarRV('${r.id}',this)">
+        <input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarRV('${r.id}',this)" multiple>
       </label>
       <div id="rv-import-status-${r.id}" style="font-size:11px;color:var(--text-muted);margin-top:6px"></div>
     </div>`:'';
@@ -1395,7 +1395,7 @@ function relTabAR(r,edit){
       <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Carrega um ficheiro de Ata de Reunião — o Claude extrai os dados automaticamente</div>
       <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--navy);color:#fff;border-radius:var(--radius);cursor:pointer;font-size:12px">
         📎 Escolher ficheiro
-        <input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarAR('${r.id}',this)">
+        <input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarAR('${r.id}',this)" multiple>
       </label>
       <div id="ar-import-status-${r.id}" style="font-size:11px;color:var(--text-muted);margin-top:6px"></div>
     </div>`:'';
@@ -1421,36 +1421,33 @@ window.delAR=function(relId,idx){
 };
 
 window.importarRV=async function(relId,input){
-  const file=input.files[0];if(!file)return;
+  const files=Array.from(input.files);if(!files.length)return;
   const status=document.getElementById('rv-import-status-'+relId);
-  if(status)status.textContent='A ler ficheiro...';
+  if(status)status.textContent='A ler '+files.length+' ficheiro(s)...';
   try{
-    const base64=await new Promise((res,rej)=>{
+    const filesData=await Promise.all(files.map(file=>new Promise((res,rej)=>{
       const reader=new FileReader();
-      reader.onload=e=>res(e.target.result.split(',')[1]);
+      reader.onload=e=>res({fileBase64:e.target.result.split(',')[1],fileName:file.name,contentType:file.type});
       reader.onerror=rej;
       reader.readAsDataURL(file);
-    });
-    if(status)status.textContent='A extrair dados com IA...';
-    const isPDF=file.type==='application/pdf';
-    const msgContent=isPDF?
-      [{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:'Extrai os dados deste Relatório de Visita e devolve apenas JSON válido com estes campos: num (número do RV, string), data (dd/mm/yyyy), duracao (texto), meteo (meteorologia/condições), fiscal (nome do fiscal), fase (fase da obra), trabObra (nº trabalhadores em obra), presencas (lista de presenças, string), temas (temas abordados, string), estado (Normal|Alerta|Suspenso), temaPrincipal (tema principal, string), obs (observações e pontos de atenção), assuntos (outros assuntos). Devolve APENAS o JSON, sem texto adicional.'}]
-    :[{type:'text',text:'Extrai os dados deste Relatório de Visita e devolve apenas JSON válido com estes campos: num, data (dd/mm/yyyy), duracao, meteo, fiscal, fase, trabObra, presencas, temas, estado (Normal|Alerta|Suspenso), temaPrincipal, obs, assuntos. Conteúdo do ficheiro:\n\n'+atob(base64)}];
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    })));
+    if(status)status.textContent='A extrair dados com IA ('+(files.length)+' ficheiro(s))...';
+    const resp=await fetch('https://sigo-aceitar.vercel.app/api/ler-documento',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:msgContent}]})
+      body:JSON.stringify({files:filesData,tipo:'rv'})
     });
     const data=await resp.json();
-    const text=data.content?.map(c=>c.text||'').join('').trim();
-    const clean=text.replace(/```json|```/g,'').trim();
-    const rv=JSON.parse(clean);
     const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
     if(!r.conteudo)r.conteudo={};
     if(!r.conteudo.rv)r.conteudo.rv={lista:[]};
-    r.conteudo.rv.lista.push(rv);
+    let ok=0,erros=0;
+    for(const result of data.results){
+      if(result.success){r.conteudo.rv.lista.push(result.data);ok++;}
+      else{erros++;console.error('Erro em '+result.fileName+':',result.error);}
+    }
     await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
-    if(status)status.textContent='✅ RV '+rv.num+' importado com sucesso!';
+    if(status)status.textContent='✅ '+ok+' RV(s) importado(s)'+(erros?' · ❌ '+erros+' erro(s)':'');
     render();
   }catch(e){
     if(status)status.textContent='❌ Erro: '+e.message;
@@ -1459,36 +1456,33 @@ window.importarRV=async function(relId,input){
 };
 
 window.importarAR=async function(relId,input){
-  const file=input.files[0];if(!file)return;
+  const files=Array.from(input.files);if(!files.length)return;
   const status=document.getElementById('ar-import-status-'+relId);
-  if(status)status.textContent='A ler ficheiro...';
+  if(status)status.textContent='A ler '+files.length+' ficheiro(s)...';
   try{
-    const base64=await new Promise((res,rej)=>{
+    const filesData=await Promise.all(files.map(file=>new Promise((res,rej)=>{
       const reader=new FileReader();
-      reader.onload=e=>res(e.target.result.split(',')[1]);
+      reader.onload=e=>res({fileBase64:e.target.result.split(',')[1],fileName:file.name,contentType:file.type});
       reader.onerror=rej;
       reader.readAsDataURL(file);
-    });
-    if(status)status.textContent='A extrair dados com IA...';
-    const isPDF=file.type==='application/pdf';
-    const msgContent=isPDF?
-      [{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:'Extrai os dados desta Ata de Reunião e devolve apenas JSON válido com estes campos: num (número da ata, string), data (dd/mm/yyyy), trabObra (nº trabalhadores), tipos (array de strings: Normal e/ou "Alerta crítico"), participantes (string com lista), temas (string), temaPrincipal (string), decisoes (observações e decisões tomadas), pendentes (pontos em aberto/pendentes). Devolve APENAS o JSON, sem texto adicional.'}]
-    :[{type:'text',text:'Extrai os dados desta Ata de Reunião e devolve apenas JSON válido com estes campos: num, data (dd/mm/yyyy), trabObra, tipos (array: Normal e/ou "Alerta crítico"), participantes, temas, temaPrincipal, decisoes, pendentes. Conteúdo:\n\n'+atob(base64)}];
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    })));
+    if(status)status.textContent='A extrair dados com IA ('+(files.length)+' ficheiro(s))...';
+    const resp=await fetch('https://sigo-aceitar.vercel.app/api/ler-documento',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:msgContent}]})
+      body:JSON.stringify({files:filesData,tipo:'ar'})
     });
     const data=await resp.json();
-    const text=data.content?.map(c=>c.text||'').join('').trim();
-    const clean=text.replace(/```json|```/g,'').trim();
-    const ar=JSON.parse(clean);
     const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
     if(!r.conteudo)r.conteudo={};
     if(!r.conteudo.ar)r.conteudo.ar={lista:[]};
-    r.conteudo.ar.lista.push(ar);
+    let ok=0,erros=0;
+    for(const result of data.results){
+      if(result.success){r.conteudo.ar.lista.push(result.data);ok++;}
+      else{erros++;console.error('Erro em '+result.fileName+':',result.error);}
+    }
     await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
-    if(status)status.textContent='✅ Ata '+ar.num+' importada com sucesso!';
+    if(status)status.textContent='✅ '+ok+' Ata(s) importada(s)'+(erros?' · ❌ '+erros+' erro(s)':'');
     render();
   }catch(e){
     if(status)status.textContent='❌ Erro: '+e.message;
@@ -3475,15 +3469,7 @@ window.chatAnswer=function(q){
 };
 
 showLogin();
-</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
+</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
 
 
-<div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
-        <div id="yt_article_summary_widget" class="yt_article_summary_widget"><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1.40123 27.3686C-0.44103 25.5284 -0.441033 22.5449 1.4012 20.7047L16.5971 5.52573L24.0098 12.9301L5.47818 31.4409L1.40123 27.3686Z" fill="#FF4E74"></path>
-        <path d="M35.1286 24.0367L16.5972 5.5258L20.6741 1.45341C22.5164 -0.386772 25.5033 -0.386775 27.3455 1.45341L42.5415 16.6323L35.1286 24.0367Z" fill="#FFF85E"></path>
-        <path d="M24.0099 35.143L42.5416 16.6323L46.6183 20.7046C48.4606 22.5448 48.4606 25.5284 46.6183 27.3686L31.4224 42.5476L24.0099 35.143Z" fill="#76FF54"></path>
-        <path d="M27.3454 46.6198C25.5032 48.4601 22.5163 48.4601 20.674 46.6198L5.47815 31.4409L12.8908 24.0366L31.4223 42.5476L27.3454 46.6198Z" fill="#5C94FF"></path>
-    </svg></div>
-        <div id="yt_article_summary_close_button" class="yt_article_summary_close_button">×</div>
-    </div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div></body></html>
+</body></html>
