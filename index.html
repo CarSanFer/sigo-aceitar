@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
-    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -326,7 +326,7 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
       </div>
     </div>
-    <div onclick="go('obras','_vpg7vcj')" style="background: var(--bg-card); border-color: var(--gold); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="go('obras','_vpg7vcj')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#0F6E56;padding:10px 14px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">5J07 · CES</div>
         <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Cesae</div>
@@ -1871,54 +1871,49 @@ window.sincronizarNAS=async function(relId,tipo){
   const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
   const o=DB.obras.find(x=>x.id===r.obra_id);if(!o)return;
   const statusEl=document.getElementById((tipo==='rv'?'rv':'ar')+'-import-status-'+relId);
-  const setStatus=msg=>{if(statusEl)statusEl.textContent=msg;};
-  const VERCEL='https://sigo-aceitar.vercel.app/api/ler-documento';
-  const LOTE=2; // processar 2 ficheiros de cada vez
-
-  setStatus('🔄 A listar ficheiros na NAS...');
+  if(statusEl)statusEl.textContent='🔄 A sincronizar com a NAS...';
   try{
-    // 1. Listar ficheiros da NAS
-    const listaResp=await fetch(VERCEL,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'listar',obraCodigo:o.codigo,obraNome:o.nome,mes:r.mes,ano:r.ano,tipo})
+    const resp=await fetch('https://sigo-aceitar.vercel.app/api/ler-documento',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        action:'sincronizar',
+        obraCodigo:o.codigo,
+        obraNome:o.nome,
+        mes:r.mes,
+        ano:r.ano,
+        tipo
+      })
     });
-    const listaData=await listaResp.json();
-    if(!listaData.success)throw new Error(listaData.error||'Erro ao listar NAS');
-    const ficheiros=listaData.ficheiros||[];
-    if(!ficheiros.length){setStatus('ℹ Sem ficheiros encontrados para este mês.');return;}
-
-    setStatus(`📂 ${ficheiros.length} ficheiro(s) encontrado(s). A processar...`);
-
-    // 2. Limpar lista existente
+    const data=await resp.json();
+    if(!data.success)throw new Error(data.error||'Erro na sincronização');
     if(!r.conteudo)r.conteudo={};
-    if(!r.conteudo[tipo])r.conteudo[tipo]={lista:[]};
-    r.conteudo[tipo].lista=[];
-
-    // 3. Processar em lotes
-    let ok=0,erros=0;
-    for(let i=0;i<ficheiros.length;i+=LOTE){
-      const lote=ficheiros.slice(i,i+LOTE);
-      setStatus(`⚙ A processar ${Math.min(i+LOTE,ficheiros.length)} de ${ficheiros.length}...`);
-      try{
-        const loteResp=await fetch(VERCEL,{
-          method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({action:'processar_lote',obraCodigo:o.codigo,obraNome:o.nome,tipo,files:lote})
-        });
-        const loteData=await loteResp.json();
-        if(!loteData.success)throw new Error(loteData.error||'Erro no lote');
-        for(const res of loteData.results){
-          if(res.success){r.conteudo[tipo].lista.push(res.data);ok++;}
-          else{erros++;console.error('Erro:',res.fileName,res.error);}
-        }
-      }catch(e){erros+=lote.length;console.error('Erro no lote:',e.message);}
+    // Substituir tudo — limpar lista existente e reimportar
+    const resultados=data.resultados;
+    let okAR=0,okRV=0,erros=0;
+    if(resultados.ar?.length){
+      r.conteudo.ar={lista:[]};
+      for(const res of resultados.ar){
+        if(res.success){r.conteudo.ar.lista.push(res.data);okAR++;}
+        else{erros++;console.error('Erro AR:',res.fileName,res.error);}
+      }
     }
-
-    // 4. Guardar no Supabase
+    if(resultados.rv?.length){
+      r.conteudo.rv={lista:[]};
+      for(const res of resultados.rv){
+        if(res.success){r.conteudo.rv.lista.push(res.data);okRV++;}
+        else{erros++;console.error('Erro RV:',res.fileName,res.error);}
+      }
+    }
     await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
-    setStatus(`✅ ${ok} ${tipo==='rv'?'RV(s)':'Ata(s)'} importado(s)`+(erros?` · ❌ ${erros} erro(s)`:''));
+    const msg=`✅ Sincronizado — ${okAR} Atas, ${okRV} RVs`+(erros?` · ❌ ${erros} erro(s)`:'');
+    if(statusEl)statusEl.textContent=msg;
+    else alert(msg);
     render();
   }catch(e){
-    setStatus('❌ Erro: '+e.message);
+    const msg='❌ Erro: '+e.message;
+    if(statusEl)statusEl.textContent=msg;
+    else alert(msg);
     console.error(e);
   }
 };
@@ -3663,7 +3658,15 @@ window.chatAnswer=function(q){
 };
 
 showLogin();
-</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
+</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
 
 
-</body></html>
+<div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
+        <div id="yt_article_summary_widget" class="yt_article_summary_widget"><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1.40123 27.3686C-0.44103 25.5284 -0.441033 22.5449 1.4012 20.7047L16.5971 5.52573L24.0098 12.9301L5.47818 31.4409L1.40123 27.3686Z" fill="#FF4E74"></path>
+        <path d="M35.1286 24.0367L16.5972 5.5258L20.6741 1.45341C22.5164 -0.386772 25.5033 -0.386775 27.3455 1.45341L42.5415 16.6323L35.1286 24.0367Z" fill="#FFF85E"></path>
+        <path d="M24.0099 35.143L42.5416 16.6323L46.6183 20.7046C48.4606 22.5448 48.4606 25.5284 46.6183 27.3686L31.4224 42.5476L24.0099 35.143Z" fill="#76FF54"></path>
+        <path d="M27.3454 46.6198C25.5032 48.4601 22.5163 48.4601 20.674 46.6198L5.47815 31.4409L12.8908 24.0366L31.4223 42.5476L27.3454 46.6198Z" fill="#5C94FF"></path>
+    </svg></div>
+        <div id="yt_article_summary_close_button" class="yt_article_summary_close_button">×</div>
+    </div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div></body></html>
