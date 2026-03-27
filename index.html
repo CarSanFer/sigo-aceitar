@@ -281,102 +281,128 @@ tr.tr-click:hover td{background:#F5F7FA}
   <div class="page-header">
     <div>
       <div class="page-title">001.0 — Março 2026</div>
-      <div style="margin-top:4px;display:flex;gap:8px;align-items:center"><span class="badge b-em-curso">Em Revisão</span>
+      <div style="margin-top:4px;display:flex;gap:8px;align-items:center"><span class="badge b-prep">Rascunho</span>
         <span style="font-size:12px;color:var(--text-muted)">CES — Cesae</span>
       </div>
     </div>
     <div class="page-actions">
       <button class="btn btn-gold" onclick="guardarRelatorio('_e00ucmu')">💾 Guardar</button>
+      <button class="btn btn-outline btn-sm" onclick="submeterRel('_e00ucmu')">→ Submeter para Revisão</button>
       
-      <button class="btn btn-gold btn-sm" onclick="aprovarRel('_e00ucmu')">✓ Aprovar</button>
       
-      <button class="btn btn-outline btn-sm" onclick="reverterRel('_e00ucmu')">↩ Reverter para Rascunho</button>
+      
     </div>
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
-    <div onclick="relTab='trabalhos';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">TRB</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Trabalhos</div>
-      </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 campos</div>
-    </div>
-    <div onclick="relTab='valores';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">VAL</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Valores</div>
-      </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 autos</div>
-    </div>
-    <div onclick="relTab='prazo';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="relTab='prazo';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#1E3A5F;padding:9px 13px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PZO</div>
         <div style="font-size:13px;font-weight:400;color:#fff">Prazo</div>
       </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 campos</div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Previstos · Executados · Análise · Futuros · Recomendações · Balizamento</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 campos</div>
+      </div>
     </div>
-    <div onclick="relTab='ptq';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="relTab='valores';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#1E3A5F;padding:9px 13px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">VAL</div>
+        <div style="font-size:13px;font-weight:400;color:#fff">Valores</div>
+      </div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Cronograma Financeiro · Autos Mensais · Trabalhos Complementares</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 autos</div>
+      </div>
+    </div>
+    <div onclick="relTab='ptq';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#1E3A5F;padding:9px 13px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PTQ</div>
         <div style="font-size:13px;font-weight:400;color:#fff">Plano Quinzenal</div>
       </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
+      </div>
     </div>
-    <div onclick="relTab='pb';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="relTab='pb';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#1E3A5F;padding:9px 13px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PB</div>
         <div style="font-size:13px;font-weight:400;color:#fff">Pedidos de Betonagem</div>
       </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
+      </div>
     </div>
-    <div onclick="relTab='pe';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="relTab='pe';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#1E3A5F;padding:9px 13px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PE</div>
         <div style="font-size:13px;font-weight:400;color:#fff">Pedidos de Esclarecimento</div>
       </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
+      </div>
     </div>
-    <div onclick="relTab='pa';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="relTab='pa';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#1E3A5F;padding:9px 13px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PA</div>
         <div style="font-size:13px;font-weight:400;color:#fff">Pedidos de Aprovação</div>
       </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
+      </div>
     </div>
     <div onclick="relTab='nc';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#1E3A5F;padding:9px 13px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">NC</div>
         <div style="font-size:13px;font-weight:400;color:#fff">Não Conformidades</div>
       </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
+      </div>
     </div>
     <div onclick="relTab='adj';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#1E3A5F;padding:9px 13px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">ADJ</div>
         <div style="font-size:13px;font-weight:400;color:#fff">Adjudicações</div>
       </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
+      </div>
     </div>
-    <div onclick="relTab='ar';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="relTab='ar';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#1E3A5F;padding:9px 13px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">AR</div>
         <div style="font-size:13px;font-weight:400;color:#fff">Atas de Reunião</div>
       </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
+      </div>
     </div>
-    <div onclick="relTab='rv';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="relTab='rv';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#1E3A5F;padding:9px 13px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">RV</div>
         <div style="font-size:13px;font-weight:400;color:#fff">Relatórios de Visita</div>
       </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 registos</div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
+      </div>
     </div>
-    <div onclick="relTab='fotos';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="relTab='fotos';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#1E3A5F;padding:9px 13px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">FOT</div>
         <div style="font-size:13px;font-weight:400;color:#fff">Fotos</div>
       </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">0 fotos</div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Galeria · Upload</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 fotos</div>
+      </div>
     </div></div></div>
 </div>
 
@@ -1095,18 +1121,17 @@ function capaField(l,v){return `<div style="border-bottom:1px solid var(--border
 // RELATÓRIOS — FICHA DO RELATÓRIO
 // ================================================================
 const REL_MODULOS=[
-  {key:'trabalhos',  label:'Trabalhos',                sigla:'TRB', cor:'#1E3A5F'},
-  {key:'valores',    label:'Valores',                   sigla:'VAL', cor:'#1E3A5F'},
-  {key:'prazo',      label:'Prazo',                     sigla:'PZO', cor:'#1E3A5F'},
-  {key:'ptq',        label:'Plano Quinzenal',            sigla:'PTQ', cor:'#1E3A5F'},
-  {key:'pb',         label:'Pedidos de Betonagem',       sigla:'PB',  cor:'#1E3A5F'},
-  {key:'pe',         label:'Pedidos de Esclarecimento',  sigla:'PE',  cor:'#1E3A5F'},
-  {key:'pa',         label:'Pedidos de Aprovação',       sigla:'PA',  cor:'#1E3A5F'},
-  {key:'nc',         label:'Não Conformidades',          sigla:'NC',  cor:'#1E3A5F'},
-  {key:'adj',        label:'Adjudicações',               sigla:'ADJ', cor:'#1E3A5F'},
-  {key:'ar',         label:'Atas de Reunião',            sigla:'AR',  cor:'#1E3A5F'},
-  {key:'rv',         label:'Relatórios de Visita',       sigla:'RV',  cor:'#1E3A5F'},
-  {key:'fotos',      label:'Fotos',                     sigla:'FOT', cor:'#1E3A5F'},
+  {key:'prazo',      label:'Prazo',                     sigla:'PZO', cor:'#1E3A5F', desc:'Previstos · Executados · Análise · Futuros · Recomendações · Balizamento'},
+  {key:'valores',    label:'Valores',                   sigla:'VAL', cor:'#1E3A5F', desc:'Cronograma Financeiro · Autos Mensais · Trabalhos Complementares'},
+  {key:'ptq',        label:'Plano Quinzenal',            sigla:'PTQ', cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'pb',         label:'Pedidos de Betonagem',       sigla:'PB',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'pe',         label:'Pedidos de Esclarecimento',  sigla:'PE',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'pa',         label:'Pedidos de Aprovação',       sigla:'PA',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'nc',         label:'Não Conformidades',          sigla:'NC',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'adj',        label:'Adjudicações',               sigla:'ADJ', cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'ar',         label:'Atas de Reunião',            sigla:'AR',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'rv',         label:'Relatórios de Visita',       sigla:'RV',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'fotos',      label:'Fotos',                     sigla:'FOT', cor:'#1E3A5F', desc:'Galeria · Upload'},
 ];
 
 function renderFichaRelatorio(app){
@@ -1153,9 +1178,8 @@ function renderFichaRelatorio(app){
   const nItem=(d,key)=>(d?.[key]||[]).length;
   const contagem=(key)=>{
     const d=r.conteudo||{};
-    if(key==='trabalhos') return Object.values(d.trabalhos||{}).filter(v=>v&&v.trim()).length+' campos';
+    if(key==='prazo') return Object.values({...d.trabalhos||{},...d.prazo||{}}).filter(v=>v&&v.trim()).length+' campos';
     if(key==='valores') return ((d.valores?.autos||[]).length)+' autos';
-    if(key==='prazo') return Object.values(d.prazo||{}).filter(v=>v&&v.trim()).length+' campos';
     if(key==='fotos') return (d.fotos||[]).length+' fotos';
     return (d[key]?.lista||[]).length+' registos';
   };
@@ -1167,7 +1191,10 @@ function renderFichaRelatorio(app){
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">${m.sigla}</div>
         <div style="font-size:13px;font-weight:400;color:#fff">${m.label}</div>
       </div>
-      <div style="padding:8px 13px;font-size:11px;color:var(--text-muted)">${contagem(m.key)}</div>
+      <div style="padding:8px 13px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">${m.desc}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">${contagem(m.key)}</div>
+      </div>
     </div>`).join('');
 
   app.innerHTML=`
@@ -1342,11 +1369,26 @@ function relTabValores(r,edit){
 }
 
 function relTabPrazo(r,edit){
+  const t=r.conteudo?.trabalhos||{};
   const d=r.conteudo?.prazo||{};
   if(!edit) return `
+    <div class="sec-div">Trabalhos</div>
+    ${relSection('Trabalhos Previstos',t.previstos)}
+    ${relSection('Trabalhos Executados',t.executados)}
+    ${relSection('Análise / Comentários',t.analise)}
+    ${relSection('Trabalhos Futuros',t.futuros)}
+    ${relSection('Recomendações',t.recomendacoes)}
+    <div class="sec-div" style="margin-top:14px">Prazo</div>
     ${relSection('Balizamento',d.balizamento)}
     ${relSection('Reflexão sobre Prazo / Prorrogação',d.reflexao)}`;
   return `
+    <div class="sec-div">Trabalhos</div>
+    <div class="form-row" style="margin-bottom:9px"><div><label class="form-label">Trabalhos Previstos</label><textarea class="form-textarea" id="rt-prev" style="min-height:80px">${t.previstos||''}</textarea></div></div>
+    <div class="form-row" style="margin-bottom:9px"><div><label class="form-label">Trabalhos Executados</label><textarea class="form-textarea" id="rt-exec" style="min-height:80px">${t.executados||''}</textarea></div></div>
+    <div class="form-row" style="margin-bottom:9px"><div><label class="form-label">Análise / Comentários</label><textarea class="form-textarea" id="rt-anal" style="min-height:80px">${t.analise||''}</textarea></div></div>
+    <div class="form-row" style="margin-bottom:9px"><div><label class="form-label">Trabalhos Futuros</label><textarea class="form-textarea" id="rt-fut" style="min-height:80px">${t.futuros||''}</textarea></div></div>
+    <div class="form-row" style="margin-bottom:9px"><div><label class="form-label">Recomendações</label><textarea class="form-textarea" id="rt-rec" style="min-height:80px">${t.recomendacoes||''}</textarea></div></div>
+    <div class="sec-div" style="margin-top:14px">Prazo</div>
     <div class="form-row" style="margin-bottom:9px"><div><label class="form-label">Balizamento</label><textarea class="form-textarea" id="rp-bal" style="min-height:100px">${d.balizamento||''}</textarea></div></div>
     <div class="form-row"><div><label class="form-label">Reflexão sobre Prazo / Prorrogação</label><textarea class="form-textarea" id="rp-ref" style="min-height:100px">${d.reflexao||''}</textarea></div></div>`;
 }
@@ -1447,7 +1489,7 @@ window.guardarRelatorio=async function(id){
   if(!r)return;
   if(!r.conteudo)r.conteudo={};
   // Recolher dados do módulo actual
-  if(relTab==='trabalhos'){
+  if(relTab==='prazo'){
     r.conteudo.trabalhos={
       previstos:$('rt-prev')?.value||'',
       executados:$('rt-exec')?.value||'',
@@ -1455,7 +1497,6 @@ window.guardarRelatorio=async function(id){
       futuros:$('rt-fut')?.value||'',
       recomendacoes:$('rt-rec')?.value||'',
     };
-  } else if(relTab==='prazo'){
     r.conteudo.prazo={
       balizamento:$('rp-bal')?.value||'',
       reflexao:$('rp-ref')?.value||'',
@@ -1978,7 +2019,7 @@ function renderFichaObra(app){
     )}
     ${(()=>{
       const novoBtn=o.relMensal&&(currentUser?.role==='fiscalizacao'||canAdmin())?'<button class="btn btn-gold btn-sm" style="font-size:11px;padding:3px 8px" onclick="modalNovoRelatorio(\''+o.id+'\')">+ Novo</button>':'';
-      const relsHtml=rels.length?rels.map(r=>'<div class="tr-click" onclick="relObraId=\''+o.id+'\';relRelId=\''+r.id+'\';relTab=\'Trabalhos\';render()" style="padding:7px 8px;border-bottom:1px solid var(--border-light);display:grid;grid-template-columns:80px 1fr auto;gap:8px;align-items:center;cursor:pointer;border-radius:4px;transition:background .1s" onmouseover="this.style.background=\'var(--bg)\'" onmouseout="this.style.background=\'\'"><span style="font-size:12px;font-weight:700;font-family:monospace;color:var(--navy)">'+relNumero(r)+'</span><span style="font-size:12px">'+fmtMesAno(r.mes,r.ano)+'</span><span>'+relBadge(r.estado)+'</span></div>').join(''):'<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:8px 0">Sem relatórios.</div>';
+      const relsHtml=rels.length?rels.map(r=>'<div class="tr-click" onclick="relObraId=\''+o.id+'\';relRelId=\''+r.id+'\';relTab=\'capa\';render()" style="padding:7px 8px;border-bottom:1px solid var(--border-light);display:grid;grid-template-columns:80px 1fr auto;gap:8px;align-items:center;cursor:pointer;border-radius:4px;transition:background .1s" onmouseover="this.style.background=\'var(--bg)\'" onmouseout="this.style.background=\'\'"><span style="font-size:12px;font-weight:700;font-family:monospace;color:var(--navy)">'+relNumero(r)+'</span><span style="font-size:12px">'+fmtMesAno(r.mes,r.ano)+'</span><span>'+relBadge(r.estado)+'</span></div>').join(''):'<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:8px 0">Sem relatórios.</div>';
       return box(boxTop('Relatórios Mensais')+'<div style="display:flex;justify-content:flex-end;margin:-4px 0 6px">'+novoBtn+'</div>'+relsHtml);
     })()}
   </div>`;
