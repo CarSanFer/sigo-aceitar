@@ -1,0 +1,7 @@
+{
+  "name": "sigo-api",
+  "version": "1.0.0",
+  "dependencies": {
+    "mammoth": "^1.7.0"
+  }
+}
