@@ -365,7 +365,7 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
       </div>
     </div>
-    <div onclick="go('obras','_vpg7vcj')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+    <div onclick="go('obras','_vpg7vcj')" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
       <div style="background:#0F6E56;padding:10px 14px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">5J07 · CES</div>
         <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Cesae</div>
@@ -1170,7 +1170,15 @@ function renderFichaRelatorio(app){
         </div>
       </div>
       <div class="page-actions">
+        ${relTab==='rv'&&podeEditar?`<label style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1px solid var(--border-light);border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:700;background:var(--bg)">
+          📎 Importar RV<input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarRV('${r.id}',this)" multiple>
+        </label>`:''}
+        ${relTab==='ar'&&podeEditar?`<label style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1px solid var(--border-light);border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:700;background:var(--bg)">
+          📎 Importar Ata<input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarAR('${r.id}',this)" multiple>
+        </label>`:''}
         ${podeEditar?`<button class="btn btn-gold" onclick="guardarRelatorio('${r.id}')">💾 Guardar</button>`:''}
+        ${relTab==='rv'?`<button class="btn btn-outline" onclick="gerarDashboardRV('${r.id}')">📊 Dashboard</button>`:''}
+        ${relTab==='ar'?`<button class="btn btn-outline" onclick="gerarDashboardAR('${r.id}')">📊 Dashboard</button>`:''}
       </div>
     </div>
     <div class="table-card"><div class="ficha-body" style="padding:14px">${body}</div></div>`;
@@ -1294,22 +1302,34 @@ window.delListaItem=function(relId,key,idx){
 function relTabRV(r,edit){
   const conteudo=typeof r.conteudo==='string'?JSON.parse(r.conteudo||'{}'):r.conteudo||{};
   const lista=(conteudo?.rv?.lista||[]).sort((a,b)=>(a.num||'').localeCompare(b.num||'',undefined,{numeric:true}));
+  const validados=conteudo?.rv?.validados||{};
+  window._rvLista=lista; // guardar globalmente para acesso no popup
   const estadoCor=e=>e==='Alerta'?'#B91C1C':e==='Suspenso'?'#854F0B':'#0F6E56';
   const estadoBg=e=>e==='Alerta'?'#FEF2F2':e==='Suspenso'?'#FEF9EC':'#F0FDF4';
 
-  const cards=lista.map((rv,i)=>`
-    <div onclick="showRVDetail(${JSON.stringify(JSON.stringify(rv))},'${r.id}',${i},'${edit}')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s"
-      onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:${estadoBg(rv.estado||'Normal')};border-bottom:2px solid ${estadoCor(rv.estado||'Normal')};padding:8px 12px">
+  const cards=lista.map((rv,i)=>{
+    const isVal=!!validados[i];
+    return `<div style="position:relative;background:var(--bg-card);border:2px solid ${isVal?'#0F6E56':'var(--border-light)'};border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s"
+      onmouseover="this.style.borderColor='${isVal?'#0F6E56':'var(--gold)'}'" onmouseout="this.style.borderColor='${isVal?'#0F6E56':'var(--border-light)'}'">
+      <div onclick="abrirRV(${i},'${r.id}','${edit}')" style="background:${estadoBg(rv.estado||'Normal')};border-bottom:2px solid ${estadoCor(rv.estado||'Normal')};padding:8px 12px">
         <div style="font-family:monospace;font-size:13px;font-weight:700;color:${estadoCor(rv.estado||'Normal')}">RV ${String(rv.num||i+1).padStart(3,'0')}</div>
         <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${rv.data||'—'}</div>
       </div>
-      <div style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
+      <div onclick="abrirRV(${i},'${r.id}','${edit}')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
         ${rv.meteo?`<div>☁ ${rv.meteo}</div>`:''}
         ${rv.fase?`<div>📍 ${rv.fase}</div>`:''}
         ${rv.temaPrincipal?`<div style="color:var(--text);margin-top:4px;font-weight:700">${rv.temaPrincipal}</div>`:''}
       </div>
-    </div>`).join('');
+      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center">
+        <button onclick="event.stopPropagation();validarRV('${r.id}',${i})" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:none;cursor:pointer;background:${isVal?'#0F6E56':'var(--border-light)'};color:${isVal?'#fff':'var(--text-muted)'}">
+          ${isVal?'✓ Validado':'Validar'}
+        </button>
+        ${edit==='true'?`<button onclick="event.stopPropagation();delRV('${r.id}',${i})" style="font-size:10px;color:var(--danger);background:none;border:none;cursor:pointer">✕</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const todosVal=lista.length>0&&lista.every((_,i)=>!!validados[i]);
 
   const kpis=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:14px">
     ${['Normal','Alerta','Suspenso'].map(est=>{
@@ -1325,40 +1345,42 @@ function relTabRV(r,edit){
     </div>
   </div>`;
 
-  const header=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-    <div class="sec-div" style="margin:0;border:none;padding:0">Relatórios de Visita (${lista.length})</div>
-    <div style="display:flex;gap:8px;align-items:center">
-      ${lista.length?`<button class="btn btn-outline btn-sm" onclick="gerarDashboardRV('${r.id}')">📊 Dashboard IA</button>`:''}
-      ${edit?`<label style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--navy);color:#fff;border-radius:var(--radius);cursor:pointer;font-size:12px">
-        📎 Importar RV
-        <input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarRV('${r.id}',this)" multiple>
-      </label>`:''}
-    </div>
-  </div>
-  <div id="rv-import-status-${r.id}" style="font-size:11px;color:var(--text-muted);margin-bottom:6px"></div>`;
-
-  return kpis+header+(lista.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${cards}</div>`:`<div class="empty-state">Sem relatórios de visita.</div>`);
+  return kpis+
+    `<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px" id="rv-import-status-${r.id}"></div>`+
+    (lista.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${cards}</div>`:`<div class="empty-state">Sem relatórios de visita.</div>`)+
+    (todosVal&&edit==='true'?`<div style="margin-top:14px;text-align:center"><button class="btn btn-gold" onclick="publicarRV('${r.id}')">↑ Publicar RVs</button></div>`:'');
 }
 
 function relTabAR(r,edit){
   const conteudo=typeof r.conteudo==='string'?JSON.parse(r.conteudo||'{}'):r.conteudo||{};
   const lista=(conteudo?.ar?.lista||[]).sort((a,b)=>(a.num||'').localeCompare(b.num||'',undefined,{numeric:true}));
+  const validados=conteudo?.ar?.validados||{};
+  window._arLista=lista;
   const tipoCor=t=>t==='Alerta crítico'?'#B91C1C':'#185FA5';
-  const tipoBg=t=>t==='Alerta crítico'?'#FEF2F2':'#E6F1FB';
   const temAlerta=ar=>(ar.tipos||[ar.tipo]).filter(Boolean).includes('Alerta crítico');
 
-  const cards=lista.map((ar,i)=>`
-    <div onclick="showARDetail(${JSON.stringify(JSON.stringify(ar))},'${r.id}',${i},'${edit}')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s"
-      onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:${temAlerta(ar)?'#FEF2F2':'#E6F1FB'};border-bottom:2px solid ${temAlerta(ar)?'#B91C1C':'#185FA5'};padding:8px 12px">
+  const cards=lista.map((ar,i)=>{
+    const isVal=!!validados[i];
+    return `<div style="position:relative;background:var(--bg-card);border:2px solid ${isVal?'#0F6E56':'var(--border-light)'};border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s"
+      onmouseover="this.style.borderColor='${isVal?'#0F6E56':'var(--gold)'}'" onmouseout="this.style.borderColor='${isVal?'#0F6E56':'var(--border-light)'}'">
+      <div onclick="abrirAR(${i},'${r.id}','${edit}')" style="background:${temAlerta(ar)?'#FEF2F2':'#E6F1FB'};border-bottom:2px solid ${temAlerta(ar)?'#B91C1C':'#185FA5'};padding:8px 12px">
         <div style="font-family:monospace;font-size:13px;font-weight:700;color:${temAlerta(ar)?'#B91C1C':'#185FA5'}">Ata ${String(ar.num||i+1).padStart(3,'0')}</div>
         <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${ar.data||'—'}</div>
       </div>
-      <div style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        ${(ar.tipos||[ar.tipo]).filter(Boolean).map(t=>`<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:${tipoBg(t)};color:${tipoCor(t)}">${t}</span>`).join(' ')}
+      <div onclick="abrirAR(${i},'${r.id}','${edit}')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
+        ${(ar.tipos||[ar.tipo]).filter(Boolean).map(t=>`<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:${tipoCor(t)}22;color:${tipoCor(t)}">${t}</span>`).join(' ')}
         ${ar.temaPrincipal?`<div style="color:var(--text);margin-top:4px;font-weight:700">${ar.temaPrincipal}</div>`:''}
       </div>
-    </div>`).join('');
+      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center">
+        <button onclick="event.stopPropagation();validarAR('${r.id}',${i})" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:none;cursor:pointer;background:${isVal?'#0F6E56':'var(--border-light)'};color:${isVal?'#fff':'var(--text-muted)'}">
+          ${isVal?'✓ Validado':'Validar'}
+        </button>
+        ${edit==='true'?`<button onclick="event.stopPropagation();delAR('${r.id}',${i})" style="font-size:10px;color:var(--danger);background:none;border:none;cursor:pointer">✕</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const todosVal=lista.length>0&&lista.every((_,i)=>!!validados[i]);
 
   const kpis=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:14px">
     ${['Normal','Alerta crítico'].map(tipo=>{
@@ -1374,24 +1396,15 @@ function relTabAR(r,edit){
     </div>
   </div>`;
 
-  const header=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-    <div class="sec-div" style="margin:0;border:none;padding:0">Atas de Reunião (${lista.length})</div>
-    <div style="display:flex;gap:8px;align-items:center">
-      ${lista.length?`<button class="btn btn-outline btn-sm" onclick="gerarDashboardAR('${r.id}')">📊 Dashboard IA</button>`:''}
-      ${edit?`<label style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--navy);color:#fff;border-radius:var(--radius);cursor:pointer;font-size:12px">
-        📎 Importar Ata
-        <input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarAR('${r.id}',this)" multiple>
-      </label>`:''}
-    </div>
-  </div>
-  <div id="ar-import-status-${r.id}" style="font-size:11px;color:var(--text-muted);margin-bottom:6px"></div>`;
-
-  return kpis+header+(lista.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${cards}</div>`:`<div class="empty-state">Sem atas registadas.</div>`);
+  return kpis+
+    `<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px" id="ar-import-status-${r.id}"></div>`+
+    (lista.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${cards}</div>`:`<div class="empty-state">Sem atas registadas.</div>`)+
+    (todosVal&&edit==='true'?`<div style="margin-top:14px;text-align:center"><button class="btn btn-gold" onclick="publicarAR('${r.id}')">↑ Publicar Atas</button></div>`:'');
 }
 
-// Popup de detalhe RV
-window.showRVDetail=function(rvJson,relId,idx,edit){
-  const rv=JSON.parse(rvJson);
+// Abrir popup via índice (evita problemas de serialização JSON)
+window.abrirRV=function(idx,relId,edit){
+  const rv=window._rvLista?.[idx];if(!rv)return;
   const estadoCor=e=>e==='Alerta'?'#B91C1C':e==='Suspenso'?'#854F0B':'#0F6E56';
   const row=(l,v)=>v?`<div style="display:grid;grid-template-columns:140px 1fr;gap:6px;padding:5px 0;border-bottom:0.5px solid var(--border-light)">
     <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">${l}</span>
@@ -1401,24 +1414,15 @@ window.showRVDetail=function(rvJson,relId,idx,edit){
       <span style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:${estadoCor(rv.estado||'Normal')}22;color:${estadoCor(rv.estado||'Normal')};border:1px solid ${estadoCor(rv.estado||'Normal')}">${rv.estado||'Normal'}</span>
       ${rv.duracao?`<span style="font-size:12px;color:var(--text-muted)">${rv.duracao}</span>`:''}
     </div>
-    ${row('Meteorologia',rv.meteo)}
-    ${row('Fiscal',rv.fiscal)}
-    ${row('Fase',rv.fase)}
-    ${row('Trab. em Obra',rv.trabObra)}
-    ${row('Presenças',rv.presencas)}
-    ${row('Temas',rv.temas)}
-    ${row('Tema Principal',rv.temaPrincipal)}
-    ${row('Observações',rv.obs)}
-    ${row('Assuntos',rv.assuntos)}
+    ${row('Meteorologia',rv.meteo)}${row('Fiscal',rv.fiscal)}${row('Fase',rv.fase)}${row('Trab. em Obra',rv.trabObra)}${row('Presenças',rv.presencas)}${row('Temas',rv.temas)}${row('Tema Principal',rv.temaPrincipal)}${row('Observações',rv.obs)}${row('Assuntos',rv.assuntos)}
   `,[
     {label:'Fechar',cls:'btn-outline',fn:'closeModal()'},
     ...(edit==='true'?[{label:'🗑 Eliminar',cls:'btn-outline',fn:`delRV('${relId}',${idx});closeModal()`}]:[])
   ]);
 };
 
-// Popup de detalhe AR
-window.showARDetail=function(arJson,relId,idx,edit){
-  const ar=JSON.parse(arJson);
+window.abrirAR=function(idx,relId,edit){
+  const ar=window._arLista?.[idx];if(!ar)return;
   const tipoCor=t=>t==='Alerta crítico'?'#B91C1C':'#185FA5';
   const row=(l,v)=>v?`<div style="display:grid;grid-template-columns:140px 1fr;gap:6px;padding:5px 0;border-bottom:0.5px solid var(--border-light)">
     <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">${l}</span>
@@ -1429,15 +1433,32 @@ window.showARDetail=function(arJson,relId,idx,edit){
       ${tipos.map(t=>`<span style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:${tipoCor(t)}22;color:${tipoCor(t)};border:1px solid ${tipoCor(t)}">${t}</span>`).join('')}
       ${ar.trabObra?`<span style="font-size:12px;color:var(--text-muted)">${ar.trabObra} trab.</span>`:''}
     </div>
-    ${row('Participantes',ar.participantes)}
-    ${row('Temas',ar.temas)}
-    ${row('Tema Principal',ar.temaPrincipal)}
-    ${row('Decisões',ar.decisoes)}
-    ${row('Pontos em Aberto',ar.pendentes)}
+    ${row('Participantes',ar.participantes)}${row('Temas',ar.temas)}${row('Tema Principal',ar.temaPrincipal)}${row('Decisões',ar.decisoes)}${row('Pontos em Aberto',ar.pendentes)}
   `,[
     {label:'Fechar',cls:'btn-outline',fn:'closeModal()'},
     ...(edit==='true'?[{label:'🗑 Eliminar',cls:'btn-outline',fn:`delAR('${relId}',${idx});closeModal()`}]:[])
   ]);
+};
+
+// Validar RV/AR
+window.validarRV=async function(relId,idx){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  if(!r.conteudo)r.conteudo={};
+  if(!r.conteudo.rv)r.conteudo.rv={lista:[]};
+  if(!r.conteudo.rv.validados)r.conteudo.rv.validados={};
+  r.conteudo.rv.validados[idx]=!r.conteudo.rv.validados[idx];
+  await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  render();
+};
+
+window.validarAR=async function(relId,idx){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  if(!r.conteudo)r.conteudo={};
+  if(!r.conteudo.ar)r.conteudo.ar={lista:[]};
+  if(!r.conteudo.ar.validados)r.conteudo.ar.validados={};
+  r.conteudo.ar.validados[idx]=!r.conteudo.ar.validados[idx];
+  await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  render();
 };
 
 // Dashboard IA — RV
