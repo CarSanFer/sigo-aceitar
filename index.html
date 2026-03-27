@@ -277,90 +277,94 @@ tr.tr-click:hover td{background:#F5F7FA}
 </nav>
 
 <div class="content" id="app">
-    <button class="back-btn" onclick="relTab='capa';render()">← Voltar ao Relatório</button>
-    <div class="page-header">
-      <div>
-        <div class="page-title">001.0 — Março 2026 · Atas de Reunião</div>
-        <div style="margin-top:4px;display:flex;gap:8px;align-items:center"><span class="badge b-prep">Rascunho</span>
-          <span style="font-size:12px;color:var(--text-muted)">CES — Cesae</span>
+  <div class="page-header">
+    <div><div class="page-title">Obras</div><div class="page-count">2 obra(s)</div></div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center">
+    <input class="filter-select" style="flex:1;max-width:320px" placeholder="Pesquisar obra, sigla ou código..." value="" oninput="obrasSearch=this.value;render()">
+    <select class="filter-select" onchange="obrasFilter=this.value;render()">
+      <option selected="">Todos os Estados</option><option>Em Curso</option><option>Concluída</option><option>Suspensa</option><option>Em Preparação</option>
+    </select>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+    <div onclick="go('obras','_48gp4b2')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#A32D2D;padding:10px 14px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">4F14 · AB</div>
+        <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Anselmo Braamcamp</div>
+      </div>
+      <div style="padding:10px 14px">
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Valor de Obra</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);color:var(--gold)">4&nbsp;040&nbsp;000,00 €</span>
+    </div>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Real</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Fim Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Prorrogações</span>
+          <span style="font-size:12px;font-weight:400;color:var(--text-muted)">0</span>
         </div>
-      </div>
-      <div class="page-actions">
-        <button class="btn btn-outline btn-sm" onclick="sincronizarNAS('_e00ucmu','ar')">🔄 Sincronizar NAS</button>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
         
-        <label style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1px solid var(--border-light);border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:700;background:var(--bg)">
-          📎 Importar Ata<input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarAR('_e00ucmu',this)" multiple="">
-        </label>
-        <button class="btn btn-gold" onclick="guardarRelatorio('_e00ucmu')">💾 Guardar</button>
-        
-        <button class="btn btn-outline" onclick="gerarDashboardAR('_e00ucmu')">📊 Dashboard</button>
-        
-        
-        <span style="font-size:12px;font-weight:700;color:#0F6E56">✓ Validado</span>
-           <button class="btn btn-outline btn-sm" style="font-size:11px" onclick="submeterModulo('_e00ucmu','ar')">↩ Reverter</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Último Relatório</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
       </div>
     </div>
-    <div class="table-card"><div class="ficha-body" style="padding:14px"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:14px">
-    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid #185FA5">
-        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Normal</div>
-        <div style="font-size:22px;font-weight:400;color:#185FA5">4</div>
-      </div><div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid #B91C1C">
-        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Alerta crítico</div>
-        <div style="font-size:22px;font-weight:400;color:#B91C1C">0</div>
+    <div onclick="go('obras','_vpg7vcj')" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#0F6E56;padding:10px 14px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">5J07 · CES</div>
+        <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Cesae</div>
       </div>
-    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid var(--navy)">
-      <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total</div>
-      <div style="font-size:22px;font-weight:400;color:var(--navy)">4</div>
+      <div style="padding:10px 14px">
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Valor de Obra</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);color:var(--gold)">3&nbsp;714&nbsp;999,00 €</span>
     </div>
-  </div><div style="font-size:11px;color:var(--text-muted);margin-bottom:8px" id="ar-import-status-_e00ucmu">❌ Erro: fetch failed</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px"><div style="position:relative;background:var(--bg-card);border:2px solid #0F6E56;border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#0F6E56'" onmouseout="this.style.borderColor='#0F6E56'">
-      <div onclick="abrirAR(0,'_e00ucmu','true')" style="background:#E6F1FB;border-bottom:2px solid #185FA5;padding:8px 12px">
-        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#185FA5">Ata 009.0</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">02/03/2026</div>
-      </div>
-      <div onclick="abrirAR(0,'_e00ucmu','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        <span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:#185FA522;color:#185FA5">Normal</span>
-        <div style="color:var(--text);margin-top:4px;font-weight:700">Pedidos de Esclarecimento e atrasos na obra por falta de esclarecimentos dos projetistas</div>
-      </div>
-      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
         
-      </div>
-    </div><div style="position:relative;background:var(--bg-card);border:2px solid #0F6E56;border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#0F6E56'" onmouseout="this.style.borderColor='#0F6E56'">
-      <div onclick="abrirAR(1,'_e00ucmu','true')" style="background:#E6F1FB;border-bottom:2px solid #185FA5;padding:8px 12px">
-        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#185FA5">Ata 010.0</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">09/03/2026</div>
-      </div>
-      <div onclick="abrirAR(1,'_e00ucmu','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        <span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:#185FA522;color:#185FA5">Normal</span>
-        <div style="color:var(--text);margin-top:4px;font-weight:700">Pedidos de Esclarecimento e atrasos nos projetos por falta de respostas dos projetistas</div>
-      </div>
-      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">03/11/2025</span>
+    </div>
         
-      </div>
-    </div><div style="position:relative;background:var(--bg-card);border:2px solid #0F6E56;border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#0F6E56'" onmouseout="this.style.borderColor='#0F6E56'">
-      <div onclick="abrirAR(2,'_e00ucmu','true')" style="background:#E6F1FB;border-bottom:2px solid #185FA5;padding:8px 12px">
-        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#185FA5">Ata 011.0</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">16/03/2026</div>
-      </div>
-      <div onclick="abrirAR(2,'_e00ucmu','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        <span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:#185FA522;color:#185FA5">Normal</span>
-        <div style="color:var(--text);margin-top:4px;font-weight:700">Obra praticamente parada por falta de decisões e pedidos de esclarecimento pendentes com projetistas</div>
-      </div>
-      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Real</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">17/11/2025</span>
+    </div>
         
-      </div>
-    </div><div style="position: relative; background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div onclick="abrirAR(3,'_e00ucmu','true')" style="background:#E6F1FB;border-bottom:2px solid #185FA5;padding:8px 12px">
-        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#185FA5">Ata 012.0</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">23/03/2026</div>
-      </div>
-      <div onclick="abrirAR(3,'_e00ucmu','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        <span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:#185FA522;color:#185FA5">Normal</span>
-        <div style="color:var(--text);margin-top:4px;font-weight:700">Obra praticamente parada por falta de decisões e prazo não será cumprido</div>
-      </div>
-      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Fim Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">25/01/2027</span>
+    </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Prorrogações</span>
+          <span style="font-size:12px;font-weight:400;color:var(--danger)">2 prorrogações</span>
+        </div>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
         
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Último Relatório</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">Março 2026</span>
+    </div>
       </div>
-    </div></div></div></div></div>
+    </div></div></div>
 </div>
 
 <!-- FLOATING CHATBOT -->
@@ -3632,7 +3636,15 @@ window.chatAnswer=function(q){
 };
 
 showLogin();
-</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
+</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
 
 
-</body></html>
+<div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
+        <div id="yt_article_summary_widget" class="yt_article_summary_widget"><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1.40123 27.3686C-0.44103 25.5284 -0.441033 22.5449 1.4012 20.7047L16.5971 5.52573L24.0098 12.9301L5.47818 31.4409L1.40123 27.3686Z" fill="#FF4E74"></path>
+        <path d="M35.1286 24.0367L16.5972 5.5258L20.6741 1.45341C22.5164 -0.386772 25.5033 -0.386775 27.3455 1.45341L42.5415 16.6323L35.1286 24.0367Z" fill="#FFF85E"></path>
+        <path d="M24.0099 35.143L42.5416 16.6323L46.6183 20.7046C48.4606 22.5448 48.4606 25.5284 46.6183 27.3686L31.4224 42.5476L24.0099 35.143Z" fill="#76FF54"></path>
+        <path d="M27.3454 46.6198C25.5032 48.4601 22.5163 48.4601 20.674 46.6198L5.47815 31.4409L12.8908 24.0366L31.4223 42.5476L27.3454 46.6198Z" fill="#5C94FF"></path>
+    </svg></div>
+        <div id="yt_article_summary_close_button" class="yt_article_summary_close_button">×</div>
+    </div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div></body></html>
