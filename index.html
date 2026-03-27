@@ -271,137 +271,137 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
   </div>
   <div class="nav-right">
-    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border-width: 1px; border-style: solid; border-color: var(--gold); border-image: initial; color: var(--gold); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
+    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.8); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
     <div class="nav-avatar" id="nav-avatar" onclick="doLogout()" style="cursor:pointer" title="Carlos Ferreira (superadmin) — Clique para sair">CF</div>
   </div>
 </nav>
 
 <div class="content" id="app">
-  <button class="back-btn" onclick="relRelId=null;render()">← Voltar à Capa</button>
   <div class="page-header">
-    <div>
-      <div class="page-title">001.0 — Março 2026</div>
-      <div style="margin-top:4px;display:flex;gap:8px;align-items:center"><span class="badge b-prep">Rascunho</span>
-        <span style="font-size:12px;color:var(--text-muted)">CES — Cesae</span>
-      </div>
-    </div>
-    <div class="page-actions">
-      <button class="btn btn-gold" onclick="guardarRelatorio('_e00ucmu')">💾 Guardar</button>
-      <button class="btn btn-outline btn-sm" onclick="submeterRel('_e00ucmu')">→ Submeter para Revisão</button>
-      
-      
-      
-    </div>
+    <div><div class="page-title">Obras</div><div class="page-count">3 obra(s)</div></div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
-    <div onclick="relTab='prazo';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PZO</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Prazo</div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center">
+    <input class="filter-select" style="flex:1;max-width:320px" placeholder="Pesquisar obra, sigla ou código..." value="" oninput="obrasSearch=this.value;render()">
+    <select class="filter-select" onchange="obrasFilter=this.value;render()">
+      <option selected="">Todos os Estados</option><option>Em Curso</option><option>Concluída</option><option>Suspensa</option><option>Em Preparação</option>
+    </select>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+    <div onclick="go('obras','_48gp4b2')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#0F6E56;padding:10px 14px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">4F14 · AB</div>
+        <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Anselmo Braamcamp</div>
       </div>
-      <div style="padding:8px 13px">
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Previstos · Executados · Análise · Futuros · Recomendações · Balizamento</div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 campos</div>
+      <div style="padding:10px 14px">
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Valor de Obra</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);color:var(--gold)">4&nbsp;040&nbsp;000,00 €</span>
+    </div>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Real</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Fim Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Prorrogações</span>
+          <span style="font-size:12px;font-weight:400;color:var(--text-muted)">0</span>
+        </div>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Último Relatório</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
       </div>
     </div>
-    <div onclick="relTab='valores';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">VAL</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Valores</div>
+    <div onclick="go('obras','_kfit6zb')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#0F6E56;padding:10px 14px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">5B25 · LSD</div>
+        <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Largo de São Domingos</div>
       </div>
-      <div style="padding:8px 13px">
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Cronograma Financeiro · Autos Mensais · Trabalhos Complementares</div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 autos</div>
+      <div style="padding:10px 14px">
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Valor de Obra</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);color:var(--gold)">1&nbsp;105&nbsp;518,48 €</span>
+    </div>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Real</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Fim Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Prorrogações</span>
+          <span style="font-size:12px;font-weight:400;color:var(--text-muted)">0</span>
+        </div>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Último Relatório</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
       </div>
     </div>
-    <div onclick="relTab='ptq';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PTQ</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Plano Quinzenal</div>
+    <div onclick="go('obras','_vpg7vcj')" style="background: var(--bg-card); border-color: var(--gold); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#0F6E56;padding:10px 14px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">5J07 · CES</div>
+        <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Cesae</div>
       </div>
-      <div style="padding:8px 13px">
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
-      </div>
+      <div style="padding:10px 14px">
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Valor de Obra</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);color:var(--gold)">3&nbsp;714&nbsp;999,00 €</span>
     </div>
-    <div onclick="relTab='pb';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PB</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Pedidos de Betonagem</div>
-      </div>
-      <div style="padding:8px 13px">
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
-      </div>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">03/11/2025</span>
     </div>
-    <div onclick="relTab='pe';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PE</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Pedidos de Esclarecimento</div>
-      </div>
-      <div style="padding:8px 13px">
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
-      </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Real</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">17/11/2025</span>
     </div>
-    <div onclick="relTab='pa';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">PA</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Pedidos de Aprovação</div>
-      </div>
-      <div style="padding:8px 13px">
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
-      </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Fim Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">25/01/2027</span>
     </div>
-    <div onclick="relTab='nc';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">NC</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Não Conformidades</div>
-      </div>
-      <div style="padding:8px 13px">
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
-      </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Prorrogações</span>
+          <span style="font-size:12px;font-weight:400;color:var(--danger)">2 prorrogações</span>
+        </div>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Último Relatório</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">Março 2026</span>
     </div>
-    <div onclick="relTab='adj';render()" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">ADJ</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Adjudicações</div>
-      </div>
-      <div style="padding:8px 13px">
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
-      </div>
-    </div>
-    <div onclick="relTab='ar';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">AR</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Atas de Reunião</div>
-      </div>
-      <div style="padding:8px 13px">
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
-      </div>
-    </div>
-    <div onclick="relTab='rv';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">RV</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Relatórios de Visita</div>
-      </div>
-      <div style="padding:8px 13px">
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Lista · Dashboard</div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 registos</div>
-      </div>
-    </div>
-    <div onclick="relTab='fotos';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div style="background:#1E3A5F;padding:9px 13px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.6px;margin-bottom:2px">FOT</div>
-        <div style="font-size:13px;font-weight:400;color:#fff">Fotos</div>
-      </div>
-      <div style="padding:8px 13px">
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">Galeria · Upload</div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy)">0 fotos</div>
       </div>
     </div></div></div>
 </div>
@@ -1121,16 +1121,16 @@ function capaField(l,v){return `<div style="border-bottom:1px solid var(--border
 // RELATÓRIOS — FICHA DO RELATÓRIO
 // ================================================================
 const REL_MODULOS=[
-  {key:'prazo',      label:'Prazo',                     sigla:'PZO', cor:'#1E3A5F', desc:'Previstos · Executados · Análise · Futuros · Recomendações · Balizamento'},
-  {key:'valores',    label:'Valores',                   sigla:'VAL', cor:'#1E3A5F', desc:'Cronograma Financeiro · Autos Mensais · Trabalhos Complementares'},
-  {key:'ptq',        label:'Plano Quinzenal',            sigla:'PTQ', cor:'#1E3A5F', desc:'Lista · Dashboard'},
-  {key:'pb',         label:'Pedidos de Betonagem',       sigla:'PB',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
-  {key:'pe',         label:'Pedidos de Esclarecimento',  sigla:'PE',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
-  {key:'pa',         label:'Pedidos de Aprovação',       sigla:'PA',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
-  {key:'nc',         label:'Não Conformidades',          sigla:'NC',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
-  {key:'adj',        label:'Adjudicações',               sigla:'ADJ', cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'valores',    label:'Valores',                   sigla:'VAL', cor:'#1E3A5F', desc:'Cronograma · Autos · Trabalhos Complementares'},
+  {key:'prazo',      label:'Prazo',                     sigla:'PZO', cor:'#1E3A5F', desc:'Trabalhos · Balizamento'},
   {key:'ar',         label:'Atas de Reunião',            sigla:'AR',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
   {key:'rv',         label:'Relatórios de Visita',       sigla:'RV',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'adj',        label:'Adjudicações',               sigla:'ADJ', cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'ptq',        label:'Plano Quinzenal',            sigla:'PTQ', cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'pb',         label:'Pedidos de Betonagem',       sigla:'PB',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'pa',         label:'Pedidos de Aprovação',       sigla:'PA',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'pe',         label:'Pedidos de Esclarecimento',  sigla:'PE',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
+  {key:'nc',         label:'Não Conformidades',          sigla:'NC',  cor:'#1E3A5F', desc:'Lista · Dashboard'},
   {key:'fotos',      label:'Fotos',                     sigla:'FOT', cor:'#1E3A5F', desc:'Galeria · Upload'},
 ];
 
@@ -1153,8 +1153,8 @@ function renderFichaRelatorio(app){
     else if(relTab==='pa') body=relTabLista(r,podeEditar,'pa','Pedidos de Aprovação');
     else if(relTab==='nc') body=relTabLista(r,podeEditar,'nc','Não Conformidades');
     else if(relTab==='adj') body=relTabLista(r,podeEditar,'adj','Adjudicações');
-    else if(relTab==='ar') body=relTabLista(r,podeEditar,'ar','Atas de Reunião');
-    else if(relTab==='rv') body=relTabLista(r,podeEditar,'rv','Relatórios de Visita');
+    else if(relTab==='ar') body=relTabAR(r,podeEditar);
+    else if(relTab==='rv') body=relTabRV(r,podeEditar);
     else if(relTab==='fotos') body=relTabFotos(r,podeEditar);
 
     app.innerHTML=`
@@ -1286,6 +1286,214 @@ window.delListaItem=function(relId,key,idx){
   const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
   r.conteudo[key].lista.splice(idx,1);
   render();
+};
+
+function relTabRV(r,edit){
+  const lista=(r.conteudo?.rv?.lista||[]);
+  const estadoCor=e=>e==='Alerta'?'#B91C1C':e==='Suspenso'?'#854F0B':'#0F6E56';
+  const estadoBg=e=>e==='Alerta'?'#FEF2F2':e==='Suspenso'?'#FEF9EC':'#F0FDF4';
+
+  const cards=lista.map((rv,i)=>`
+    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;margin-bottom:10px">
+      <div style="background:var(--navy);padding:8px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <span style="font-family:monospace;font-size:14px;font-weight:700;color:var(--gold)">RV ${String(rv.num||i+1).padStart(3,'0')}</span>
+          <span style="font-size:11px;color:rgba(255,255,255,.6);margin-left:10px">${rv.data||'—'} ${rv.duracao?'· '+rv.duracao:''} ${rv.meteo?'· '+rv.meteo:''} ${rv.fiscal?'· Fisc: '+rv.fiscal:''}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:${estadoBg(rv.estado)};color:${estadoCor(rv.estado)}">${rv.estado||'Normal'}</span>
+          ${edit?`<button class="btn-icon del" onclick="delRV('${r.id}',${i})">✕</button>`:''}
+        </div>
+      </div>
+      <div style="padding:10px 14px;display:grid;grid-template-columns:120px 1fr;gap:4px 12px;font-size:12px">
+        ${rv.fase?`<span style="font-weight:700;color:var(--text-muted)">Fase</span><span>${rv.fase}</span>`:''}
+        ${rv.trabObra?`<span style="font-weight:700;color:var(--text-muted)">Trab. em Obra</span><span>${rv.trabObra}</span>`:''}
+        ${rv.presencas?`<span style="font-weight:700;color:var(--text-muted)">Presenças</span><span>${rv.presencas}</span>`:''}
+        ${rv.temas?`<span style="font-weight:700;color:var(--text-muted)">Temas</span><span>${rv.temas}</span>`:''}
+        ${rv.temaPrincipal?`<span style="font-weight:700;color:var(--text-muted)">Tema Principal</span><span>${rv.temaPrincipal}</span>`:''}
+        ${rv.obs?`<span style="font-weight:700;color:var(--text-muted)">Observações</span><span>${rv.obs}</span>`:''}
+        ${rv.assuntos?`<span style="font-weight:700;color:var(--text-muted)">Assuntos</span><span>${rv.assuntos}</span>`:''}
+      </div>
+    </div>`).join('');
+
+  const dashboard=`
+    <div class="sec-div" style="margin-top:14px">Dashboard</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px">
+      ${['Normal','Alerta','Suspenso'].map(est=>{
+        const n=lista.filter(x=>(x.estado||'Normal')===est).length;
+        return `<div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px 14px;text-align:center">
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${est}</div>
+          <div style="font-size:24px;font-weight:400;color:${estadoCor(est)}">${n}</div>
+        </div>`;
+      }).join('')}
+      <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px 14px;text-align:center">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Total</div>
+        <div style="font-size:24px;font-weight:400;color:var(--navy)">${lista.length}</div>
+      </div>
+    </div>`;
+
+  const uploadArea=edit?`
+    <div class="sec-div">Importar RV por ficheiro (PDF/DOCX)</div>
+    <div style="border:1px dashed var(--border-light);border-radius:var(--radius);padding:16px;margin-bottom:14px;text-align:center;background:var(--bg)">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Carrega um ficheiro de Relatório de Visita — o Claude extrai os dados automaticamente</div>
+      <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--navy);color:#fff;border-radius:var(--radius);cursor:pointer;font-size:12px">
+        📎 Escolher ficheiro
+        <input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarRV('${r.id}',this)">
+      </label>
+      <div id="rv-import-status-${r.id}" style="font-size:11px;color:var(--text-muted);margin-top:6px"></div>
+    </div>`:'';
+
+  return dashboard+uploadArea+`<div class="sec-div">Lista de Relatórios de Visita (${lista.length})</div>`+
+    (lista.length?cards:`<div class="empty-state">Sem relatórios de visita registados.</div>`);
+}
+
+function relTabAR(r,edit){
+  const lista=(r.conteudo?.ar?.lista||[]);
+  const tipoCor=t=>t==='Alerta crítico'?'#B91C1C':'#185FA5';
+  const tipoBg=t=>t==='Alerta crítico'?'#FEF2F2':'#E6F1FB';
+
+  const cards=lista.map((ar,i)=>`
+    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;margin-bottom:10px">
+      <div style="background:var(--navy);padding:8px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <span style="font-family:monospace;font-size:14px;font-weight:700;color:var(--gold)">Ata ${String(ar.num||i+1).padStart(3,'0')}</span>
+          <span style="font-size:11px;color:rgba(255,255,255,.6);margin-left:10px">${ar.data||'—'}${ar.trabObra?' · '+ar.trabObra+' trab.':''}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          ${(ar.tipos||[ar.tipo]).filter(Boolean).map(t=>`<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:${tipoBg(t)};color:${tipoCor(t)}">${t}</span>`).join('')}
+          ${edit?`<button class="btn-icon del" onclick="delAR('${r.id}',${i})">✕</button>`:''}
+        </div>
+      </div>
+      <div style="padding:10px 14px;display:grid;grid-template-columns:140px 1fr;gap:4px 12px;font-size:12px">
+        ${ar.participantes?`<span style="font-weight:700;color:var(--text-muted)">Participantes</span><span>${ar.participantes}</span>`:''}
+        ${ar.temas?`<span style="font-weight:700;color:var(--text-muted)">Temas</span><span>${ar.temas}</span>`:''}
+        ${ar.temaPrincipal?`<span style="font-weight:700;color:var(--text-muted)">Tema Principal</span><span>${ar.temaPrincipal}</span>`:''}
+        ${ar.decisoes?`<span style="font-weight:700;color:var(--text-muted)">Observações/Decisões</span><span>${ar.decisoes}</span>`:''}
+        ${ar.pendentes?`<span style="font-weight:700;color:var(--text-muted)">Pontos em Aberto</span><span>${ar.pendentes}</span>`:''}
+      </div>
+    </div>`).join('');
+
+  const dashboard=`
+    <div class="sec-div" style="margin-top:14px">Dashboard</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px">
+      ${['Normal','Alerta crítico'].map(tipo=>{
+        const n=lista.filter(x=>(x.tipos||[x.tipo]).includes(tipo)).length;
+        return `<div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px 14px;text-align:center">
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${tipo}</div>
+          <div style="font-size:24px;font-weight:400;color:${tipoCor(tipo)}">${n}</div>
+        </div>`;
+      }).join('')}
+      <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px 14px;text-align:center">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Total</div>
+        <div style="font-size:24px;font-weight:400;color:var(--navy)">${lista.length}</div>
+      </div>
+    </div>`;
+
+  const uploadArea=edit?`
+    <div class="sec-div">Importar Ata por ficheiro (PDF/DOCX)</div>
+    <div style="border:1px dashed var(--border-light);border-radius:var(--radius);padding:16px;margin-bottom:14px;text-align:center;background:var(--bg)">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Carrega um ficheiro de Ata de Reunião — o Claude extrai os dados automaticamente</div>
+      <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--navy);color:#fff;border-radius:var(--radius);cursor:pointer;font-size:12px">
+        📎 Escolher ficheiro
+        <input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarAR('${r.id}',this)">
+      </label>
+      <div id="ar-import-status-${r.id}" style="font-size:11px;color:var(--text-muted);margin-top:6px"></div>
+    </div>`:'';
+
+  return dashboard+uploadArea+`<div class="sec-div">Lista de Atas de Reunião (${lista.length})</div>`+
+    (lista.length?cards:`<div class="empty-state">Sem atas registadas.</div>`);
+}
+
+window.delRV=function(relId,idx){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  if(!r.conteudo?.rv?.lista)return;
+  r.conteudo.rv.lista.splice(idx,1);
+  sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)}).catch(console.error);
+  render();
+};
+
+window.delAR=function(relId,idx){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  if(!r.conteudo?.ar?.lista)return;
+  r.conteudo.ar.lista.splice(idx,1);
+  sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)}).catch(console.error);
+  render();
+};
+
+window.importarRV=async function(relId,input){
+  const file=input.files[0];if(!file)return;
+  const status=document.getElementById('rv-import-status-'+relId);
+  if(status)status.textContent='A ler ficheiro...';
+  try{
+    const base64=await new Promise((res,rej)=>{
+      const reader=new FileReader();
+      reader.onload=e=>res(e.target.result.split(',')[1]);
+      reader.onerror=rej;
+      reader.readAsDataURL(file);
+    });
+    if(status)status.textContent='A extrair dados com IA...';
+    const isPDF=file.type==='application/pdf';
+    const msgContent=isPDF?
+      [{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:'Extrai os dados deste Relatório de Visita e devolve apenas JSON válido com estes campos: num (número do RV, string), data (dd/mm/yyyy), duracao (texto), meteo (meteorologia/condições), fiscal (nome do fiscal), fase (fase da obra), trabObra (nº trabalhadores em obra), presencas (lista de presenças, string), temas (temas abordados, string), estado (Normal|Alerta|Suspenso), temaPrincipal (tema principal, string), obs (observações e pontos de atenção), assuntos (outros assuntos). Devolve APENAS o JSON, sem texto adicional.'}]
+    :[{type:'text',text:'Extrai os dados deste Relatório de Visita e devolve apenas JSON válido com estes campos: num, data (dd/mm/yyyy), duracao, meteo, fiscal, fase, trabObra, presencas, temas, estado (Normal|Alerta|Suspenso), temaPrincipal, obs, assuntos. Conteúdo do ficheiro:\n\n'+atob(base64)}];
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:msgContent}]})
+    });
+    const data=await resp.json();
+    const text=data.content?.map(c=>c.text||'').join('').trim();
+    const clean=text.replace(/```json|```/g,'').trim();
+    const rv=JSON.parse(clean);
+    const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+    if(!r.conteudo)r.conteudo={};
+    if(!r.conteudo.rv)r.conteudo.rv={lista:[]};
+    r.conteudo.rv.lista.push(rv);
+    await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+    if(status)status.textContent='✅ RV '+rv.num+' importado com sucesso!';
+    render();
+  }catch(e){
+    if(status)status.textContent='❌ Erro: '+e.message;
+    console.error(e);
+  }
+};
+
+window.importarAR=async function(relId,input){
+  const file=input.files[0];if(!file)return;
+  const status=document.getElementById('ar-import-status-'+relId);
+  if(status)status.textContent='A ler ficheiro...';
+  try{
+    const base64=await new Promise((res,rej)=>{
+      const reader=new FileReader();
+      reader.onload=e=>res(e.target.result.split(',')[1]);
+      reader.onerror=rej;
+      reader.readAsDataURL(file);
+    });
+    if(status)status.textContent='A extrair dados com IA...';
+    const isPDF=file.type==='application/pdf';
+    const msgContent=isPDF?
+      [{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:'Extrai os dados desta Ata de Reunião e devolve apenas JSON válido com estes campos: num (número da ata, string), data (dd/mm/yyyy), trabObra (nº trabalhadores), tipos (array de strings: Normal e/ou "Alerta crítico"), participantes (string com lista), temas (string), temaPrincipal (string), decisoes (observações e decisões tomadas), pendentes (pontos em aberto/pendentes). Devolve APENAS o JSON, sem texto adicional.'}]
+    :[{type:'text',text:'Extrai os dados desta Ata de Reunião e devolve apenas JSON válido com estes campos: num, data (dd/mm/yyyy), trabObra, tipos (array: Normal e/ou "Alerta crítico"), participantes, temas, temaPrincipal, decisoes, pendentes. Conteúdo:\n\n'+atob(base64)}];
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:msgContent}]})
+    });
+    const data=await resp.json();
+    const text=data.content?.map(c=>c.text||'').join('').trim();
+    const clean=text.replace(/```json|```/g,'').trim();
+    const ar=JSON.parse(clean);
+    const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+    if(!r.conteudo)r.conteudo={};
+    if(!r.conteudo.ar)r.conteudo.ar={lista:[]};
+    r.conteudo.ar.lista.push(ar);
+    await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+    if(status)status.textContent='✅ Ata '+ar.num+' importada com sucesso!';
+    render();
+  }catch(e){
+    if(status)status.textContent='❌ Erro: '+e.message;
+    console.error(e);
+  }
 };
 
 function relTabTrabalhos(r,edit){
