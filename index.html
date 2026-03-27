@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
-    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -1293,121 +1293,221 @@ window.delListaItem=function(relId,key,idx){
 
 function relTabRV(r,edit){
   const conteudo=typeof r.conteudo==='string'?JSON.parse(r.conteudo||'{}'):r.conteudo||{};
-  const lista=(conteudo?.rv?.lista||[]);
+  const lista=(conteudo?.rv?.lista||[]).sort((a,b)=>(a.num||'').localeCompare(b.num||'',undefined,{numeric:true}));
   const estadoCor=e=>e==='Alerta'?'#B91C1C':e==='Suspenso'?'#854F0B':'#0F6E56';
   const estadoBg=e=>e==='Alerta'?'#FEF2F2':e==='Suspenso'?'#FEF9EC':'#F0FDF4';
 
   const cards=lista.map((rv,i)=>`
-    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;margin-bottom:10px">
-      <div style="background:var(--navy);padding:8px 12px;display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <span style="font-family:monospace;font-size:14px;font-weight:700;color:var(--gold)">RV ${String(rv.num||i+1).padStart(3,'0')}</span>
-          <span style="font-size:11px;color:rgba(255,255,255,.6);margin-left:10px">${rv.data||'—'} ${rv.duracao?'· '+rv.duracao:''} ${rv.meteo?'· '+rv.meteo:''} ${rv.fiscal?'· Fisc: '+rv.fiscal:''}</span>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:${estadoBg(rv.estado)};color:${estadoCor(rv.estado)}">${rv.estado||'Normal'}</span>
-          ${edit?`<button class="btn-icon del" onclick="delRV('${r.id}',${i})">✕</button>`:''}
-        </div>
+    <div onclick="showRVDetail(${JSON.stringify(JSON.stringify(rv))},'${r.id}',${i},'${edit}')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s"
+      onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:${estadoBg(rv.estado||'Normal')};border-bottom:2px solid ${estadoCor(rv.estado||'Normal')};padding:8px 12px">
+        <div style="font-family:monospace;font-size:13px;font-weight:700;color:${estadoCor(rv.estado||'Normal')}">RV ${String(rv.num||i+1).padStart(3,'0')}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${rv.data||'—'}</div>
       </div>
-      <div style="padding:10px 14px;display:grid;grid-template-columns:120px 1fr;gap:4px 12px;font-size:12px">
-        ${rv.fase?`<span style="font-weight:700;color:var(--text-muted)">Fase</span><span>${rv.fase}</span>`:''}
-        ${rv.trabObra?`<span style="font-weight:700;color:var(--text-muted)">Trab. em Obra</span><span>${rv.trabObra}</span>`:''}
-        ${rv.presencas?`<span style="font-weight:700;color:var(--text-muted)">Presenças</span><span>${rv.presencas}</span>`:''}
-        ${rv.temas?`<span style="font-weight:700;color:var(--text-muted)">Temas</span><span>${rv.temas}</span>`:''}
-        ${rv.temaPrincipal?`<span style="font-weight:700;color:var(--text-muted)">Tema Principal</span><span>${rv.temaPrincipal}</span>`:''}
-        ${rv.obs?`<span style="font-weight:700;color:var(--text-muted)">Observações</span><span>${rv.obs}</span>`:''}
-        ${rv.assuntos?`<span style="font-weight:700;color:var(--text-muted)">Assuntos</span><span>${rv.assuntos}</span>`:''}
+      <div style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
+        ${rv.meteo?`<div>☁ ${rv.meteo}</div>`:''}
+        ${rv.fase?`<div>📍 ${rv.fase}</div>`:''}
+        ${rv.temaPrincipal?`<div style="color:var(--text);margin-top:4px;font-weight:700">${rv.temaPrincipal}</div>`:''}
       </div>
     </div>`).join('');
 
-  const dashboard=`
-    <div class="sec-div" style="margin-top:14px">Dashboard</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px">
-      ${['Normal','Alerta','Suspenso'].map(est=>{
-        const n=lista.filter(x=>(x.estado||'Normal')===est).length;
-        return `<div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px 14px;text-align:center">
-          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${est}</div>
-          <div style="font-size:24px;font-weight:400;color:${estadoCor(est)}">${n}</div>
-        </div>`;
-      }).join('')}
-      <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px 14px;text-align:center">
-        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Total</div>
-        <div style="font-size:24px;font-weight:400;color:var(--navy)">${lista.length}</div>
-      </div>
-    </div>`;
+  const kpis=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:14px">
+    ${['Normal','Alerta','Suspenso'].map(est=>{
+      const n=lista.filter(x=>(x.estado||'Normal')===est).length;
+      return `<div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid ${estadoCor(est)}">
+        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">${est}</div>
+        <div style="font-size:22px;font-weight:400;color:${estadoCor(est)}">${n}</div>
+      </div>`;
+    }).join('')}
+    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid var(--navy)">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total</div>
+      <div style="font-size:22px;font-weight:400;color:var(--navy)">${lista.length}</div>
+    </div>
+  </div>`;
 
-  const uploadArea=edit?`
-    <div class="sec-div">Importar RV por ficheiro (PDF/DOCX)</div>
-    <div style="border:1px dashed var(--border-light);border-radius:var(--radius);padding:16px;margin-bottom:14px;text-align:center;background:var(--bg)">
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Carrega um ficheiro de Relatório de Visita — o Claude extrai os dados automaticamente</div>
-      <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--navy);color:#fff;border-radius:var(--radius);cursor:pointer;font-size:12px">
-        📎 Escolher ficheiro
+  const header=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div class="sec-div" style="margin:0;border:none;padding:0">Relatórios de Visita (${lista.length})</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      ${lista.length?`<button class="btn btn-outline btn-sm" onclick="gerarDashboardRV('${r.id}')">📊 Dashboard IA</button>`:''}
+      ${edit?`<label style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--navy);color:#fff;border-radius:var(--radius);cursor:pointer;font-size:12px">
+        📎 Importar RV
         <input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarRV('${r.id}',this)" multiple>
-      </label>
-      <div id="rv-import-status-${r.id}" style="font-size:11px;color:var(--text-muted);margin-top:6px"></div>
-    </div>`:'';
+      </label>`:''}
+    </div>
+  </div>
+  <div id="rv-import-status-${r.id}" style="font-size:11px;color:var(--text-muted);margin-bottom:6px"></div>`;
 
-  return dashboard+uploadArea+`<div class="sec-div">Lista de Relatórios de Visita (${lista.length})</div>`+
-    (lista.length?cards:`<div class="empty-state">Sem relatórios de visita registados.</div>`);
+  return kpis+header+(lista.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${cards}</div>`:`<div class="empty-state">Sem relatórios de visita.</div>`);
 }
 
 function relTabAR(r,edit){
   const conteudo=typeof r.conteudo==='string'?JSON.parse(r.conteudo||'{}'):r.conteudo||{};
-  const lista=(conteudo?.ar?.lista||[]);
+  const lista=(conteudo?.ar?.lista||[]).sort((a,b)=>(a.num||'').localeCompare(b.num||'',undefined,{numeric:true}));
   const tipoCor=t=>t==='Alerta crítico'?'#B91C1C':'#185FA5';
   const tipoBg=t=>t==='Alerta crítico'?'#FEF2F2':'#E6F1FB';
+  const temAlerta=ar=>(ar.tipos||[ar.tipo]).filter(Boolean).includes('Alerta crítico');
 
   const cards=lista.map((ar,i)=>`
-    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;margin-bottom:10px">
-      <div style="background:var(--navy);padding:8px 12px;display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <span style="font-family:monospace;font-size:14px;font-weight:700;color:var(--gold)">Ata ${String(ar.num||i+1).padStart(3,'0')}</span>
-          <span style="font-size:11px;color:rgba(255,255,255,.6);margin-left:10px">${ar.data||'—'}${ar.trabObra?' · '+ar.trabObra+' trab.':''}</span>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center">
-          ${(ar.tipos||[ar.tipo]).filter(Boolean).map(t=>`<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:${tipoBg(t)};color:${tipoCor(t)}">${t}</span>`).join('')}
-          ${edit?`<button class="btn-icon del" onclick="delAR('${r.id}',${i})">✕</button>`:''}
-        </div>
+    <div onclick="showARDetail(${JSON.stringify(JSON.stringify(ar))},'${r.id}',${i},'${edit}')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s"
+      onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:${temAlerta(ar)?'#FEF2F2':'#E6F1FB'};border-bottom:2px solid ${temAlerta(ar)?'#B91C1C':'#185FA5'};padding:8px 12px">
+        <div style="font-family:monospace;font-size:13px;font-weight:700;color:${temAlerta(ar)?'#B91C1C':'#185FA5'}">Ata ${String(ar.num||i+1).padStart(3,'0')}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${ar.data||'—'}</div>
       </div>
-      <div style="padding:10px 14px;display:grid;grid-template-columns:140px 1fr;gap:4px 12px;font-size:12px">
-        ${ar.participantes?`<span style="font-weight:700;color:var(--text-muted)">Participantes</span><span>${ar.participantes}</span>`:''}
-        ${ar.temas?`<span style="font-weight:700;color:var(--text-muted)">Temas</span><span>${ar.temas}</span>`:''}
-        ${ar.temaPrincipal?`<span style="font-weight:700;color:var(--text-muted)">Tema Principal</span><span>${ar.temaPrincipal}</span>`:''}
-        ${ar.decisoes?`<span style="font-weight:700;color:var(--text-muted)">Observações/Decisões</span><span>${ar.decisoes}</span>`:''}
-        ${ar.pendentes?`<span style="font-weight:700;color:var(--text-muted)">Pontos em Aberto</span><span>${ar.pendentes}</span>`:''}
+      <div style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
+        ${(ar.tipos||[ar.tipo]).filter(Boolean).map(t=>`<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:${tipoBg(t)};color:${tipoCor(t)}">${t}</span>`).join(' ')}
+        ${ar.temaPrincipal?`<div style="color:var(--text);margin-top:4px;font-weight:700">${ar.temaPrincipal}</div>`:''}
       </div>
     </div>`).join('');
 
-  const dashboard=`
-    <div class="sec-div" style="margin-top:14px">Dashboard</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px">
-      ${['Normal','Alerta crítico'].map(tipo=>{
-        const n=lista.filter(x=>(x.tipos||[x.tipo]).includes(tipo)).length;
-        return `<div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px 14px;text-align:center">
-          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${tipo}</div>
-          <div style="font-size:24px;font-weight:400;color:${tipoCor(tipo)}">${n}</div>
-        </div>`;
-      }).join('')}
-      <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px 14px;text-align:center">
-        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Total</div>
-        <div style="font-size:24px;font-weight:400;color:var(--navy)">${lista.length}</div>
-      </div>
-    </div>`;
+  const kpis=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:14px">
+    ${['Normal','Alerta crítico'].map(tipo=>{
+      const n=lista.filter(x=>(x.tipos||[x.tipo]).includes(tipo)).length;
+      return `<div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid ${tipoCor(tipo)}">
+        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">${tipo}</div>
+        <div style="font-size:22px;font-weight:400;color:${tipoCor(tipo)}">${n}</div>
+      </div>`;
+    }).join('')}
+    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid var(--navy)">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total</div>
+      <div style="font-size:22px;font-weight:400;color:var(--navy)">${lista.length}</div>
+    </div>
+  </div>`;
 
-  const uploadArea=edit?`
-    <div class="sec-div">Importar Ata por ficheiro (PDF/DOCX)</div>
-    <div style="border:1px dashed var(--border-light);border-radius:var(--radius);padding:16px;margin-bottom:14px;text-align:center;background:var(--bg)">
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Carrega um ficheiro de Ata de Reunião — o Claude extrai os dados automaticamente</div>
-      <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--navy);color:#fff;border-radius:var(--radius);cursor:pointer;font-size:12px">
-        📎 Escolher ficheiro
+  const header=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div class="sec-div" style="margin:0;border:none;padding:0">Atas de Reunião (${lista.length})</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      ${lista.length?`<button class="btn btn-outline btn-sm" onclick="gerarDashboardAR('${r.id}')">📊 Dashboard IA</button>`:''}
+      ${edit?`<label style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--navy);color:#fff;border-radius:var(--radius);cursor:pointer;font-size:12px">
+        📎 Importar Ata
         <input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarAR('${r.id}',this)" multiple>
-      </label>
-      <div id="ar-import-status-${r.id}" style="font-size:11px;color:var(--text-muted);margin-top:6px"></div>
-    </div>`:'';
+      </label>`:''}
+    </div>
+  </div>
+  <div id="ar-import-status-${r.id}" style="font-size:11px;color:var(--text-muted);margin-bottom:6px"></div>`;
 
-  return dashboard+uploadArea+`<div class="sec-div">Lista de Atas de Reunião (${lista.length})</div>`+
-    (lista.length?cards:`<div class="empty-state">Sem atas registadas.</div>`);
+  return kpis+header+(lista.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${cards}</div>`:`<div class="empty-state">Sem atas registadas.</div>`);
 }
+
+// Popup de detalhe RV
+window.showRVDetail=function(rvJson,relId,idx,edit){
+  const rv=JSON.parse(rvJson);
+  const estadoCor=e=>e==='Alerta'?'#B91C1C':e==='Suspenso'?'#854F0B':'#0F6E56';
+  const row=(l,v)=>v?`<div style="display:grid;grid-template-columns:140px 1fr;gap:6px;padding:5px 0;border-bottom:0.5px solid var(--border-light)">
+    <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">${l}</span>
+    <span style="font-size:12px">${v}</span></div>`:'';
+  showModal('RV '+String(rv.num||idx+1).padStart(3,'0')+' — '+rv.data,`
+    <div style="margin-bottom:10px;display:flex;gap:8px;align-items:center">
+      <span style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:${estadoCor(rv.estado||'Normal')}22;color:${estadoCor(rv.estado||'Normal')};border:1px solid ${estadoCor(rv.estado||'Normal')}">${rv.estado||'Normal'}</span>
+      ${rv.duracao?`<span style="font-size:12px;color:var(--text-muted)">${rv.duracao}</span>`:''}
+    </div>
+    ${row('Meteorologia',rv.meteo)}
+    ${row('Fiscal',rv.fiscal)}
+    ${row('Fase',rv.fase)}
+    ${row('Trab. em Obra',rv.trabObra)}
+    ${row('Presenças',rv.presencas)}
+    ${row('Temas',rv.temas)}
+    ${row('Tema Principal',rv.temaPrincipal)}
+    ${row('Observações',rv.obs)}
+    ${row('Assuntos',rv.assuntos)}
+  `,[
+    {label:'Fechar',cls:'btn-outline',fn:'closeModal()'},
+    ...(edit==='true'?[{label:'🗑 Eliminar',cls:'btn-outline',fn:`delRV('${relId}',${idx});closeModal()`}]:[])
+  ]);
+};
+
+// Popup de detalhe AR
+window.showARDetail=function(arJson,relId,idx,edit){
+  const ar=JSON.parse(arJson);
+  const tipoCor=t=>t==='Alerta crítico'?'#B91C1C':'#185FA5';
+  const row=(l,v)=>v?`<div style="display:grid;grid-template-columns:140px 1fr;gap:6px;padding:5px 0;border-bottom:0.5px solid var(--border-light)">
+    <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">${l}</span>
+    <span style="font-size:12px">${v}</span></div>`:'';
+  const tipos=(ar.tipos||[ar.tipo]).filter(Boolean);
+  showModal('Ata '+String(ar.num||idx+1).padStart(3,'0')+' — '+ar.data,`
+    <div style="margin-bottom:10px;display:flex;gap:6px;flex-wrap:wrap">
+      ${tipos.map(t=>`<span style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:${tipoCor(t)}22;color:${tipoCor(t)};border:1px solid ${tipoCor(t)}">${t}</span>`).join('')}
+      ${ar.trabObra?`<span style="font-size:12px;color:var(--text-muted)">${ar.trabObra} trab.</span>`:''}
+    </div>
+    ${row('Participantes',ar.participantes)}
+    ${row('Temas',ar.temas)}
+    ${row('Tema Principal',ar.temaPrincipal)}
+    ${row('Decisões',ar.decisoes)}
+    ${row('Pontos em Aberto',ar.pendentes)}
+  `,[
+    {label:'Fechar',cls:'btn-outline',fn:'closeModal()'},
+    ...(edit==='true'?[{label:'🗑 Eliminar',cls:'btn-outline',fn:`delAR('${relId}',${idx});closeModal()`}]:[])
+  ]);
+};
+
+// Dashboard IA — RV
+window.gerarDashboardRV=async function(relId){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  const conteudo=typeof r.conteudo==='string'?JSON.parse(r.conteudo||'{}'):r.conteudo||{};
+  const lista=conteudo?.rv?.lista||[];
+  if(!lista.length){alert('Sem RVs para analisar.');return;}
+  showModal('📊 Dashboard RV — A gerar...',`<div id="dash-rv-content" style="min-height:200px;display:flex;align-items:center;justify-content:center"><div style="color:var(--text-muted)">A analisar ${lista.length} Relatórios de Visita com IA...</div></div>`,[{label:'Fechar',cls:'btn-outline',fn:'closeModal()'}],'modal-lg');
+  try{
+    const resumo=lista.map((rv,i)=>`RV ${rv.num||i+1} (${rv.data||'?'}): Estado=${rv.estado||'Normal'}, Fase=${rv.fase||'?'}, Trab=${rv.trabObra||'?'}, Temas=${rv.temas||'?'}, Obs=${rv.obs||'?'}`).join('\n');
+    const resp=await fetch('https://sigo-aceitar.vercel.app/api/ler-documento',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({files:[{fileBase64:btoa(unescape(encodeURIComponent(resumo))),fileName:'dados.txt',contentType:'text/plain'}],tipo:'dashboard_rv',prompt:`Analisa estes ${lista.length} Relatórios de Visita de obra e devolve um JSON com: resumo (string, análise executiva em 2-3 frases), alertas (array de strings com pontos críticos), tendencias (array de strings), recomendacoes (array de strings), stats: {normal:n, alerta:n, suspenso:n, totalTrab:string}. Dados:\n\n${resumo}`})
+    });
+    const data=await resp.json();
+    let analise={resumo:'Análise gerada.',alertas:[],tendencias:[],recomendacoes:[],stats:{normal:lista.filter(x=>(x.estado||'Normal')==='Normal').length,alerta:lista.filter(x=>x.estado==='Alerta').length,suspenso:lista.filter(x=>x.estado==='Suspenso').length}};
+    if(data.results?.[0]?.success){try{analise=data.results[0].data;}catch(e){}}
+    const el=document.getElementById('dash-rv-content');
+    if(!el)return;
+    el.innerHTML=`
+      <div style="font-size:13px;line-height:1.6;padding:10px 0;border-bottom:1px solid var(--border-light);margin-bottom:14px;color:var(--text)">${analise.resumo||''}</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+        ${[['Normal','#0F6E56',analise.stats?.normal||0],['Alerta','#B91C1C',analise.stats?.alerta||0],['Suspenso','#854F0B',analise.stats?.suspenso||0],['Total','var(--navy)',lista.length]].map(([l,c,n])=>`
+        <div style="background:var(--bg);border-radius:var(--radius);padding:10px;text-align:center;border-top:3px solid ${c}">
+          <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">${l}</div>
+          <div style="font-size:22px;font-weight:400;color:${c}">${n}</div>
+        </div>`).join('')}
+      </div>
+      ${analise.alertas?.length?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#B91C1C;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">⚠ Alertas</div>${analise.alertas.map(a=>`<div style="font-size:12px;padding:4px 8px;background:#FEF2F2;border-left:3px solid #B91C1C;margin-bottom:4px;border-radius:0 4px 4px 0">${a}</div>`).join('')}</div>`:''}
+      ${analise.tendencias?.length?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">📈 Tendências</div>${analise.tendencias.map(t=>`<div style="font-size:12px;padding:4px 8px;background:var(--bg);border-left:3px solid var(--navy);margin-bottom:4px;border-radius:0 4px 4px 0">${t}</div>`).join('')}</div>`:''}
+      ${analise.recomendacoes?.length?`<div><div style="font-size:10px;font-weight:700;color:#0F6E56;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">✅ Recomendações</div>${analise.recomendacoes.map(rec=>`<div style="font-size:12px;padding:4px 8px;background:#F0FDF4;border-left:3px solid #0F6E56;margin-bottom:4px;border-radius:0 4px 4px 0">${rec}</div>`).join('')}</div>`:''}`;
+  }catch(e){const el=document.getElementById('dash-rv-content');if(el)el.innerHTML=`<div style="color:var(--danger)">Erro: ${e.message}</div>`;}
+};
+
+// Dashboard IA — AR
+window.gerarDashboardAR=async function(relId){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  const conteudo=typeof r.conteudo==='string'?JSON.parse(r.conteudo||'{}'):r.conteudo||{};
+  const lista=conteudo?.ar?.lista||[];
+  if(!lista.length){alert('Sem Atas para analisar.');return;}
+  showModal('📊 Dashboard AR — A gerar...',`<div id="dash-ar-content" style="min-height:200px;display:flex;align-items:center;justify-content:center"><div style="color:var(--text-muted)">A analisar ${lista.length} Atas de Reunião com IA...</div></div>`,[{label:'Fechar',cls:'btn-outline',fn:'closeModal()'}],'modal-lg');
+  try{
+    const resumo=lista.map((ar,i)=>`Ata ${ar.num||i+1} (${ar.data||'?'}): Tipo=${(ar.tipos||[ar.tipo]).join('+')}, Temas=${ar.temas||'?'}, Decisões=${ar.decisoes||'?'}, Pendentes=${ar.pendentes||'?'}`).join('\n');
+    const resp=await fetch('https://sigo-aceitar.vercel.app/api/ler-documento',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({files:[{fileBase64:btoa(unescape(encodeURIComponent(resumo))),fileName:'dados.txt',contentType:'text/plain'}],tipo:'dashboard_ar',prompt:`Analisa estas ${lista.length} Atas de Reunião e devolve JSON com: resumo (string, análise executiva 2-3 frases), alertas (array strings), decisoesPrincipais (array strings), pendentesCriticos (array strings), recomendacoes (array strings), stats: {normal:n, alertaCritico:n}. Dados:\n\n${resumo}`})
+    });
+    const data=await resp.json();
+    let analise={resumo:'Análise gerada.',alertas:[],decisoesPrincipais:[],pendentesCriticos:[],recomendacoes:[],stats:{normal:lista.filter(x=>!(x.tipos||[x.tipo]).includes('Alerta crítico')).length,alertaCritico:lista.filter(x=>(x.tipos||[x.tipo]).includes('Alerta crítico')).length}};
+    if(data.results?.[0]?.success){try{analise=data.results[0].data;}catch(e){}}
+    const el=document.getElementById('dash-ar-content');
+    if(!el)return;
+    el.innerHTML=`
+      <div style="font-size:13px;line-height:1.6;padding:10px 0;border-bottom:1px solid var(--border-light);margin-bottom:14px;color:var(--text)">${analise.resumo||''}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+        ${[['Normal','#185FA5',analise.stats?.normal||0],['Alerta Crítico','#B91C1C',analise.stats?.alertaCritico||0],['Total','var(--navy)',lista.length]].map(([l,c,n])=>`
+        <div style="background:var(--bg);border-radius:var(--radius);padding:10px;text-align:center;border-top:3px solid ${c}">
+          <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">${l}</div>
+          <div style="font-size:22px;font-weight:400;color:${c}">${n}</div>
+        </div>`).join('')}
+      </div>
+      ${analise.alertas?.length?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#B91C1C;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">⚠ Alertas</div>${analise.alertas.map(a=>`<div style="font-size:12px;padding:4px 8px;background:#FEF2F2;border-left:3px solid #B91C1C;margin-bottom:4px;border-radius:0 4px 4px 0">${a}</div>`).join('')}</div>`:''}
+      ${analise.decisoesPrincipais?.length?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#185FA5;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">✅ Decisões Principais</div>${analise.decisoesPrincipais.map(d=>`<div style="font-size:12px;padding:4px 8px;background:#E6F1FB;border-left:3px solid #185FA5;margin-bottom:4px;border-radius:0 4px 4px 0">${d}</div>`).join('')}</div>`:''}
+      ${analise.pendentesCriticos?.length?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#854F0B;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">⏳ Pendentes Críticos</div>${analise.pendentesCriticos.map(p=>`<div style="font-size:12px;padding:4px 8px;background:#FEF9EC;border-left:3px solid #854F0B;margin-bottom:4px;border-radius:0 4px 4px 0">${p}</div>`).join('')}</div>`:''}
+      ${analise.recomendacoes?.length?`<div><div style="font-size:10px;font-weight:700;color:#0F6E56;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">💡 Recomendações</div>${analise.recomendacoes.map(rec=>`<div style="font-size:12px;padding:4px 8px;background:#F0FDF4;border-left:3px solid #0F6E56;margin-bottom:4px;border-radius:0 4px 4px 0">${rec}</div>`).join('')}</div>`:''}`;
+  }catch(e){const el=document.getElementById('dash-ar-content');if(el)el.innerHTML=`<div style="color:var(--danger)">Erro: ${e.message}</div>`;}
+};
 
 window.delRV=function(relId,idx){
   const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
@@ -1428,75 +1528,73 @@ window.delAR=function(relId,idx){
 window.importarRV=async function(relId,input){
   const files=Array.from(input.files);if(!files.length)return;
   const status=document.getElementById('rv-import-status-'+relId);
-  if(status)status.textContent='A ler '+files.length+' ficheiro(s)...';
-  try{
-    const filesData=await Promise.all(files.map(file=>new Promise((res,rej)=>{
-      const reader=new FileReader();
-      reader.onload=e=>res({fileBase64:e.target.result.split(',')[1],fileName:file.name,contentType:file.type});
-      reader.onerror=rej;
-      reader.readAsDataURL(file);
-    })));
-    if(status)status.textContent='A extrair dados com IA ('+(files.length)+' ficheiro(s))...';
-    const resp=await fetch('https://sigo-aceitar.vercel.app/api/ler-documento',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({files:filesData,tipo:'rv'})
-    });
-    const data=await resp.json();
-    if(!data.results)throw new Error(data.error||'Resposta inválida do servidor');
-    const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
-    if(!r.conteudo)r.conteudo={};
-    if(!r.conteudo.rv)r.conteudo.rv={lista:[]};
-    if(!Array.isArray(r.conteudo.rv.lista))r.conteudo.rv.lista=[];
-    let ok=0,erros=0;
-    for(const result of data.results){
-      if(result.success){r.conteudo.rv.lista.push(result.data);ok++;}
-      else{erros++;console.error('Erro em '+result.fileName+':',result.error);}
-    }
-    await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
-    if(status)status.textContent='✅ '+ok+' RV(s) importado(s)'+(erros?' · ❌ '+erros+' erro(s)':'');
-    render();
-  }catch(e){
-    if(status)status.textContent='❌ Erro: '+e.message;
-    console.error(e);
+  let ok=0,erros=0;
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  if(!r.conteudo)r.conteudo={};
+  if(!r.conteudo.rv)r.conteudo.rv={lista:[]};
+  if(!Array.isArray(r.conteudo.rv.lista))r.conteudo.rv.lista=[];
+  for(let i=0;i<files.length;i++){
+    const file=files[i];
+    if(status)status.textContent='A processar ficheiro '+(i+1)+' de '+files.length+' ('+file.name+')...';
+    try{
+      const fileBase64=await new Promise((res,rej)=>{
+        const reader=new FileReader();
+        reader.onload=e=>res(e.target.result.split(',')[1]);
+        reader.onerror=rej;
+        reader.readAsDataURL(file);
+      });
+      const resp=await fetch('https://sigo-aceitar.vercel.app/api/ler-documento',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({files:[{fileBase64,fileName:file.name,contentType:file.type}],tipo:'rv'})
+      });
+      const data=await resp.json();
+      if(!data.results)throw new Error(data.error||'Resposta inválida');
+      for(const result of data.results){
+        if(result.success){r.conteudo.rv.lista.push(result.data);ok++;}
+        else{erros++;console.error('Erro:',result.error);}
+      }
+    }catch(e){erros++;console.error('Erro em '+file.name+':',e.message);}
   }
+  await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  if(status)status.textContent='✅ '+ok+' RV(s) importado(s)'+(erros?' · ❌ '+erros+' erro(s)':'');
+  render();
 };
 
 window.importarAR=async function(relId,input){
   const files=Array.from(input.files);if(!files.length)return;
   const status=document.getElementById('ar-import-status-'+relId);
-  if(status)status.textContent='A ler '+files.length+' ficheiro(s)...';
-  try{
-    const filesData=await Promise.all(files.map(file=>new Promise((res,rej)=>{
-      const reader=new FileReader();
-      reader.onload=e=>res({fileBase64:e.target.result.split(',')[1],fileName:file.name,contentType:file.type});
-      reader.onerror=rej;
-      reader.readAsDataURL(file);
-    })));
-    if(status)status.textContent='A extrair dados com IA ('+(files.length)+' ficheiro(s))...';
-    const resp=await fetch('https://sigo-aceitar.vercel.app/api/ler-documento',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({files:filesData,tipo:'ar'})
-    });
-    const data=await resp.json();
-    if(!data.results)throw new Error(data.error||'Resposta inválida do servidor');
-    const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
-    if(!r.conteudo)r.conteudo={};
-    if(!r.conteudo.ar)r.conteudo.ar={lista:[]};
-    if(!Array.isArray(r.conteudo.ar.lista))r.conteudo.ar.lista=[];
-    let ok=0,erros=0;
-    for(const result of data.results){
-      if(result.success){r.conteudo.ar.lista.push(result.data);ok++;}
-      else{erros++;console.error('Erro em '+result.fileName+':',result.error);}
-    }
-    await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
-    if(status)status.textContent='✅ '+ok+' Ata(s) importada(s)'+(erros?' · ❌ '+erros+' erro(s)':'');
-    render();
-  }catch(e){
-    if(status)status.textContent='❌ Erro: '+e.message;
-    console.error(e);
+  let ok=0,erros=0;
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  if(!r.conteudo)r.conteudo={};
+  if(!r.conteudo.ar)r.conteudo.ar={lista:[]};
+  if(!Array.isArray(r.conteudo.ar.lista))r.conteudo.ar.lista=[];
+  for(let i=0;i<files.length;i++){
+    const file=files[i];
+    if(status)status.textContent='A processar ficheiro '+(i+1)+' de '+files.length+' ('+file.name+')...';
+    try{
+      const fileBase64=await new Promise((res,rej)=>{
+        const reader=new FileReader();
+        reader.onload=e=>res(e.target.result.split(',')[1]);
+        reader.onerror=rej;
+        reader.readAsDataURL(file);
+      });
+      const resp=await fetch('https://sigo-aceitar.vercel.app/api/ler-documento',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({files:[{fileBase64,fileName:file.name,contentType:file.type}],tipo:'ar'})
+      });
+      const data=await resp.json();
+      if(!data.results)throw new Error(data.error||'Resposta inválida');
+      for(const result of data.results){
+        if(result.success){r.conteudo.ar.lista.push(result.data);ok++;}
+        else{erros++;console.error('Erro:',result.error);}
+      }
+    }catch(e){erros++;console.error('Erro em '+file.name+':',e.message);}
   }
+  await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  if(status)status.textContent='✅ '+ok+' Ata(s) importada(s)'+(erros?' · ❌ '+erros+' erro(s)':'');
+  render();
 };
 
 function relTabTrabalhos(r,edit){
@@ -3478,15 +3576,7 @@ window.chatAnswer=function(q){
 };
 
 showLogin();
-</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
+</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
 
 
-<div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
-        <div id="yt_article_summary_widget" class="yt_article_summary_widget"><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1.40123 27.3686C-0.44103 25.5284 -0.441033 22.5449 1.4012 20.7047L16.5971 5.52573L24.0098 12.9301L5.47818 31.4409L1.40123 27.3686Z" fill="#FF4E74"></path>
-        <path d="M35.1286 24.0367L16.5972 5.5258L20.6741 1.45341C22.5164 -0.386772 25.5033 -0.386775 27.3455 1.45341L42.5415 16.6323L35.1286 24.0367Z" fill="#FFF85E"></path>
-        <path d="M24.0099 35.143L42.5416 16.6323L46.6183 20.7046C48.4606 22.5448 48.4606 25.5284 46.6183 27.3686L31.4224 42.5476L24.0099 35.143Z" fill="#76FF54"></path>
-        <path d="M27.3454 46.6198C25.5032 48.4601 22.5163 48.4601 20.674 46.6198L5.47815 31.4409L12.8908 24.0366L31.4223 42.5476L27.3454 46.6198Z" fill="#5C94FF"></path>
-    </svg></div>
-        <div id="yt_article_summary_close_button" class="yt_article_summary_close_button">×</div>
-    </div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div></body></html>
+</body></html>
