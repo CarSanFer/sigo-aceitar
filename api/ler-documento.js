@@ -365,6 +365,7 @@ Se um campo não existir usa "".`;
   // ════════════════════════════════════════════════════════════════════
   if (action === 'processar_pe_pa') {
     const { pastaPath, pastaNome } = req.body;
+    console.log('processar_pe_pa tipo=', tipo, 'pasta=', pastaPath);
     if (!pastaPath || !tipo) {
       return res.status(400).json({ error: 'Falta parâmetros (pastaPath, tipo)' });
     }
@@ -549,6 +550,7 @@ Se um campo não existir usa "".`;
           resposta: fResposta ? [{ nome: fResposta.name, path: fResposta.path }] : [],
         },
         _debug: {
+          tipo,
           totalFicheiros: ficheiros.length,
           nomesFicheiros: ficheiros.map(f => f.name),
           ficheiroLido: fParaLer?.name || null,
