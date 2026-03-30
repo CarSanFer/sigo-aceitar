@@ -116,50 +116,71 @@ Se um campo não existir usa "".`;
     const wb = XLSX.read(buffer, { type: 'buffer', cellDates: true });
     const resultado = { pe: [], pa: [] };
 
-    for (const nomeSheet of wb.SheetNames) {
-      const nomeLower = nomeSheet.toLowerCase();
-      const tipo = nomeLower.includes('pe') ? 'pe' : nomeLower.includes('pa') ? 'pa' : null;
-      if (!tipo) continue;
+    const fmtData = (v) => {
+      if (!v) return '';
+      if (v instanceof Date) {
+        const d = String(v.getDate()).padStart(2,'0');
+        const m = String(v.getMonth()+1).padStart(2,'0');
+        const a = v.getFullYear();
+        return `${d}/${m}/${a}`;
+      }
+      return String(v).trim();
+    };
 
-      const ws = wb.Sheets[nomeSheet];
-      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
-
-      for (const row of rows) {
-        // Normalizar chaves para lowercase sem acentos
-        const r = {};
-        for (const [k, v] of Object.entries(row)) {
-          const normalizada = k.toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')  // remove acentos
-            .replace(/[^a-z0-9]/g, '_')                         // tudo que não é letra/número → _
-            .replace(/_+/g, '_')                                 // múltiplos _ → um só
-            .replace(/^_|_$/g, '');                              // trim _
-          r[normalizada] = v;
-        }
-
-        // Tentar mapear colunas comuns independentemente dos nomes exatos
-        const ref = String(r.ref || r.referencia || r.numero || r.num || r.n || '').trim();
-        if (!ref) continue; // linha vazia
-
-        const formatarData = (v) => {
-          if (!v) return '';
-          if (v instanceof Date) return v.toLocaleDateString('pt-PT');
-          return String(v).trim();
-        };
-
-        resultado[tipo].push({
-          ref,
-          assunto: String(r.assunto || r.designacao || r.descricao || r.titulo || '').trim(),
-          dataSubmissao: formatarData(r.ent_exec || r.data_submissao || r.data || r.submetido || r.data_envio || r.entrega_exec || r.entrega || ''),
-          dataResposta: formatarData(r.data_resposta || r.respondido || r.resposta || ''),
-          estado: String(r.estado || r.situacao || r.status || '').trim(),
-          prazo: formatarData(r.prazo || r.data_limite || ''),
-          responsavel: String(r.responsavel || r.para || r.destinatario || '').trim(),
-          obs: String(r.obs || r.observacoes || r.notas || '').trim(),
-          // guardar linha original para referência
-          _raw: r
+    // ── Folha PE ──────────────────────────────────────────────────────
+    // Linha 4: cabeçalho | Linha 5+: dados
+    // Cols (0-based): 1=Id, 2=Esp, 3=Descrição, 4=Ent Exec, 5=Fiscaliz(env),
+    //                 6=Projetista, 7=Fiscaliz(resp), 8=Fecho, 9=Observações
+    if (wb.SheetNames.includes('PE')) {
+      const ws = wb.Sheets['PE'];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+      for (let i = 4; i < rows.length; i++) { // dados a partir da linha 5 (index 4)
+        const row = rows[i];
+        const id = row[1];
+        if (!id || String(id).trim() === '') continue;
+        resultado.pe.push({
+          ref: String(id).trim(),
+          assunto: String(row[3] || '').trim(),
+          esp: String(row[2] || '').trim(),
+          dataSubmissao: fmtData(row[4]),  // Ent Exec
+          dataEnvioFisc: fmtData(row[5]),  // Fiscaliz (envio)
+          dataProjetista: fmtData(row[6]), // Projetista
+          dataRespFisc: fmtData(row[7]),   // Fiscaliz (resp)
+          dataFecho: fmtData(row[8]),      // Fecho
+          estado: row[8] ? 'Fechado' : (row[7] ? 'Respondido' : 'Pendente'),
+          obs: String(row[9] || '').trim(),
         });
       }
     }
+
+    // ── Folha PA ──────────────────────────────────────────────────────
+    // Linha 4: cabeçalho | Linha 5+: dados
+    // Cols (0-based): 1=Id, 2=Esp, 3=M|E, 4=P|N, 5=Descrição, 6=Ent Exec,
+    //                 7=Fiscaliz(env), 8=Proj, 9=Fiscaliz(resp), 10=Estado, 11=Obs
+    if (wb.SheetNames.includes('PA')) {
+      const ws = wb.Sheets['PA'];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+      for (let i = 4; i < rows.length; i++) {
+        const row = rows[i];
+        const id = row[1];
+        if (!id || String(id).trim() === '') continue;
+        resultado.pa.push({
+          ref: String(id).trim(),
+          assunto: String(row[5] || '').trim(),
+          esp: String(row[2] || '').trim(),
+          tipoME: String(row[3] || '').trim(),  // Mat/Equip
+          tipoPN: String(row[4] || '').trim(),  // Prev/Nov
+          dataSubmissao: fmtData(row[6]),        // Ent Exec
+          dataEnvioFisc: fmtData(row[7]),        // Fiscaliz (envio)
+          dataProjetista: fmtData(row[8]),       // Proj
+          dataRespFisc: fmtData(row[9]),         // Fiscaliz (resp)
+          estado: String(row[10] || '').trim(),  // Aprov / Não Aprov / etc
+          obs: String(row[11] || '').trim(),
+          dataResposta: fmtData(row[9]),         // para compatibilidade com filtro
+        });
+      }
+    }
+
     return resultado;
   }
 
@@ -282,13 +303,14 @@ Se um campo não existir usa "".`;
           pastaNome: p.name,
           // Metadados do Excel (fonte de verdade)
           dataSubmissao: excelRow.dataSubmissao || '',
-          dataResposta: excelRow.dataResposta || '',
+          dataResposta: excelRow.dataRespFisc || excelRow.dataResposta || '',
+          dataFecho: excelRow.dataFecho || '',
           estado: excelRow.estado || '',
-          prazo: excelRow.prazo || '',
-          responsavel: excelRow.responsavel || '',
+          esp: excelRow.esp || '',
+          tipoME: excelRow.tipoME || '',
+          tipoPN: excelRow.tipoPN || '',
           obs: excelRow.obs || '',
-          // Flag se tem resposta (baseado no Excel)
-          temResposta: !!(excelRow.dataResposta),
+          temResposta: !!(excelRow.dataRespFisc || excelRow.dataResposta),
         };
       });
 
