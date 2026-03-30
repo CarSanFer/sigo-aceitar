@@ -353,7 +353,7 @@ Se um campo não existir usa "".`;
         itens,
         totalExcel: dadosExcel[tipo].length,
         excelEncontrado: !!excel,
-        _debug: { pastaTipo, totalSubpastas: subpastas.length, totalExcel: dadosExcel[tipo].length, itensMes: itens.length }
+        _debug: { pastaTipo, totalSubpastas: subpastas.length, totalExcel: dadosExcel[tipo].length, itensMes: itens.length, excelNome: excel?.name || null, ficheirosCONomes: ficheirosCO.filter(f=>!f.isdir).map(f=>f.name) }
       });
     } catch (err) {
       return res.status(500).json({ error: err.message });
