@@ -128,7 +128,12 @@ Se um campo não existir usa "".`;
         // Normalizar chaves para lowercase sem acentos
         const r = {};
         for (const [k, v] of Object.entries(row)) {
-          r[k.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '_')] = v;
+          const normalizada = k.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')  // remove acentos
+            .replace(/[^a-z0-9]/g, '_')                         // tudo que não é letra/número → _
+            .replace(/_+/g, '_')                                 // múltiplos _ → um só
+            .replace(/^_|_$/g, '');                              // trim _
+          r[normalizada] = v;
         }
 
         // Tentar mapear colunas comuns independentemente dos nomes exatos
@@ -144,7 +149,7 @@ Se um campo não existir usa "".`;
         resultado[tipo].push({
           ref,
           assunto: String(r.assunto || r.designacao || r.descricao || r.titulo || '').trim(),
-          dataSubmissao: formatarData(r.data_submissao || r.data || r.submetido || r.data_envio || ''),
+          dataSubmissao: formatarData(r.ent_exec || r.data_submissao || r.data || r.submetido || r.data_envio || r.entrega_exec || r.entrega || ''),
           dataResposta: formatarData(r.data_resposta || r.respondido || r.resposta || ''),
           estado: String(r.estado || r.situacao || r.status || '').trim(),
           prazo: formatarData(r.prazo || r.data_limite || ''),
@@ -255,7 +260,7 @@ Se um campo não existir usa "".`;
       const subpastas = await nasListar(sid, pastaTipo);
       await nasLogout(sid);
 
-      // Apenas directórios que contenham a sigla PE ou PA no nome
+      // Apenas directórios — aceita PE/PA no nome em qualquer posição e capitalização
       const pastas = subpastas.filter(f => f.isdir && (f.name || '').toUpperCase().includes(sigla));
 
       // 3. Para cada subpasta extrair referência e nome
@@ -294,20 +299,20 @@ Se um campo não existir usa "".`;
 
       const dataCorresponde = (dataStr) => {
         if (!dataStr) return false;
-        // Tentar vários formatos
-        // dd/mm/yyyy ou d/m/yyyy
         const m1 = dataStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
         if (m1) return parseInt(m1[2]) === mesNum && parseInt(m1[3]) === anoNum;
-        // yyyy-mm-dd
         const m2 = dataStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
         if (m2) return parseInt(m2[2]) === mesNum && parseInt(m2[1]) === anoNum;
-        // mm/yyyy
         const m3 = dataStr.match(/^(\d{1,2})\/(\d{4})/);
         if (m3) return parseInt(m3[1]) === mesNum && parseInt(m3[2]) === anoNum;
         return false;
       };
 
-      const itensFiltrados = itens.filter(item => dataCorresponde(item.dataSubmissao));
+      // Filtrar: incluir itens com data correspondente OU sem data no Excel
+      // (sem data = Excel não tem info, não devemos excluir)
+      const itensFiltrados = itens.filter(item =>
+        !item.dataSubmissao || dataCorresponde(item.dataSubmissao)
+      );
       itensFiltrados.sort((a, b) => {
         const [an, ar] = a.ref.split('.').map(Number);
         const [bn, br] = b.ref.split('.').map(Number);
@@ -318,7 +323,15 @@ Se um campo não existir usa "".`;
         success: true,
         itens: itensFiltrados,
         totalExcel: dadosExcel[tipo].length,
-        excelEncontrado: !!excel
+        excelEncontrado: !!excel,
+        // debug — remover depois de confirmar funcionamento
+        _debug: {
+          pastaTipo,
+          totalSubpastas: subpastas.length,
+          nomesSubpastas: subpastas.slice(0,10).map(f=>f.name),
+          totalItens: itens.length,
+          itensFiltrados: itensFiltrados.length
+        }
       });
     } catch (err) {
       return res.status(500).json({ error: err.message });
