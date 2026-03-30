@@ -469,7 +469,11 @@ Se um campo não existir usa "".`;
         };
         const cel = (linha, col) => {
           const r = rows[linha - 1];
-          return r ? (r[col] != null ? String(r[col]).trim() : '') : '';
+          if (!r) return '';
+          const v = r[col];
+          if (v === null || v === undefined) return '';
+          if (v instanceof Date) return fmtData(v);
+          return String(v).trim();
         };
 
         // Pedido — L7, L10, L13, L16
@@ -493,11 +497,10 @@ Se um campo não existir usa "".`;
           respostas: []
         };
 
-        // Resposta Projetista — L25, L27
-        const dataProjRow = rows[24]; // L25 (0-based)
-        const dataProjVal = dataProjRow?.[1];
+        // Resposta Projetista — cabeçalho L24, dados L25, obs L27
+        const dataProjVal = rows[24]?.[1]; // L25
         const obsProj = cel(27, 1);
-        if (dataProjVal || obsProj) {
+        if (dataProjVal || cel(25, 4) || obsProj) {
           pedido.respostas.push({
             tipo:        'Projetista',
             data:        fmtData(dataProjVal),
@@ -508,10 +511,10 @@ Se um campo não existir usa "".`;
           });
         }
 
-        // Resposta Fiscalização — L37, L39
+        // Resposta Fiscalização — cabeçalho L36, dados L37, obs L39
         const dataFiscVal = rows[36]?.[1]; // L37
         const obsFisc = cel(39, 1);
-        if (dataFiscVal || obsFisc) {
+        if (dataFiscVal || cel(37, 4) || obsFisc) {
           pedido.respostas.push({
             tipo:        'Fiscalização',
             data:        fmtData(dataFiscVal),
