@@ -49,7 +49,7 @@ Se um campo não existir usa "".`;
 Cada resposta tem: data (dd/mm/yyyy), autor (string), anexos (string), esclarecimento (string, texto da resposta/esclarecimento), observacoes (string).
 Pode haver mais do que uma resposta no documento — extrai todas.
 Devolve APENAS: { "respostas": [ { "data":"", "autor":"", "anexos":"", "esclarecimento":"", "observacoes":"" } ] }
-Se um campo não existir usa "".`;`;
+Se um campo não existir usa "".`;
 
   // ── Helper: processar ficheiro com Claude ─────────────────────────────
   async function processarFicheiro(buffer, fileName, subTipo) {
