@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
-    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -277,92 +277,90 @@ tr.tr-click:hover td{background:#F5F7FA}
 </nav>
 
 <div class="content" id="app">
-    <button class="back-btn" onclick="relTab='capa';render()">← Voltar ao Relatório</button>
-    <div class="page-header">
-      <div>
-        <div class="page-title">001.0 — Março 2026 · Pedidos de Aprovação</div>
-        <div style="margin-top:4px;display:flex;gap:8px;align-items:center"><span class="badge b-prep">Rascunho</span>
-          <span style="font-size:12px;color:var(--text-muted)">CES — Cesae</span>
-        </div>
-      </div>
-      <div class="page-actions">
-        <button class="btn btn-outline btn-sm" onclick="sincronizarPEPA('_e00ucmu','pa')">🔄 Sincronizar NAS</button><button class="btn btn-outline btn-sm" style="border-color:#185FA5;color:#185FA5" onclick="submeterModulo('_e00ucmu','pa')">→ Submeter</button>
+  <button class="back-btn" onclick="relRelId=null;relObraId=null;render()">← Voltar à Obra</button>
+  <div class="page-header">
+    <div>
+      <div class="page-title">001.0 — Março 2026</div>
+      <div style="margin-top:4px;display:flex;gap:8px;align-items:center"><span class="badge b-prep">Rascunho</span>
+        <span style="font-size:12px;color:var(--text-muted)">CES — Cesae</span>
       </div>
     </div>
-    <div class="table-card"><div class="ficha-body" style="padding:14px">
-    <div id="pa-import-status-_e00ucmu" style="font-size:12px;color:var(--text-muted);margin-bottom:8px;min-height:16px">❌ Erro: Failed to fetch</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+    <div class="page-actions">
       
-      <div style="background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center;border-top:3px solid var(--navy)">
-        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total</div>
-        <div style="font-size:22px;font-weight:400;color:var(--navy)">3</div>
-      </div>
-      <div style="background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center;border-top:3px solid #0F6E56">
-        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Fechados</div>
-        <div style="font-size:22px;font-weight:400;color:#0F6E56">0</div>
-      </div>
-      <div style="background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center;border-top:3px solid #854F0B">
-        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Pendentes</div>
-        <div style="font-size:22px;font-weight:400;color:#854F0B">3</div>
-      </div>
     </div>
-    <div style="background:var(--surface);border-radius:var(--radius);overflow:auto;border:1px solid var(--border-light)">
-      <table style="width:100%;border-collapse:collapse;min-width:800px">
-        <thead><tr style="background:var(--navy)">
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Id</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Esp</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Descrição</th>
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Ent Exec</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Fiscaliz</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Projetista</th>
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Fiscaliz</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Fecho</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Ações</th>
-        </tr></thead>
-        <tbody>
-          
-          <tr style="border-bottom:0.5px solid var(--border-light)" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
-            <td style="padding:8px 12px;font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap">039.0</td>
-            <td style="padding:8px 12px;font-size:11px;color:var(--text-muted);white-space:nowrap">ARQ</td>
-            <td style="padding:8px 12px;font-size:12px;font-weight:500;max-width:250px">Argamassa Autonivelante - Edif 1</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">04/03/2026</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">04/03/2026</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap"><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:#FEF9EC;color:#854F0B">Pendente</span>
-            </td>
-            <td style="padding:8px 12px;white-space:nowrap">
-              <button onclick="abrirDetalhesPE(0,'_e00ucmu')" style="font-size:11px;padding:3px 8px;border:1px solid var(--border-light);border-radius:4px;background:var(--bg);cursor:pointer;color:var(--text)">📄 Ver</button>
-              
-            </td>
-          </tr>
-          <tr style="border-bottom:0.5px solid var(--border-light)" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
-            <td style="padding:8px 12px;font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap">040.0</td>
-            <td style="padding:8px 12px;font-size:11px;color:var(--text-muted);white-space:nowrap">ELE</td>
-            <td style="padding:8px 12px;font-size:12px;font-weight:500;max-width:250px">Caixa de Pavimento</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">12/03/2026</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap"><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:#FEF9EC;color:#854F0B">Pendente</span>
-            </td>
-            <td style="padding:8px 12px;white-space:nowrap">
-              <button onclick="abrirDetalhesPE(1,'_e00ucmu')" style="font-size:11px;padding:3px 8px;border:1px solid var(--border-light);border-radius:4px;background:var(--bg);cursor:pointer;color:var(--text)">📄 Ver</button>
-              
-            </td>
-          </tr>
-          <tr style="border-bottom:0.5px solid var(--border-light)" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
-            <td style="padding:8px 12px;font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap">041.0</td>
-            <td style="padding:8px 12px;font-size:11px;color:var(--text-muted);white-space:nowrap">ELE</td>
-            <td style="padding:8px 12px;font-size:12px;font-weight:500;max-width:250px">Calha de Pavimento</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">12/03/2026</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap"><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:#FEF9EC;color:#854F0B">Pendente</span>
-            </td>
-            <td style="padding:8px 12px;white-space:nowrap">
-              <button onclick="abrirDetalhesPE(2,'_e00ucmu')" style="font-size:11px;padding:3px 8px;border:1px solid var(--border-light);border-radius:4px;background:var(--bg);cursor:pointer;color:var(--text)">📄 Ver</button>
-              
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div></div></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px"><div onclick="relTab='valores';render()" style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);cursor:pointer;transition:all .15s;padding:14px 12px;text-align:center" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">VAL</div>
+      <div style="width:44px;height:44px;margin:0 auto 8px;opacity:.3"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="12" width="32" height="4" rx="2" fill="#888"></rect><rect x="8" y="20" width="24" height="4" rx="2" fill="currentColor"></rect><rect x="8" y="28" width="28" height="4" rx="2" fill="currentColor"></rect><rect x="8" y="36" width="20" height="4" rx="2" fill="currentColor"></rect></svg></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">0 autos</div>
+      <div style="font-size:11px;color:var(--text-muted)">Valores</div>
+      
+    </div><div onclick="relTab='prazo';render()" style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);cursor:pointer;transition:all .15s;padding:14px 12px;text-align:center" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">PZO</div>
+      <div style="width:44px;height:44px;margin:0 auto 8px;opacity:.3"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="14" stroke="#888" stroke-width="2.5"></circle><path d="M24 16v8l5 5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path></svg></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">0 campos</div>
+      <div style="font-size:11px;color:var(--text-muted)">Prazo</div>
+      
+    </div><div onclick="relTab='ar';render()" style="background:#F0FDF4;border:1.5px solid #0F6E56;border-radius:var(--radius);cursor:pointer;transition:all .15s;padding:14px 12px;text-align:center" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='#0F6E56'">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">AR</div>
+      <div style="width:44px;height:44px;margin:0 auto 8px;opacity:0.65"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="8" width="28" height="32" rx="3" stroke="#0F6E56" stroke-width="2.5"></rect><path d="M16 18h16M16 24h12M16 30h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">4 atas</div>
+      <div style="font-size:11px;color:var(--text-muted)">Atas de Reunião</div>
+      <span style="display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:#E1F5EE;color:#0F6E56;margin-top:6px">✓ Validado</span>
+    </div><div onclick="relTab='rv';render()" style="background:#E6F1FB;border:1.5px solid #185FA5;border-radius:var(--radius);cursor:pointer;transition:all .15s;padding:14px 12px;text-align:center" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='#185FA5'">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">RV</div>
+      <div style="width:44px;height:44px;margin:0 auto 8px;opacity:0.65"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="20" r="8" stroke="#185FA5" stroke-width="2.5"></circle><path d="M10 38c0-7.7 6.3-14 14-14s14 6.3 14 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path></svg></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">7 relatórios</div>
+      <div style="font-size:11px;color:var(--text-muted)">Relatórios de Visita</div>
+      <span style="display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:#E6F1FB;color:#185FA5;margin-top:6px">● Em Aprovação</span>
+    </div><div onclick="relTab='adj';render()" style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);cursor:pointer;transition:all .15s;padding:14px 12px;text-align:center" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">ADJ</div>
+      <div style="width:44px;height:44px;margin:0 auto 8px;opacity:.3"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 36l8-12 8 6 8-14" stroke="#888" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">0 registos</div>
+      <div style="font-size:11px;color:var(--text-muted)">Adjudicações</div>
+      
+    </div><div onclick="relTab='ptq';render()" style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);cursor:pointer;transition:all .15s;padding:14px 12px;text-align:center" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">PTQ</div>
+      <div style="width:44px;height:44px;margin:0 auto 8px;opacity:.3"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="14" width="28" height="20" rx="2" stroke="#888" stroke-width="2.5"></rect><path d="M16 22h16M16 28h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><path d="M18 10v8M30 10v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">0 registos</div>
+      <div style="font-size:11px;color:var(--text-muted)">Plano Quinzenal</div>
+      
+    </div><div onclick="relTab='pb';render()" style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);cursor:pointer;transition:all .15s;padding:14px 12px;text-align:center" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">PB</div>
+      <div style="width:44px;height:44px;margin:0 auto 8px;opacity:.3"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="18" width="20" height="16" rx="2" stroke="#888" stroke-width="2.5"></rect><path d="M20 18v-4a4 4 0 018 0v4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path><circle cx="24" cy="26" r="2" fill="currentColor"></circle></svg></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">0 registos</div>
+      <div style="font-size:11px;color:var(--text-muted)">Pedidos de Betonagem</div>
+      
+    </div><div onclick="relTab='pa';render()" style="background: rgb(230, 241, 251); border: 1.5px solid rgb(24, 95, 165); border-radius: var(--radius); cursor: pointer; transition: 0.15s; padding: 14px 12px; text-align: center;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='#185FA5'">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">PA</div>
+      <div style="width:44px;height:44px;margin:0 auto 8px;opacity:0.65"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="12" stroke="#185FA5" stroke-width="2.5"></circle><path d="M18 24l4 4 8-8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">3 registos</div>
+      <div style="font-size:11px;color:var(--text-muted)">Pedidos de Aprovação</div>
+      <span style="display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:#E6F1FB;color:#185FA5;margin-top:6px">● Em Aprovação</span>
+    </div><div onclick="relTab='pe';render()" style="background: var(--bg-card); border-color: var(--border-light); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-radius: var(--radius); cursor: pointer; transition: 0.15s; padding: 14px 12px; text-align: center;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">PE</div>
+      <div style="width:44px;height:44px;margin:0 auto 8px;opacity:.3"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="12" stroke="#888" stroke-width="2.5"></circle><path d="M24 20v4M24 28v.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path></svg></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">4 registos</div>
+      <div style="font-size:11px;color:var(--text-muted)">Pedidos de Esclarecimento</div>
+      
+    </div><div onclick="relTab='nc';render()" style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);cursor:pointer;transition:all .15s;padding:14px 12px;text-align:center" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">NC</div>
+      <div style="width:44px;height:44px;margin:0 auto 8px;opacity:.3"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 12l12 20H12L24 12z" stroke="#888" stroke-width="2.5" stroke-linejoin="round"></path><path d="M24 22v4M24 30v.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path></svg></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">0 registos</div>
+      <div style="font-size:11px;color:var(--text-muted)">Não Conformidades</div>
+      
+    </div><div onclick="relTab='fotos';render()" style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);cursor:pointer;transition:all .15s;padding:14px 12px;text-align:center" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">FOT</div>
+      <div style="width:44px;height:44px;margin:0 auto 8px;opacity:.3"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="16" width="32" height="22" rx="3" stroke="#888" stroke-width="2.5"></rect><circle cx="24" cy="27" r="6" stroke="currentColor" stroke-width="2.5"></circle><path d="M18 16l2-4h8l2 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">0 fotos</div>
+      <div style="font-size:11px;color:var(--text-muted)">Fotos</div>
+      
+    </div></div>
+  <div style="margin-top:14px;display:flex;gap:16px;font-size:11px;color:var(--text-muted)">
+    <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#0F6E56;display:inline-block"></span>Validado (1)</span>
+    <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#185FA5;display:inline-block"></span>Em Aprovação (2)</span>
+    <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:var(--border-light);display:inline-block"></span>Em Curso (8)</span>
+  </div></div>
 </div>
 
 <!-- FLOATING CHATBOT -->
