@@ -396,15 +396,14 @@ Se um campo não existir usa "".`;
           return String(v).trim();
         };
         const cel = (linha, col) => {
-          const r = rows[linha - 1]; // linha 1-based
+          const r = rows[linha - 1];
           return r ? (r[col] != null ? String(r[col]).trim() : '') : '';
         };
 
-        // Pedido (linhas 7, 10, 13)
         const pedido = {
           id:       cel(7, 1),
           autor:    cel(7, 4),
-          enviado:  fmtData(rows[6]?.[7]),   // L7 col H
+          enviado:  fmtData(rows[6]?.[7]),
           idArtigos: cel(7, 10),
           desenhos: cel(7, 13),
           assunto:  cel(10, 1),
@@ -413,7 +412,6 @@ Se um campo não existir usa "".`;
           respostas: []
         };
 
-        // Resposta Projetista (linhas 27, 30)
         const dataProj = rows[26]?.[1];
         if (dataProj || cel(30, 1)) {
           pedido.respostas.push({
@@ -426,7 +424,6 @@ Se um campo não existir usa "".`;
           });
         }
 
-        // Resposta Fiscalização (linhas 39, 41)
         const dataFisc = rows[38]?.[1];
         if (dataFisc || cel(41, 1)) {
           pedido.respostas.push({
@@ -442,16 +439,88 @@ Se um campo não existir usa "".`;
         return pedido;
       };
 
-      // Processar ficheiro principal (pedido ou resposta — mesmo formato)
+      // Helper: ler Excel PA da NAS e extrair campos por posição fixa
+      const lerExcelPA = async (f) => {
+        const buf = await nasDownload(sid, f.path);
+        const wb = XLSX.read(buf, { type: 'buffer', cellDates: true });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+
+        const fmtData = (v) => {
+          if (!v) return '';
+          if (v instanceof Date) {
+            return `${String(v.getDate()).padStart(2,'0')}/${String(v.getMonth()+1).padStart(2,'0')}/${v.getFullYear()}`;
+          }
+          return String(v).trim();
+        };
+        const cel = (linha, col) => {
+          const r = rows[linha - 1];
+          return r ? (r[col] != null ? String(r[col]).trim() : '') : '';
+        };
+
+        // Pedido — L7, L10, L13, L16
+        const pedido = {
+          id:           cel(7, 1),
+          autor:        cel(7, 4),
+          enviado:      cel(7, 7),
+          especialidade: cel(7, 10),
+          matEquip:     cel(7, 13),
+          capitulo:     cel(10, 1),
+          artigo:       cel(10, 4),
+          referencia:   cel(10, 7),
+          localizacao:  cel(10, 10),
+          previsto:     cel(10, 13),
+          amostras:     cel(13, 1),
+          fichas:       cel(13, 4),
+          docsConform:  cel(13, 7),
+          outros:       cel(13, 10),
+          proposto:     cel(13, 13),
+          observacoes:  cel(16, 1),
+          respostas: []
+        };
+
+        // Resposta Projetista — L25, L27
+        const dataProjRow = rows[24]; // L25 (0-based)
+        const dataProjVal = dataProjRow?.[1];
+        const obsProj = cel(27, 1);
+        if (dataProjVal || obsProj) {
+          pedido.respostas.push({
+            tipo:        'Projetista',
+            data:        fmtData(dataProjVal),
+            autor:       cel(25, 4),
+            parecer:     cel(25, 7),
+            anexos:      cel(25, 13),
+            observacoes: obsProj
+          });
+        }
+
+        // Resposta Fiscalização — L37, L39
+        const dataFiscVal = rows[36]?.[1]; // L37
+        const obsFisc = cel(39, 1);
+        if (dataFiscVal || obsFisc) {
+          pedido.respostas.push({
+            tipo:        'Fiscalização',
+            data:        fmtData(dataFiscVal),
+            autor:       cel(37, 4),
+            parecer:     cel(37, 7),
+            anexos:      cel(37, 13),
+            observacoes: obsFisc
+          });
+        }
+
+        return pedido;
+      };
+
+      // Processar ficheiro principal (preferir Resposta se existir — tem tudo)
       let dadosPedido = null;
       let erroPedido = null;
-      const fParaLer = fResposta || fPedido; // preferir Resposta se existir (tem tudo)
+      const fParaLer = fResposta || fPedido;
       if (fParaLer) {
         try {
-          dadosPedido = await lerExcelPE(fParaLer);
+          dadosPedido = tipo === 'pa' ? await lerExcelPA(fParaLer) : await lerExcelPE(fParaLer);
         } catch (e) {
           erroPedido = e.message;
-          console.warn('Erro ao ler Excel PE:', e.message);
+          console.warn('Erro ao ler Excel:', e.message);
         }
       }
 
