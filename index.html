@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
-    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -283,21 +283,21 @@ tr.tr-click:hover td{background:#F5F7FA}
     <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:3px;letter-spacing:.4px">5J07 · CES · Em Curso</div>
     <div style="font-size:20px;font-weight:400;color:#fff">Cesae</div>
     <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:4px">Santo Tirso</div>
+    <div style="display:flex;gap:20px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.15)">
+      <div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Cliente</div>
+        <div style="font-size:12px;font-weight:500;color:#fff">cl1</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,.15)"></div>
+      <div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Empreiteiro</div>
+        <div style="font-size:12px;font-weight:500;color:#fff">f1</div>
+      </div>
+    </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:10px">
-    <div style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);overflow:hidden">
-    <div style="display:flex;align-items:center;gap:10px;padding:11px 14px 10px;border-bottom:0.5px solid var(--border-light)">
-      <div style="width:34px;height:34px;border-radius:var(--radius);background:#E6F1FB;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 48 48" fill="none"><rect x="8" y="20" width="32" height="22" rx="2" stroke="#185FA5" stroke-width="2.5"></rect><path d="M16 20v-6a8 8 0 0116 0v6" stroke="#185FA5" stroke-width="2.5" stroke-linecap="round"></path><rect x="20" y="28" width="8" height="14" rx="1" fill="#185FA5" opacity=".4"></rect></svg></div>
-      <div>
-        <div style="font-size:9px;font-weight:700;color:#185FA5;letter-spacing:.7px;text-transform:uppercase">EMP</div>
-        <div style="font-size:13px;font-weight:500;color:var(--text);margin-top:1px">Empresa</div>
-      </div>
-    </div><div style="padding:12px 14px"><div style="font-size:10px;color:var(--text-muted);margin-bottom:2px">Cliente</div>
-     <div style="font-size:12px;font-weight:500;color:#185FA5;margin-bottom:8px">cl1</div>
-     <div style="height:0.5px;background:var(--border-light);margin:6px 0"></div>
-     <div style="font-size:10px;color:var(--text-muted);margin-top:8px;margin-bottom:2px">Empreiteiro</div>
-     <div style="font-size:12px;font-weight:500">f1</div></div></div><div style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);overflow:hidden">
+  <div style="display:flex;gap:10px;margin-bottom:10px;overflow-x:auto;align-items:flex-start">
+    <div style="min-width:170px;flex:1"><div style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);overflow:hidden">
     <div style="display:flex;align-items:center;gap:10px;padding:11px 14px 10px;border-bottom:0.5px solid var(--border-light)">
       <div style="width:34px;height:34px;border-radius:var(--radius);background:#E1F5EE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 48 48" fill="none"><rect x="10" y="8" width="28" height="32" rx="3" stroke="#0F6E56" stroke-width="2.5"></rect><path d="M16 18h16M16 24h10M16 30h13" stroke="#0F6E56" stroke-width="2" stroke-linecap="round"></path></svg></div>
       <div>
@@ -324,20 +324,18 @@ tr.tr-click:hover td{background:#F5F7FA}
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Duração</span>
       <span style="font-size:12px;font-weight:500;color:var(--text)">379 d</span>
-    </div></div></div><div style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);overflow:hidden">
+    </div></div></div></div><div style="min-width:170px;flex:1"><div style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);overflow:hidden">
     <div style="display:flex;align-items:center;gap:10px;padding:11px 14px 10px;border-bottom:0.5px solid var(--border-light)">
-      <div style="width:34px;height:34px;border-radius:var(--radius);background:#FEF9EC;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="#854F0B" stroke-width="2.5"></circle><path d="M24 16v8l5 5" stroke="#854F0B" stroke-width="2.5" stroke-linecap="round"></path><path d="M34 10l4 4-4 4" stroke="#854F0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      <div style="width:34px;height:34px;border-radius:var(--radius);background:#FEF9EC;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="#854F0B" stroke-width="2.5"></circle><path d="M24 16v8l5 5" stroke="#854F0B" stroke-width="2.5" stroke-linecap="round"></path></svg></div>
       <div>
-        <div style="font-size:9px;font-weight:700;color:#854F0B;letter-spacing:.7px;text-transform:uppercase">PRR</div>
-        <div style="font-size:13px;font-weight:500;color:var(--text);margin-top:1px">Prorrogações</div>
+        <div style="font-size:9px;font-weight:700;color:#854F0B;letter-spacing:.7px;text-transform:uppercase">PRR 1</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text);margin-top:1px">Prorrogação 1</div>
       </div>
-    </div><div style="padding:12px 14px"><div style="background:#FEF9EC;border:0.5px solid #FAC775;border-radius:var(--radius);padding:9px 11px;margin-bottom:8px">
-      <div style="font-size:9px;font-weight:700;color:#854F0B;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Prorrogação 1</div>
-      
+    </div><div style="padding:12px 14px"><div style="height:22px"></div><div style="height:0.5px;background:var(--border-light);margin:6px 0"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Data</span>
       <span style="font-size:12px;font-weight:500;color:var(--text)">05/01/2026</span>
-    </div>
+    </div><div style="height:22px"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Novo Fim</span>
       <span style="font-size:12px;font-weight:500;color:var(--text)">10/12/2026</span>
@@ -345,14 +343,18 @@ tr.tr-click:hover td{background:#F5F7FA}
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Duração</span>
       <span style="font-size:12px;font-weight:500;color:var(--text)">402 d</span>
-    </div>
-    </div><div style="background:#FEF9EC;border:0.5px solid #FAC775;border-radius:var(--radius);padding:9px 11px;margin-bottom:8px">
-      <div style="font-size:9px;font-weight:700;color:#854F0B;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Prorrogação 2</div>
-      
+    </div></div></div></div><div style="min-width:170px;flex:1"><div style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);overflow:hidden">
+    <div style="display:flex;align-items:center;gap:10px;padding:11px 14px 10px;border-bottom:0.5px solid var(--border-light)">
+      <div style="width:34px;height:34px;border-radius:var(--radius);background:#FEF9EC;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="#854F0B" stroke-width="2.5"></circle><path d="M24 16v8l5 5" stroke="#854F0B" stroke-width="2.5" stroke-linecap="round"></path></svg></div>
+      <div>
+        <div style="font-size:9px;font-weight:700;color:#854F0B;letter-spacing:.7px;text-transform:uppercase">PRR 2</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text);margin-top:1px">Prorrogação 2</div>
+      </div>
+    </div><div style="padding:12px 14px"><div style="height:22px"></div><div style="height:0.5px;background:var(--border-light);margin:6px 0"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Data</span>
       <span style="font-size:12px;font-weight:500;color:var(--text)">16/02/2026</span>
-    </div>
+    </div><div style="height:22px"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Novo Fim</span>
       <span style="font-size:12px;font-weight:500;color:var(--text)">25/01/2027</span>
@@ -360,19 +362,18 @@ tr.tr-click:hover td{background:#F5F7FA}
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Duração</span>
       <span style="font-size:12px;font-weight:500;color:var(--text)">448 d</span>
-    </div>
-    </div></div></div><div style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);overflow:hidden">
+    </div></div></div></div><div style="min-width:170px;flex:1"><div style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);overflow:hidden">
     <div style="display:flex;align-items:center;gap:10px;padding:11px 14px 10px;border-bottom:0.5px solid var(--border-light)">
       <div style="width:34px;height:34px;border-radius:var(--radius);background:#FCEBEB;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 48 48" fill="none"><path d="M10 34l10-14 8 8 10-16" stroke="#A32D2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="38" cy="12" r="4" fill="#A32D2D" opacity=".4"></circle></svg></div>
       <div>
         <div style="font-size:9px;font-weight:700;color:#A32D2D;letter-spacing:.7px;text-transform:uppercase">DEV</div>
         <div style="font-size:13px;font-weight:500;color:var(--text);margin-top:1px">Desvios</div>
       </div>
-    </div><div style="padding:12px 14px">
+    </div><div style="padding:12px 14px"><div style="height:22px"></div><div style="height:0.5px;background:var(--border-light);margin:6px 0"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Real − Previsto</span>
       <span style="font-size:12px;font-weight:500;color:#A32D2D">+14 d</span>
-    </div>
+    </div><div style="height:22px"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Prorrogação 1</span>
       <span style="font-size:12px;font-weight:500;color:#A32D2D">+23 d</span>
@@ -380,7 +381,7 @@ tr.tr-click:hover td{background:#F5F7FA}
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Prorrogação 2</span>
       <span style="font-size:12px;font-weight:500;color:#A32D2D">+46 d</span>
-    </div></div></div><div style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);overflow:hidden">
+    </div></div></div></div><div style="min-width:170px;flex:1"><div style="background:var(--bg-card);border:0.5px solid var(--border-light);border-radius:var(--radius);overflow:hidden">
     <div style="display:flex;align-items:center;gap:10px;padding:11px 14px 10px;border-bottom:0.5px solid var(--border-light)">
       <div style="width:34px;height:34px;border-radius:var(--radius);background:#EEEDFE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 48 48" fill="none"><circle cx="12" cy="24" r="3" fill="#534AB7"></circle><circle cx="24" cy="24" r="3" fill="#534AB7"></circle><circle cx="36" cy="24" r="3" fill="#534AB7"></circle><path d="M15 24h6M27 24h6" stroke="#534AB7" stroke-width="2"></path><path d="M36 16v16" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 3"></path></svg></div>
       <div>
@@ -389,17 +390,17 @@ tr.tr-click:hover td{background:#F5F7FA}
       </div>
     </div><div style="padding:12px 14px">
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
+      <span style="font-size:11px;color:var(--text-muted)">Desvio</span>
+      <span style="font-size:12px;font-weight:500;color:var(--text-muted)">—</span>
+    </div><div style="height:0.5px;background:var(--border-light);margin:6px 0"></div><div style="height:22px"></div><div style="height:22px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Fim</span>
       <span style="font-size:12px;font-weight:500;color:var(--text)">—</span>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
       <span style="font-size:11px;color:var(--text-muted)">Duração</span>
       <span style="font-size:12px;font-weight:500;color:var(--text)">—</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0">
-      <span style="font-size:11px;color:var(--text-muted)">Desvio</span>
-      <span style="font-size:12px;font-weight:500;color:var(--text-muted)">—</span>
-    </div></div></div>
+    </div></div></div></div>
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -2457,51 +2458,59 @@ function renderFichaObra(app){
   const intvSec=(titulo,users,extraFn=u=>u.funcao||u.email||'—')=>
     secLbl(titulo)+(users.length?users.map(u=>userRow(u,extraFn(u))).join(''):`<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:4px 0">Não definido</div>`);
 
-  // Cards Linha 1
+  // Linha de altura fixa para alinhamento
+  const sp=`<div style="height:22px"></div>`;
+  const rowH=`<div style="height:0.5px;background:var(--border-light);margin:6px 0"></div>`;
+
+  // Card Empresa — linha 1: Cliente, linha 2: divider, linha 3: Empreiteiro
   const cardEmpresa=card(
     cardHead('EMP','Empresa',`<svg width="18" height="18" viewBox="0 0 48 48" fill="none"><rect x="8" y="20" width="32" height="22" rx="2" stroke="#185FA5" stroke-width="2.5"/><path d="M16 20v-6a8 8 0 0116 0v6" stroke="#185FA5" stroke-width="2.5" stroke-linecap="round"/><rect x="20" y="28" width="8" height="14" rx="1" fill="#185FA5" opacity=".4"/></svg>`,'#E6F1FB','#185FA5'),
     `<div style="font-size:10px;color:var(--text-muted);margin-bottom:2px">Cliente</div>
-     <div style="font-size:12px;font-weight:500;color:#185FA5;margin-bottom:8px">${cli?cli.nome:'—'}</div>
-     ${divider}
-     <div style="font-size:10px;color:var(--text-muted);margin-top:8px;margin-bottom:2px">Empreiteiro</div>
-     <div style="font-size:12px;font-weight:500">${empEmpresas.length?empEmpresas.map(e=>e.nome).join(', '):'—'}</div>`
+     <div style="font-size:12px;font-weight:500;color:#185FA5;margin-bottom:0">${cli?cli.nome:'—'}</div>`+
+    rowH+
+    `<div style="font-size:10px;color:var(--text-muted);margin-bottom:2px">Empreiteiro</div>
+     <div style="font-size:12px;font-weight:500">${empEmpresas.length?empEmpresas.map(e=>e.nome).join(', '):'—'}</div>`+
+    sp+sp
   );
 
   const cardContrato=card(
     cardHead('CTR','Contrato',`<svg width="18" height="18" viewBox="0 0 48 48" fill="none"><rect x="10" y="8" width="28" height="32" rx="3" stroke="#0F6E56" stroke-width="2.5"/><path d="M16 18h16M16 24h10M16 30h13" stroke="#0F6E56" stroke-width="2" stroke-linecap="round"/></svg>`,'#E1F5EE','#0F6E56'),
     row('Valor',o.valorObra?Number(o.valorObra).toLocaleString('pt-PT',{minimumFractionDigits:2})+' €':null,'var(--gold)')+
-    divider+
+    rowH+
     row('Início Previsto',fmtDate(o.inicioPrevisto))+
     row('Início Real',fmtDate(o.inicioReal))+
     row('Fim Previsto',fmtDate(o.fimPrevisto))+
     row('Duração',o.prazo?o.prazo+' d':null)
   );
 
-  const prrHtml=prrs.length?prrs.map((p,i)=>{
+  const cardsPrrs=prrs.map((p,i)=>{
     let dur='—';
     if(p.novoFim&&o.fimPrevisto&&o.prazo){const diff=Math.round((new Date(p.novoFim)-new Date(o.fimPrevisto))/86400000);dur=(Number(o.prazo)+diff)+' d';}
-    return `<div style="background:#FEF9EC;border:0.5px solid #FAC775;border-radius:var(--radius);padding:9px 11px;margin-bottom:8px">
-      <div style="font-size:9px;font-weight:700;color:#854F0B;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Prorrogação ${i+1}</div>
-      ${row('Data',fmtDate(p.data))}${row('Novo Fim',fmtDate(p.novoFim))}${row('Duração',dur)}
-    </div>`;
-  }).join(''):`<div style="font-size:12px;color:var(--text-muted);font-style:italic">Sem prorrogações</div>`;
-
-  const cardProrrogacoes=card(
-    cardHead('PRR','Prorrogações',`<svg width="18" height="18" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="#854F0B" stroke-width="2.5"/><path d="M24 16v8l5 5" stroke="#854F0B" stroke-width="2.5" stroke-linecap="round"/><path d="M34 10l4 4-4 4" stroke="#854F0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,'#FEF9EC','#854F0B'),
-    prrHtml
-  );
+    return card(
+      cardHead('PRR '+(i+1),'Prorrogação '+(i+1),`<svg width="18" height="18" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="#854F0B" stroke-width="2.5"/><path d="M24 16v8l5 5" stroke="#854F0B" stroke-width="2.5" stroke-linecap="round"/></svg>`,'#FEF9EC','#854F0B'),
+      sp+rowH+
+      row('Data',fmtDate(p.data))+
+      sp+
+      row('Novo Fim',fmtDate(p.novoFim))+
+      row('Duração',dur)
+    );
+  }).join('');
 
   const cardDesvios=card(
     cardHead('DEV','Desvios',`<svg width="18" height="18" viewBox="0 0 48 48" fill="none"><path d="M10 34l10-14 8 8 10-16" stroke="#A32D2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="38" cy="12" r="4" fill="#A32D2D" opacity=".4"/></svg>`,'#FCEBEB','#A32D2D'),
+    sp+rowH+
     row('Real − Previsto',desvInicio||'—',desvInicioDias!=null&&desvInicioDias>0?'#A32D2D':desvInicioDias!=null?'#0F6E56':'var(--text-muted)')+
+    sp+
     prrs.map((p,i)=>{const d=desvFimPrrs[i];return row('Prorrogação '+(i+1),d||'—',d&&d.startsWith('+')?'#A32D2D':d?'#0F6E56':'var(--text-muted)');}).join('')
   );
 
   const cardReal=card(
     cardHead('REAL','Real',`<svg width="18" height="18" viewBox="0 0 48 48" fill="none"><circle cx="12" cy="24" r="3" fill="#534AB7"/><circle cx="24" cy="24" r="3" fill="#534AB7"/><circle cx="36" cy="24" r="3" fill="#534AB7"/><path d="M15 24h6M27 24h6" stroke="#534AB7" stroke-width="2"/><path d="M36 16v16" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 3"/></svg>`,'#EEEDFE','#534AB7'),
+    row('Desvio',desvReal||'—',desvReal&&desvReal.startsWith('+')?'#A32D2D':desvReal?'#0F6E56':'var(--text-muted)')+
+    rowH+
+    sp+sp+
     row('Fim',fmtDate(o.fimReal)||'—')+
-    row('Duração',duracaoReal)+
-    row('Desvio',desvReal||'—',desvReal&&desvReal.startsWith('+')?'#A32D2D':desvReal?'#0F6E56':'var(--text-muted)')
+    row('Duração',duracaoReal)
   );
 
   // Cards Linha 2
@@ -2532,6 +2541,16 @@ function renderFichaObra(app){
     relsHtml
   );
 
+  const linha1Cards=[cardEmpresa,cardContrato,...prrs.map((_,i)=>{
+    const p=prrs[i];
+    let dur='—';
+    if(p.novoFim&&o.fimPrevisto&&o.prazo){const diff=Math.round((new Date(p.novoFim)-new Date(o.fimPrevisto))/86400000);dur=(Number(o.prazo)+diff)+' d';}
+    return card(
+      cardHead('PRR '+(i+1),'Prorrogação '+(i+1),`<svg width="18" height="18" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="#854F0B" stroke-width="2.5"/><path d="M24 16v8l5 5" stroke="#854F0B" stroke-width="2.5" stroke-linecap="round"/></svg>`,'#FEF9EC','#854F0B'),
+      sp+rowH+row('Data',fmtDate(p.data))+sp+row('Novo Fim',fmtDate(p.novoFim))+row('Duração',dur)
+    );
+  }),cardDesvios,cardReal];
+
   app.innerHTML=`
   <button class="back-btn" onclick="fichObraId=null;render()">← Voltar a Obras</button>
 
@@ -2539,10 +2558,21 @@ function renderFichaObra(app){
     <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:3px;letter-spacing:.4px">${o.codigo} · ${o.sigla} · ${o.estado||''}</div>
     <div style="font-size:20px;font-weight:400;color:#fff">${o.nome}</div>
     ${o.morada||o.localidade?`<div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:4px">${[o.morada,o.localidade].filter(Boolean).join(' · ')}</div>`:''}
+    <div style="display:flex;gap:20px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.15)">
+      <div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Cliente</div>
+        <div style="font-size:12px;font-weight:500;color:#fff">${cli?cli.nome:'—'}</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,.15)"></div>
+      <div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Empreiteiro</div>
+        <div style="font-size:12px;font-weight:500;color:#fff">${empEmpresas.length?empEmpresas.map(e=>e.nome).join(', '):'—'}</div>
+      </div>
+    </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:10px">
-    ${cardEmpresa}${cardContrato}${cardProrrogacoes}${cardDesvios}${cardReal}
+  <div style="display:flex;gap:10px;margin-bottom:10px;overflow-x:auto;align-items:flex-start">
+    ${linha1Cards.filter((_,i)=>i!==0).map(c=>`<div style="min-width:170px;flex:1">${c}</div>`).join('')}
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
