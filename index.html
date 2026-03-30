@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
-    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -501,16 +501,14 @@ tr.tr-click:hover td{background:#F5F7FA}
 <!-- end app-shell -->
 
 <!-- MODAL -->
-<div class="modal-bg" id="modal" style="display: none;" onclick="if(event.target===this)closeModal()">
+<div class="modal-bg" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal" id="modal-box">
     <div class="modal-header">
-      <div class="modal-title" id="modal-title">020.1 PE — Acabamento Extremo Cobertura Edif 4</div>
+      <div class="modal-title" id="modal-title"></div>
       <button class="btn-icon" style="color:rgba(255,255,255,.7);font-size:16px" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-body" id="modal-body"><div style="font-size:14px;font-weight:500;margin-bottom:4px">020.1 PE — Acabamento Extremo Cobertura Edif 4</div>
-    <div style="font-size:11px;color:var(--text-muted);margin-bottom:16px">ARQ</div>
-    <div style="font-size:10px;font-weight:700;color:#185FA5;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Pedido</div><div style="border-top:1px solid var(--border-light);margin:12px 0"></div><div style="font-size:12px;color:var(--text-muted);font-style:italic">Sem resposta importada.</div></div>
-    <div class="modal-footer" id="modal-footer"><button class="btn btn-outline" onclick="closeModal()">Fechar</button></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
   </div>
 </div>
 
@@ -1806,43 +1804,42 @@ window.sincronizarPEPA=async function(relId,tipo){
       ok++;
     }
 
-    // Itens com pasta — processar com IA em lotes
-    for(let i=0;i<comPasta.length;i+=LOTE){
-      const lote=comPasta.slice(i,i+LOTE);
-      setStatus(`⚙ A processar ${Math.min(i+LOTE,comPasta.length)} de ${comPasta.length} ${sigla}(s) com documentos...`);
-      for(const item of lote){
-        try{
-          const procResp=await fetch(VERCEL,{
-            method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({action:'processar_pe_pa',obraCodigo:o.codigo,obraNome:o.nome,tipo,pastaPath:item.pastaPath,pastaNome:item.pastaNome})
-          });
-          const procData=await procResp.json();
-          if(!procData.success)throw new Error(procData.error||'Erro ao processar');
-          if(procData._debug)console.log(`DEBUG ${sigla} ${item.ref}:`,procData._debug);
-          // A resposta PE vem com respostas[] dentro do pedido
-          let pedidoFinal=procData.pedido||null;
-          if(pedidoFinal && procData.resposta?.respostas){
-            pedidoFinal.respostas=procData.resposta.respostas;
-          } else if(!pedidoFinal && procData.resposta){
-            pedidoFinal={respostas:procData.resposta.respostas||[]};
-          }
-          r.conteudo[tipo].lista.push({
-            ref:item.ref, nome:item.nome,
-            esp:item.esp,
-            dataSubmissao:item.dataSubmissao,
-            dataEnvioFisc:item.dataEnvioFisc,
-            dataProjetista:item.dataProjetista,
-            dataRespFisc:item.dataRespFisc,
-            dataFecho:item.dataFecho,
-            obs:item.obs, temResposta:item.temResposta,
-            pedido:pedidoFinal,
-            resposta:procData.resposta||null,
-            anexos:procData.anexos||[],
-            ficheiros:procData.ficheiros||{}
-          });
-          ok++;
-        }catch(e){erros++;console.error('Erro em '+item.ref+':',e.message);}
-      }
+    // Itens com pasta — processar com IA UM DE CADA VEZ com pausa
+    for(let i=0;i<comPasta.length;i++){
+      const item=comPasta[i];
+      setStatus(`⚙ A processar ${i+1} de ${comPasta.length} ${sigla}(s)...`);
+      try{
+        const procResp=await fetch(VERCEL,{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({action:'processar_pe_pa',obraCodigo:o.codigo,obraNome:o.nome,tipo,pastaPath:item.pastaPath,pastaNome:item.pastaNome})
+        });
+        const procData=await procResp.json();
+        if(!procData.success)throw new Error(procData.error||'Erro ao processar');
+        if(procData._debug)console.log(`DEBUG ${sigla} ${item.ref}:`,procData._debug);
+        let pedidoFinal=procData.pedido||null;
+        if(pedidoFinal && procData.resposta?.respostas){
+          pedidoFinal.respostas=procData.resposta.respostas;
+        } else if(!pedidoFinal && procData.resposta){
+          pedidoFinal={respostas:procData.resposta.respostas||[]};
+        }
+        r.conteudo[tipo].lista.push({
+          ref:item.ref, nome:item.nome,
+          esp:item.esp,
+          dataSubmissao:item.dataSubmissao,
+          dataEnvioFisc:item.dataEnvioFisc,
+          dataProjetista:item.dataProjetista,
+          dataRespFisc:item.dataRespFisc,
+          dataFecho:item.dataFecho,
+          obs:item.obs, temResposta:item.temResposta,
+          pedido:pedidoFinal,
+          resposta:procData.resposta||null,
+          anexos:procData.anexos||[],
+          ficheiros:procData.ficheiros||{}
+        });
+        ok++;
+      }catch(e){erros++;console.error('Erro em '+item.ref+':',e.message);}
+      // Pausa de 3s entre pedidos para evitar rate limit
+      if(i<comPasta.length-1) await new Promise(r=>setTimeout(r,3000));
     }
 
     // Ordenar por referência
@@ -4050,15 +4047,7 @@ window.chatAnswer=function(q){
 };
 
 showLogin();
-</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
+</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
 
 
-<div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
-        <div id="yt_article_summary_widget" class="yt_article_summary_widget"><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1.40123 27.3686C-0.44103 25.5284 -0.441033 22.5449 1.4012 20.7047L16.5971 5.52573L24.0098 12.9301L5.47818 31.4409L1.40123 27.3686Z" fill="#FF4E74"></path>
-        <path d="M35.1286 24.0367L16.5972 5.5258L20.6741 1.45341C22.5164 -0.386772 25.5033 -0.386775 27.3455 1.45341L42.5415 16.6323L35.1286 24.0367Z" fill="#FFF85E"></path>
-        <path d="M24.0099 35.143L42.5416 16.6323L46.6183 20.7046C48.4606 22.5448 48.4606 25.5284 46.6183 27.3686L31.4224 42.5476L24.0099 35.143Z" fill="#76FF54"></path>
-        <path d="M27.3454 46.6198C25.5032 48.4601 22.5163 48.4601 20.674 46.6198L5.47815 31.4409L12.8908 24.0366L31.4223 42.5476L27.3454 46.6198Z" fill="#5C94FF"></path>
-    </svg></div>
-        <div id="yt_article_summary_close_button" class="yt_article_summary_close_button">×</div>
-    </div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div></body></html>
+</body></html>
