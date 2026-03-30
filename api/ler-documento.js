@@ -284,44 +284,15 @@ Se um campo não existir usa "".`;
       const subpastas = await nasListar(sid, pastaTipo);
       await nasLogout(sid);
 
-      // Apenas directórios — aceita PE/PA no nome em qualquer posição e capitalização
-      const pastas = subpastas.filter(f => f.isdir && (f.name || '').toUpperCase().includes(sigla));
+      // Mapa de pastas NAS por referência
+      const mapaPasstas = {};
+      for (const p of subpastas) {
+        if (!p.isdir) continue;
+        const match = p.name.match(/^(\d+\.\d+)\s+(?:PE|PA)/i);
+        if (match) mapaPasstas[match[1]] = p;
+      }
 
-      // 3. Para cada subpasta extrair referência e nome
-      const itens = pastas.map(p => {
-        // Ex: "001.0 PE - Demolição de Paredes"
-        const match = p.name.match(/^(\d+\.\d+)\s+(?:PE|PA)\s*[-–]\s*(.+)$/i);
-        const ref = match ? match[1] : p.name;
-        const nome = match ? match[2].trim() : p.name;
-
-        // Cruzar com dados do Excel (fonte de verdade para metadados)
-        const excelRow = dadosExcel[tipo].find(e =>
-          e.ref === ref || e.assunto?.toLowerCase() === nome.toLowerCase()
-        ) || {};
-
-        return {
-          ref,
-          nome,
-          pastaPath: p.path,
-          pastaNome: p.name,
-          // Metadados do Excel (fonte de verdade)
-          esp:            excelRow.esp            || '',
-          dataSubmissao:  excelRow.dataSubmissao  || '',  // Ent Exec
-          dataEnvioFisc:  excelRow.dataEnvioFisc  || '',  // Fiscaliz (envio)
-          dataProjetista: excelRow.dataProjetista || '',  // Projetista
-          dataRespFisc:   excelRow.dataRespFisc   || '',  // Fiscaliz (resp)
-          dataFecho:      excelRow.dataFecho       || '',  // Fecho
-          dataResposta:   excelRow.dataRespFisc    || '',  // alias para PA
-          estado:         excelRow.estado          || '',
-          tipoME:         excelRow.tipoME          || '',
-          tipoPN:         excelRow.tipoPN          || '',
-          obs:            excelRow.obs             || '',
-          temResposta:    !!(excelRow.dataRespFisc || excelRow.dataResposta),
-        };
-      });
-
-      // 4. Filtrar: qualquer PE/PA que tenha actividade no mês do relatório
-      // (qualquer coluna de data do Excel dentro do mês/ano)
+      // 3. Partir do Excel — filtrar por mês/ano em qualquer coluna de data
       const mesNum = parseInt(mes);
       const anoNum = parseInt(ano);
 
@@ -334,13 +305,37 @@ Se um campo não existir usa "".`;
         return false;
       };
 
-      // Incluir se qualquer data do item cair no mês
-      const itensFiltrados = itens.filter(item =>
-        dataCorresponde(item.dataSubmissao) ||
-        dataCorresponde(item.dataResposta)  ||
-        dataCorresponde(item.dataFecho)
+      const itensExcel = dadosExcel[tipo].filter(e =>
+        dataCorresponde(e.dataSubmissao)  ||
+        dataCorresponde(e.dataEnvioFisc)  ||
+        dataCorresponde(e.dataProjetista) ||
+        dataCorresponde(e.dataRespFisc)   ||
+        dataCorresponde(e.dataFecho)
       );
-      itensFiltrados.sort((a, b) => {
+
+      // 4. Construir itens cruzando Excel (fonte de verdade) com pasta NAS (se existir)
+      const itens = itensExcel.map(e => {
+        const pasta = mapaPasstas[e.ref] || null;
+        return {
+          ref:            e.ref,
+          nome:           e.assunto,
+          pastaPath:      pasta ? pasta.path : null,
+          pastaNome:      pasta ? pasta.name : null,
+          temPasta:       !!pasta,
+          esp:            e.esp            || '',
+          dataSubmissao:  e.dataSubmissao  || '',
+          dataEnvioFisc:  e.dataEnvioFisc  || '',
+          dataProjetista: e.dataProjetista || '',
+          dataRespFisc:   e.dataRespFisc   || '',
+          dataFecho:      e.dataFecho      || '',
+          dataResposta:   e.dataRespFisc   || '',
+          estado:         e.estado         || '',
+          obs:            e.obs            || '',
+          temResposta:    !!e.dataRespFisc,
+        };
+      });
+
+      itens.sort((a, b) => {
         const [an, ar] = a.ref.split('.').map(Number);
         const [bn, br] = b.ref.split('.').map(Number);
         return an !== bn ? an - bn : ar - br;
@@ -348,17 +343,10 @@ Se um campo não existir usa "".`;
 
       return res.status(200).json({
         success: true,
-        itens: itensFiltrados,
+        itens,
         totalExcel: dadosExcel[tipo].length,
         excelEncontrado: !!excel,
-        // debug — remover depois de confirmar funcionamento
-        _debug: {
-          pastaTipo,
-          totalSubpastas: subpastas.length,
-          nomesSubpastas: subpastas.slice(0,10).map(f=>f.name),
-          totalItens: itens.length,
-          itensFiltrados: itensFiltrados.length
-        }
+        _debug: { pastaTipo, totalSubpastas: subpastas.length, totalExcel: dadosExcel[tipo].length, itensMes: itens.length }
       });
     } catch (err) {
       return res.status(500).json({ error: err.message });
