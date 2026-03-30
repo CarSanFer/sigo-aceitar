@@ -1705,38 +1705,37 @@ window.sincronizarPEPA=async function(relId,tipo){
       for(let i=0;i<comPasta.length;i++){
         const item=comPasta[i];
         setStatus(`⚙ A processar ${i+1} de ${comPasta.length} ${sigla}(s)...`);
-      try{
-        const procResp=await fetch(VERCEL,{
-          method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({action:'processar_pe_pa',obraCodigo:o.codigo,obraNome:o.nome,tipo,pastaPath:item.pastaPath,pastaNome:item.pastaNome})
-        });
-        const procData=await procResp.json();
-        if(!procData.success)throw new Error(procData.error||'Erro ao processar');
-        if(procData._debug)console.log(`DEBUG ${sigla} ${item.ref}:`,procData._debug);
-        let pedidoFinal=procData.pedido||null;
-        if(pedidoFinal && procData.resposta?.respostas){
-          pedidoFinal.respostas=procData.resposta.respostas;
-        } else if(!pedidoFinal && procData.resposta){
-          pedidoFinal={respostas:procData.resposta.respostas||[]};
-        }
-        r.conteudo[tipo].lista.push({
-          ref:item.ref, nome:item.nome,
-          esp:item.esp,
-          dataSubmissao:item.dataSubmissao,
-          dataEnvioFisc:item.dataEnvioFisc,
-          dataProjetista:item.dataProjetista,
-          dataRespFisc:item.dataRespFisc,
-          dataFecho:item.dataFecho,
-          obs:item.obs, temResposta:item.temResposta,
-          pedido:pedidoFinal,
-          resposta:procData.resposta||null,
-          anexos:procData.anexos||[],
-          ficheiros:procData.ficheiros||{}
-        });
-        ok++;
-      }catch(e){erros++;console.error('Erro em '+item.ref+':',e.message);}
+        try{
+          const procResp=await fetch(VERCEL,{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({action:'processar_pe_pa',obraCodigo:o.codigo,obraNome:o.nome,tipo,pastaPath:item.pastaPath,pastaNome:item.pastaNome})
+          });
+          const procData=await procResp.json();
+          if(!procData.success)throw new Error(procData.error||'Erro ao processar');
+          if(procData._debug)console.log(`DEBUG ${sigla} ${item.ref}:`,procData._debug);
+          let pedidoFinal=procData.pedido||null;
+          if(pedidoFinal && procData.resposta?.respostas){
+            pedidoFinal.respostas=procData.resposta.respostas;
+          } else if(!pedidoFinal && procData.resposta){
+            pedidoFinal={respostas:procData.resposta.respostas||[]};
+          }
+          r.conteudo[tipo].lista.push({
+            ref:item.ref, nome:item.nome,
+            esp:item.esp,
+            dataSubmissao:item.dataSubmissao,
+            dataEnvioFisc:item.dataEnvioFisc,
+            dataProjetista:item.dataProjetista,
+            dataRespFisc:item.dataRespFisc,
+            dataFecho:item.dataFecho,
+            obs:item.obs, temResposta:item.temResposta,
+            pedido:pedidoFinal,
+            resposta:procData.resposta||null,
+            anexos:procData.anexos||[],
+            ficheiros:procData.ficheiros||{}
+          });
+          ok++;
+        }catch(e){erros++;console.error('Erro em '+item.ref+':',e.message);}
       }
-    }
 
     // Ordenar por referência
     r.conteudo[tipo].lista.sort((a,b)=>{
