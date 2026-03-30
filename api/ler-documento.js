@@ -28,9 +28,12 @@ participantes (string), temas (string), temaPrincipal (string), decisoes (string
 Se um campo não existir usa "" ou [].`;
 
   const promptPE = `Extrai os dados deste Pedido de Esclarecimento (PE) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
-Campos: referencia (string, ex: "001.0"), assunto (string), descricao (string), elementos (string, elementos pedidos ou em causa),
-disciplina (string, ex: Arquitetura/Estruturas/MEP/etc), urgente (boolean), obs (string).
-Se um campo não existir usa "" ou false.`;
+Campos do pedido: autor (string), enviado (dd/mm/yyyy), idArtigos (string), desenhos (string), assunto (string),
+anexos (string, lista de anexos se existirem), pedido (string, texto do pedido de esclarecimento).
+Campos da resposta (pode haver mais do que uma, devolver array "respostas"): cada elemento tem
+data (dd/mm/yyyy), autor (string), anexos (string), esclarecimento (string), observacoes (string).
+Se um campo não existir usa "" ou [].
+Formato: { "autor":"", "enviado":"", "idArtigos":"", "desenhos":"", "assunto":"", "anexos":"", "pedido":"", "respostas":[] }`;
 
   const promptPA = `Extrai os dados deste Pedido de Aprovação (PA) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
 Campos: referencia (string, ex: "001.0"), assunto (string), descricao (string), elementos (string, elementos submetidos a aprovação),
@@ -302,20 +305,23 @@ Se um campo não existir usa "".`;
           pastaPath: p.path,
           pastaNome: p.name,
           // Metadados do Excel (fonte de verdade)
-          dataSubmissao: excelRow.dataSubmissao || '',
-          dataResposta: excelRow.dataRespFisc || excelRow.dataResposta || '',
-          dataFecho: excelRow.dataFecho || '',
-          estado: excelRow.estado || '',
-          esp: excelRow.esp || '',
-          tipoME: excelRow.tipoME || '',
-          tipoPN: excelRow.tipoPN || '',
-          obs: excelRow.obs || '',
-          temResposta: !!(excelRow.dataRespFisc || excelRow.dataResposta),
+          esp:            excelRow.esp            || '',
+          dataSubmissao:  excelRow.dataSubmissao  || '',  // Ent Exec
+          dataEnvioFisc:  excelRow.dataEnvioFisc  || '',  // Fiscaliz (envio)
+          dataProjetista: excelRow.dataProjetista || '',  // Projetista
+          dataRespFisc:   excelRow.dataRespFisc   || '',  // Fiscaliz (resp)
+          dataFecho:      excelRow.dataFecho       || '',  // Fecho
+          dataResposta:   excelRow.dataRespFisc    || '',  // alias para PA
+          estado:         excelRow.estado          || '',
+          tipoME:         excelRow.tipoME          || '',
+          tipoPN:         excelRow.tipoPN          || '',
+          obs:            excelRow.obs             || '',
+          temResposta:    !!(excelRow.dataRespFisc || excelRow.dataResposta),
         };
       });
 
-      // 4. Filtrar por mês/ano de submissão (fonte de verdade: Excel)
-      // Aceita formatos: dd/mm/yyyy, d/m/yyyy, yyyy-mm-dd, mm/yyyy, etc.
+      // 4. Filtrar: qualquer PE/PA que tenha actividade no mês do relatório
+      // (qualquer coluna de data do Excel dentro do mês/ano)
       const mesNum = parseInt(mes);
       const anoNum = parseInt(ano);
 
@@ -325,15 +331,14 @@ Se um campo não existir usa "".`;
         if (m1) return parseInt(m1[2]) === mesNum && parseInt(m1[3]) === anoNum;
         const m2 = dataStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
         if (m2) return parseInt(m2[2]) === mesNum && parseInt(m2[1]) === anoNum;
-        const m3 = dataStr.match(/^(\d{1,2})\/(\d{4})/);
-        if (m3) return parseInt(m3[1]) === mesNum && parseInt(m3[2]) === anoNum;
         return false;
       };
 
-      // Filtrar: incluir itens com data correspondente OU sem data no Excel
-      // (sem data = Excel não tem info, não devemos excluir)
+      // Incluir se qualquer data do item cair no mês
       const itensFiltrados = itens.filter(item =>
-        !item.dataSubmissao || dataCorresponde(item.dataSubmissao)
+        dataCorresponde(item.dataSubmissao) ||
+        dataCorresponde(item.dataResposta)  ||
+        dataCorresponde(item.dataFecho)
       );
       itensFiltrados.sort((a, b) => {
         const [an, ar] = a.ref.split('.').map(Number);
