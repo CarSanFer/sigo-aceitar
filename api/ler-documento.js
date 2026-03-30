@@ -45,6 +45,12 @@ Campos: decisao (string, ex: Aprovado|Aprovado com condições|Não aprovado|Esc
 condicoes (string, condições ou observações à decisão), responsavel (string, quem assina a resposta), obs (string).
 Se um campo não existir usa "".`;
 
+  const promptRespostaPE = `Extrai os dados desta Resposta a um Pedido de Esclarecimento e devolve APENAS um objecto JSON com array "respostas".
+Cada resposta tem: data (dd/mm/yyyy), autor (string), anexos (string), esclarecimento (string, texto da resposta/esclarecimento), observacoes (string).
+Pode haver mais do que uma resposta no documento — extrai todas.
+Devolve APENAS: { "respostas": [ { "data":"", "autor":"", "anexos":"", "esclarecimento":"", "observacoes":"" } ] }
+Se um campo não existir usa "".`;`;
+
   // ── Helper: processar ficheiro com Claude ─────────────────────────────
   async function processarFicheiro(buffer, fileName, subTipo) {
     const isDocx = (fileName || '').toLowerCase().match(/\.docx?$/);
@@ -55,6 +61,7 @@ Se um campo não existir usa "".`;
     else if (subTipo === 'pe') prompt = promptPE;
     else if (subTipo === 'pa') prompt = promptPA;
     else if (subTipo === 'resposta') prompt = promptResposta;
+    else if (subTipo === 'resposta_pe') prompt = promptRespostaPE;
     else prompt = customPrompt || '';
 
     let msgContent;
@@ -368,8 +375,8 @@ Se um campo não existir usa "".`;
       const sid = await nasLogin();
       const ficheiros = await nasListar(sid, pastaPath);
 
-      // Separar: pedido principal, resposta, anexos
-      const nomePasta = pastaNome || '';
+      // Separar: resposta, pedido principal, anexos
+      // Ordem importante: verificar resposta primeiro (nome mais específico)
       const ficheirosPedido = [];
       const ficheirosResposta = [];
       const ficheirosAnexo = [];
@@ -378,12 +385,14 @@ Se um campo não existir usa "".`;
         if (f.isdir) continue;
         const nome = f.name || '';
         const nomeLower = nome.toLowerCase();
-        // Resposta: contém " r " ou "resposta" no nome (case insensitive)
-        if (nomeLower.includes(' resposta') || nomeLower.match(/\s+r\s*\./)) {
+        const semExt = nomeLower.replace(/\.[^.]+$/, '');
+
+        // Resposta: termina em "resposta" (antes da extensão)
+        if (semExt.endsWith('resposta') || semExt.match(/\s+r$/)) {
           ficheirosResposta.push(f);
         }
-        // Pedido principal: mesmo nome da pasta (sem extensão) ou contém a sigla PE/PA
-        else if (nomeLower.includes(sigla.toLowerCase()) && !nomeLower.includes('anexo')) {
+        // Pedido: contém PE ou PA no nome mas não é resposta
+        else if (nomeLower.includes(sigla.toLowerCase())) {
           ficheirosPedido.push(f);
         }
         // Resto: anexos
@@ -392,24 +401,28 @@ Se um campo não existir usa "".`;
         }
       }
 
-      // Processar pedido principal (primeiro ficheiro encontrado)
+      // Processar pedido principal
       let dadosPedido = null;
+      let erroPedido = null;
       if (ficheirosPedido.length) {
         try {
           const buf = await nasDownload(sid, ficheirosPedido[0].path);
           dadosPedido = await processarFicheiro(buf, ficheirosPedido[0].name, tipo);
         } catch (e) {
+          erroPedido = e.message;
           console.warn('Aviso: erro ao processar pedido:', e.message);
         }
       }
 
-      // Processar resposta (primeiro ficheiro de resposta)
+      // Processar resposta
       let dadosResposta = null;
+      let erroResposta = null;
       if (ficheirosResposta.length) {
         try {
           const buf = await nasDownload(sid, ficheirosResposta[0].path);
-          dadosResposta = await processarFicheiro(buf, ficheirosResposta[0].name, 'resposta');
+          dadosResposta = await processarFicheiro(buf, ficheirosResposta[0].name, 'resposta_pe');
         } catch (e) {
+          erroResposta = e.message;
           console.warn('Aviso: erro ao processar resposta:', e.message);
         }
       }
@@ -424,6 +437,14 @@ Se um campo não existir usa "".`;
         ficheiros: {
           pedido: ficheirosPedido.map(f => ({ nome: f.name, path: f.path })),
           resposta: ficheirosResposta.map(f => ({ nome: f.name, path: f.path })),
+        },
+        // debug
+        _debug: {
+          totalFicheiros: ficheiros.length,
+          nomesFicheiros: ficheiros.map(f => f.name),
+          pedidoEncontrado: ficheirosPedido.length > 0,
+          respostaEncontrada: ficheirosResposta.length > 0,
+          erroPedido, erroResposta
         }
       });
     } catch (err) {
