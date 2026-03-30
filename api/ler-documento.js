@@ -361,10 +361,9 @@ Se um campo não existir usa "".`;
   }
 
   // ════════════════════════════════════════════════════════════════════
-  // ACÇÃO: processar_pe_pa — extrai conteúdo de uma pasta PE/PA com IA
+  // ACÇÃO: processar_pe_pa — lê Excel da pasta PE/PA directamente
   // ════════════════════════════════════════════════════════════════════
   if (action === 'processar_pe_pa') {
-    // pastaPath: path completo da subpasta, ex: /500 Obras/.../30 PE/001.0 PE - Demolição
     const { pastaPath, pastaNome } = req.body;
     if (!pastaPath || !tipo) {
       return res.status(400).json({ error: 'Falta parâmetros (pastaPath, tipo)' });
@@ -375,55 +374,84 @@ Se um campo não existir usa "".`;
       const sid = await nasLogin();
       const ficheiros = await nasListar(sid, pastaPath);
 
-      // Separar: resposta, pedido principal, anexos
-      // Ordem importante: verificar resposta primeiro (nome mais específico)
-      const ficheirosPedido = [];
-      const ficheirosResposta = [];
-      const ficheirosAnexo = [];
+      // Encontrar o Excel na pasta (ficheiro .xlsx que não seja "Resposta")
+      // O ficheiro de resposta tem "Resposta" no nome, o pedido não
+      const fExcels = ficheiros.filter(f => !f.isdir && (f.name||'').match(/\.xlsx?$/i));
+      const fResposta = fExcels.find(f => f.name.toLowerCase().includes('resposta'));
+      const fPedido   = fExcels.find(f => !f.name.toLowerCase().includes('resposta'));
+      const ficheirosAnexo = ficheiros.filter(f => !f.isdir && !(f.name||'').match(/\.xlsx?$/i));
 
-      for (const f of ficheiros) {
-        if (f.isdir) continue;
-        const nome = f.name || '';
-        const nomeLower = nome.toLowerCase();
-        const semExt = nomeLower.replace(/\.[^.]+$/, '');
+      // Helper: ler Excel PE da NAS e extrair campos por posição fixa
+      const lerExcelPE = async (f) => {
+        const buf = await nasDownload(sid, f.path);
+        const wb = XLSX.read(buf, { type: 'buffer', cellDates: true });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
 
-        // Resposta: termina em "resposta" (antes da extensão)
-        if (semExt.endsWith('resposta') || semExt.match(/\s+r$/)) {
-          ficheirosResposta.push(f);
-        }
-        // Pedido: contém PE ou PA no nome mas não é resposta
-        else if (nomeLower.includes(sigla.toLowerCase())) {
-          ficheirosPedido.push(f);
-        }
-        // Resto: anexos
-        else {
-          ficheirosAnexo.push(f);
-        }
-      }
+        const fmtData = (v) => {
+          if (!v) return '';
+          if (v instanceof Date) {
+            return `${String(v.getDate()).padStart(2,'0')}/${String(v.getMonth()+1).padStart(2,'0')}/${v.getFullYear()}`;
+          }
+          return String(v).trim();
+        };
+        const cel = (linha, col) => {
+          const r = rows[linha - 1]; // linha 1-based
+          return r ? (r[col] != null ? String(r[col]).trim() : '') : '';
+        };
 
-      // Processar pedido principal
+        // Pedido (linhas 7, 10, 13)
+        const pedido = {
+          id:       cel(7, 1),
+          autor:    cel(7, 4),
+          enviado:  fmtData(rows[6]?.[7]),   // L7 col H
+          idArtigos: cel(7, 10),
+          desenhos: cel(7, 13),
+          assunto:  cel(10, 1),
+          anexos:   cel(10, 13),
+          pedido:   cel(13, 1),
+          respostas: []
+        };
+
+        // Resposta Projetista (linhas 27, 30)
+        const dataProj = rows[26]?.[1];
+        if (dataProj || cel(30, 1)) {
+          pedido.respostas.push({
+            tipo:           'Projetista',
+            data:           fmtData(dataProj),
+            autor:          cel(27, 4),
+            anexos:         cel(27, 13),
+            esclarecimento: cel(30, 1),
+            observacoes:    ''
+          });
+        }
+
+        // Resposta Fiscalização (linhas 39, 41)
+        const dataFisc = rows[38]?.[1];
+        if (dataFisc || cel(41, 1)) {
+          pedido.respostas.push({
+            tipo:           'Fiscalização',
+            data:           fmtData(dataFisc),
+            autor:          cel(39, 4),
+            anexos:         cel(39, 13),
+            esclarecimento: '',
+            observacoes:    cel(41, 1)
+          });
+        }
+
+        return pedido;
+      };
+
+      // Processar ficheiro principal (pedido ou resposta — mesmo formato)
       let dadosPedido = null;
       let erroPedido = null;
-      if (ficheirosPedido.length) {
+      const fParaLer = fResposta || fPedido; // preferir Resposta se existir (tem tudo)
+      if (fParaLer) {
         try {
-          const buf = await nasDownload(sid, ficheirosPedido[0].path);
-          dadosPedido = await processarFicheiro(buf, ficheirosPedido[0].name, tipo);
+          dadosPedido = await lerExcelPE(fParaLer);
         } catch (e) {
           erroPedido = e.message;
-          console.warn('Aviso: erro ao processar pedido:', e.message);
-        }
-      }
-
-      // Processar resposta
-      let dadosResposta = null;
-      let erroResposta = null;
-      if (ficheirosResposta.length) {
-        try {
-          const buf = await nasDownload(sid, ficheirosResposta[0].path);
-          dadosResposta = await processarFicheiro(buf, ficheirosResposta[0].name, 'resposta_pe');
-        } catch (e) {
-          erroResposta = e.message;
-          console.warn('Aviso: erro ao processar resposta:', e.message);
+          console.warn('Erro ao ler Excel PE:', e.message);
         }
       }
 
@@ -432,19 +460,17 @@ Se um campo não existir usa "".`;
       return res.status(200).json({
         success: true,
         pedido: dadosPedido,
-        resposta: dadosResposta,
+        resposta: null, // já incluído dentro de pedido.respostas
         anexos: ficheirosAnexo.map(f => ({ nome: f.name, path: f.path })),
         ficheiros: {
-          pedido: ficheirosPedido.map(f => ({ nome: f.name, path: f.path })),
-          resposta: ficheirosResposta.map(f => ({ nome: f.name, path: f.path })),
+          pedido:   fPedido   ? [{ nome: fPedido.name,   path: fPedido.path   }] : [],
+          resposta: fResposta ? [{ nome: fResposta.name, path: fResposta.path }] : [],
         },
-        // debug
         _debug: {
           totalFicheiros: ficheiros.length,
           nomesFicheiros: ficheiros.map(f => f.name),
-          pedidoEncontrado: ficheirosPedido.length > 0,
-          respostaEncontrada: ficheirosResposta.length > 0,
-          erroPedido, erroResposta
+          ficheiroLido: fParaLer?.name || null,
+          erroPedido
         }
       });
     } catch (err) {
