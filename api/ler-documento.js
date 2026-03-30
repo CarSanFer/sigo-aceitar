@@ -277,7 +277,7 @@ Se um campo não existir usa "".`;
       // 1. Ler Excel de listagem na raíz da 300 CO
       let dadosExcel = { pe: [], pa: [] };
       const ficheirosCO = await nasListar(sid, pastaCO);
-      const excel = ficheirosCO.find(f => !f.isdir && (f.name || '').match(/\.xlsx?$/i));
+      const excel = ficheirosCO.find(f => !f.isdir && (f.name || '').match(/\.xlsx?$/i) && !(f.name || '').startsWith('~$'));
       if (excel) {
         try {
           const bufExcel = await nasDownload(sid, excel.path);
