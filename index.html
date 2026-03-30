@@ -1213,8 +1213,8 @@ function renderFichaRelatorio(app){
     else if(relTab==='prazo') body=relTabPrazo(r,podeEditar);
     else if(relTab==='ptq') body=relTabLista(r,podeEditar,'ptq','Plano Quinzenal de Trabalhos');
     else if(relTab==='pb') body=relTabLista(r,podeEditar,'pb','Pedidos de Betonagem');
-    else if(relTab==='pe') body=relTabLista(r,podeEditar,'pe','Pedidos de Esclarecimento');
-    else if(relTab==='pa') body=relTabLista(r,podeEditar,'pa','Pedidos de Aprovação');
+    else if(relTab==='pe') body=relTabPEPA(r,podeEditar,'pe');
+    else if(relTab==='pa') body=relTabPEPA(r,podeEditar,'pa');
     else if(relTab==='nc') body=relTabLista(r,podeEditar,'nc','Não Conformidades');
     else if(relTab==='adj') body=relTabLista(r,podeEditar,'adj','Adjudicações');
     else if(relTab==='ar') body=relTabAR(r,podeEditar);
@@ -1235,6 +1235,7 @@ function renderFichaRelatorio(app){
           const estMod=r.conteudo?.modulos?.[relTab]||'em_curso';
           const bloqueado=estMod==='em_aprovacao'||estMod==='validado';
           const isARRV=relTab==='rv'||relTab==='ar';
+          const isPEPA=relTab==='pe'||relTab==='pa';
           let btns='';
           // Sincronizar e Importar — só em Em Curso
           if(isARRV&&podeEditar&&!bloqueado){
@@ -1242,8 +1243,11 @@ function renderFichaRelatorio(app){
             if(relTab==='rv') btns+=`<label style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1px solid var(--border-light);border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:700;background:var(--bg)">📎 Importar RV<input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarRV('${r.id}',this)" multiple></label>`;
             if(relTab==='ar') btns+=`<label style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1px solid var(--border-light);border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:700;background:var(--bg)">📎 Importar Ata<input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarAR('${r.id}',this)" multiple></label>`;
           }
-          // Guardar — só para módulos de texto (não AR/RV)
-          if(podeEditar&&!isARRV) btns+=`<button class="btn btn-gold" onclick="guardarRelatorio('${r.id}')">💾 Guardar</button>`;
+          if(isPEPA&&podeEditar&&!bloqueado){
+            btns+=`<button class="btn btn-outline btn-sm" onclick="sincronizarPEPA('${r.id}','${relTab}')">🔄 Sincronizar NAS</button>`;
+          }
+          // Guardar — só para módulos de texto (não AR/RV/PE/PA)
+          if(podeEditar&&!isARRV&&!isPEPA) btns+=`<button class="btn btn-gold" onclick="guardarRelatorio('${r.id}')">💾 Guardar</button>`;
           // Dashboard
           if(relTab==='rv') btns+=`<button class="btn btn-outline" onclick="gerarDashboardRV('${r.id}')">📊 Dashboard</button>`;
           if(relTab==='ar') btns+=`<button class="btn btn-outline" onclick="gerarDashboardAR('${r.id}')">📊 Dashboard</button>`;
@@ -1304,7 +1308,7 @@ function renderFichaRelatorio(app){
   }).join('');
 
   app.innerHTML=`
-  <button class="back-btn" onclick="relRelId=null;render()">← Voltar à Capa</button>
+  <button class="back-btn" onclick="relRelId=null;relObraId=null;render()">← Voltar à Obra</button>
   <div class="page-header">
     <div>
       <div class="page-title">${relNumero(r)} — ${fmtMesAno(r.mes,r.ano)}</div>
@@ -1618,6 +1622,244 @@ window.gerarDashboardAR=async function(relId){
       ${analise.pendentesCriticos?.length?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#854F0B;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">⏳ Pendentes Críticos</div>${analise.pendentesCriticos.map(p=>`<div style="font-size:12px;padding:4px 8px;background:#FEF9EC;border-left:3px solid #854F0B;margin-bottom:4px;border-radius:0 4px 4px 0">${p}</div>`).join('')}</div>`:''}
       ${analise.recomendacoes?.length?`<div><div style="font-size:10px;font-weight:700;color:#0F6E56;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">💡 Recomendações</div>${analise.recomendacoes.map(rec=>`<div style="font-size:12px;padding:4px 8px;background:#F0FDF4;border-left:3px solid #0F6E56;margin-bottom:4px;border-radius:0 4px 4px 0">${rec}</div>`).join('')}</div>`:''}`;
   }catch(e){const el=document.getElementById('dash-ar-content');if(el)el.innerHTML=`<div style="color:var(--danger)">Erro: ${e.message}</div>`;}
+};
+
+// ════════════════════════════════════════════════════════════════════
+// PE / PA — Tab de listagem
+// ════════════════════════════════════════════════════════════════════
+function relTabPEPA(r,edit,tipo){
+  const sigla=tipo.toUpperCase();
+  const label=tipo==='pe'?'Pedidos de Esclarecimento':'Pedidos de Aprovação';
+  const conteudo=typeof r.conteudo==='string'?JSON.parse(r.conteudo||'{}'):r.conteudo||{};
+  const lista=(conteudo?.[tipo]?.lista)||[];
+  const statusId=`${tipo}-import-status-${r.id}`;
+
+  // Cor do estado
+  const corEstadoPEPA=e=>{
+    const s=(e||'').toLowerCase();
+    if(s.includes('aprovado')||s.includes('respondido')||s.includes('esclarecido')) return '#0F6E56';
+    if(s.includes('pendente')||s.includes('aguarda')) return '#854F0B';
+    if(s.includes('não aprovado')||s.includes('rejeit')) return '#A32D2D';
+    return 'var(--text-muted)';
+  };
+  const bgEstadoPEPA=e=>{
+    const s=(e||'').toLowerCase();
+    if(s.includes('aprovado')||s.includes('respondido')||s.includes('esclarecido')) return '#E1F5EE';
+    if(s.includes('pendente')||s.includes('aguarda')) return '#FEF9EC';
+    if(s.includes('não aprovado')||s.includes('rejeit')) return '#FCEBEB';
+    return 'var(--bg)';
+  };
+
+  if(!lista.length) return `
+    <div style="text-align:center;padding:40px 20px;color:var(--text-muted)">
+      <div style="font-size:32px;margin-bottom:12px">📂</div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:6px">Sem ${label} importados</div>
+      <div style="font-size:12px">Use o botão "🔄 Sincronizar NAS" para importar da NAS</div>
+      <div id="${statusId}" style="font-size:12px;color:var(--text-muted);margin-top:12px"></div>
+    </div>`;
+
+  // Estatísticas rápidas
+  const total=lista.length;
+  const respondidos=lista.filter(x=>{const s=(x.estado||'').toLowerCase();return s.includes('aprovado')||s.includes('respondido')||s.includes('esclarecido');}).length;
+  const pendentes=lista.filter(x=>{const s=(x.estado||'').toLowerCase();return s.includes('pendente')||s.includes('aguarda')||!s;}).length;
+  const urgentes=lista.filter(x=>x.pedido?.urgente||x.urgente).length;
+
+  return `
+    <div id="${statusId}" style="font-size:12px;color:var(--text-muted);margin-bottom:8px;min-height:16px"></div>
+
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+      ${[['Total',total,'var(--navy)'],['Respondidos/Aprovados',respondidos,'#0F6E56'],['Pendentes',pendentes,'#854F0B'],['Urgentes',urgentes,'#A32D2D']].map(([l,n,c])=>`
+      <div style="background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center;border-top:3px solid ${c}">
+        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">${l}</div>
+        <div style="font-size:22px;font-weight:400;color:${c}">${n}</div>
+      </div>`).join('')}
+    </div>
+
+    <!-- Lista -->
+    <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border-light)">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="background:var(--navy)">
+            <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Ref.</th>
+            <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase">Assunto</th>
+            <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Disciplina</th>
+            <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Submissão</th>
+            <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Resposta</th>
+            <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase">Estado</th>
+            <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${lista.map((item,i)=>{
+            const urgente=item.pedido?.urgente||item.urgente;
+            const temResposta=!!(item.resposta);
+            return `<tr style="border-bottom:0.5px solid var(--border-light);${urgente?'background:#FFF9F9':''}" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='${urgente?'#FFF9F9':''}'">
+              <td style="padding:8px 12px;font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap">
+                ${item.ref}${urgente?` <span style="font-size:9px;background:#FCEBEB;color:#A32D2D;padding:1px 5px;border-radius:3px;font-family:Calibri">URGENTE</span>`:''}
+              </td>
+              <td style="padding:8px 12px;font-size:12px;max-width:300px">
+                <div style="font-weight:500">${item.nome||item.pedido?.assunto||'—'}</div>
+                ${item.pedido?.descricao?`<div style="font-size:11px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px">${item.pedido.descricao}</div>`:''}
+              </td>
+              <td style="padding:8px 12px;font-size:11px;color:var(--text-muted);white-space:nowrap">${item.pedido?.disciplina||'—'}</td>
+              <td style="padding:8px 12px;font-size:12px;white-space:nowrap">${item.dataSubmissao||'—'}</td>
+              <td style="padding:8px 12px;font-size:12px;white-space:nowrap">${item.dataResposta||'—'}</td>
+              <td style="padding:8px 12px">
+                <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:${bgEstadoPEPA(item.estado)};color:${corEstadoPEPA(item.estado)}">${item.estado||'—'}</span>
+              </td>
+              <td style="padding:8px 12px">
+                <button onclick="abrirDetalhesPEPA(${i},'${r.id}','${tipo}')" style="font-size:11px;padding:3px 8px;border:1px solid var(--border-light);border-radius:4px;background:var(--bg);cursor:pointer;color:var(--text)">Ver ${temResposta?'↕':'→'}</button>
+                ${edit==='true'?`<button onclick="event.stopPropagation();delPEPA('${r.id}',${i},'${tipo}')" style="font-size:10px;color:var(--danger);background:none;border:none;cursor:pointer;margin-left:4px">✕</button>`:''}
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// Detalhe de um PE/PA
+window.abrirDetalhesPEPA=function(idx,relId,tipo){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  const conteudo=typeof r.conteudo==='string'?JSON.parse(r.conteudo||'{}'):r.conteudo||{};
+  const item=(conteudo?.[tipo]?.lista||[])[idx];
+  if(!item)return;
+  const sigla=tipo.toUpperCase();
+  const p=item.pedido||{};
+  const resp=item.resposta||null;
+
+  const secao=(titulo,cor,conteudoHtml)=>`
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;color:${cor};text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border-light)">${titulo}</div>
+      ${conteudoHtml}
+    </div>`;
+
+  const campo=(label,val)=>val?`<div style="display:flex;gap:8px;margin-bottom:6px;font-size:12px"><span style="min-width:120px;color:var(--text-muted);flex-shrink:0">${label}</span><span style="font-weight:500">${val}</span></div>`:'';
+
+  let html=`<div style="font-size:14px;font-weight:500;margin-bottom:16px">${item.ref} ${sigla} — ${item.nome}</div>`;
+
+  // Metadados do Excel
+  html+=secao('Controlo (Excel)','var(--navy)',`
+    ${campo('Submissão',item.dataSubmissao)}
+    ${campo('Prazo',item.prazo)}
+    ${campo('Resposta',item.dataResposta)}
+    ${campo('Estado',item.estado?`<span style="padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;background:${item.estado.includes('Aprovado')||item.estado.includes('Respondido')?'#E1F5EE':'#FEF9EC'};color:${item.estado.includes('Aprovado')||item.estado.includes('Respondido')?'#0F6E56':'#854F0B'}">${item.estado}</span>`:'')}
+    ${campo('Responsável',item.responsavel)}
+    ${item.obs?campo('Obs.',item.obs):''}`);
+
+  // Conteúdo extraído do Word (pedido)
+  if(p.descricao||p.elementos||p.disciplina){
+    html+=secao(`Conteúdo do ${sigla} (IA)`,'#185FA5',`
+      ${campo('Assunto',p.assunto||item.nome)}
+      ${campo('Disciplina',p.disciplina)}
+      ${campo('Descrição',p.descricao)}
+      ${campo('Elementos',p.elementos)}
+      ${p.urgente?`<div style="font-size:11px;background:#FCEBEB;color:#A32D2D;padding:4px 8px;border-radius:4px;font-weight:700">⚠ URGENTE</div>`:''}
+      ${campo('Obs.',p.obs)}`);
+  }
+
+  // Resposta
+  if(resp){
+    html+=secao('Resposta (IA)','#0F6E56',`
+      ${campo('Decisão',resp.decisao?`<span style="padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;background:#E1F5EE;color:#0F6E56">${resp.decisao}</span>`:'')}
+      ${campo('Condições',resp.condicoes)}
+      ${campo('Responsável',resp.responsavel)}
+      ${campo('Obs.',resp.obs)}`);
+  } else {
+    html+=`<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:8px 0">Sem resposta importada.</div>`;
+  }
+
+  // Anexos
+  if(item.anexos?.length){
+    html+=secao('Anexos','#854F0B',item.anexos.map(a=>`<div style="font-size:12px;padding:3px 0;border-bottom:0.5px solid var(--border-light)">📎 ${a.nome}</div>`).join(''));
+  }
+
+  showModal(`${item.ref} ${sigla} — ${item.nome}`,html,[{label:'Fechar',cls:'btn-outline',fn:'closeModal()'}]);
+};
+
+window.delPEPA=function(relId,idx,tipo){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  if(!r.conteudo?.[tipo]?.lista)return;
+  r.conteudo[tipo].lista.splice(idx,1);
+  sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)}).catch(console.error);
+  render();
+};
+
+// ════════════════════════════════════════════════════════════════════
+// PE / PA — Sincronizar NAS
+// ════════════════════════════════════════════════════════════════════
+window.sincronizarPEPA=async function(relId,tipo){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  const o=DB.obras.find(x=>x.id===r.obra_id);if(!o)return;
+  const statusEl=document.getElementById(`${tipo}-import-status-${relId}`);
+  const setStatus=msg=>{if(statusEl)statusEl.textContent=msg;};
+  const VERCEL='https://sigo-aceitar.vercel.app/api/ler-documento';
+  const sigla=tipo.toUpperCase();
+
+  setStatus('🔄 A listar '+sigla+' na NAS...');
+  try{
+    // 1. Listar pastas PE/PA + ler Excel
+    const listaResp=await fetch(VERCEL,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'listar_pe_pa',obraCodigo:o.codigo,obraNome:o.nome,tipo,mes:r.mes,ano:r.ano})
+    });
+    const listaData=await listaResp.json();
+    if(!listaData.success)throw new Error(listaData.error||'Erro ao listar NAS');
+    const itens=listaData.itens||[];
+    if(!itens.length){setStatus('ℹ Sem pastas '+sigla+' encontradas na NAS.');return;}
+    setStatus(`📂 ${itens.length} ${sigla}(s) encontrado(s). A processar conteúdo...`+(listaData.excelEncontrado?' ✅ Excel lido.':' ⚠ Excel não encontrado.'));
+
+    // 2. Inicializar lista no conteúdo
+    if(!r.conteudo)r.conteudo={};
+    if(!r.conteudo[tipo])r.conteudo[tipo]={lista:[]};
+    r.conteudo[tipo].lista=[];
+
+    // 3. Para cada pasta, processar pedido + resposta com IA
+    let ok=0,erros=0;
+    const LOTE=2;
+    for(let i=0;i<itens.length;i+=LOTE){
+      const lote=itens.slice(i,i+LOTE);
+      setStatus(`⚙ A processar ${Math.min(i+LOTE,itens.length)} de ${itens.length} ${sigla}(s)...`);
+      for(const item of lote){
+        try{
+          const procResp=await fetch(VERCEL,{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({action:'processar_pe_pa',obraCodigo:o.codigo,obraNome:o.nome,tipo,pastaPath:item.pastaPath,pastaNome:item.pastaNome})
+          });
+          const procData=await procResp.json();
+          if(!procData.success)throw new Error(procData.error||'Erro ao processar');
+          // Combinar metadados Excel (fonte de verdade) com conteúdo Word (IA)
+          r.conteudo[tipo].lista.push({
+            ref:item.ref,
+            nome:item.nome,
+            // Metadados do Excel
+            dataSubmissao:item.dataSubmissao,
+            dataResposta:item.dataResposta,
+            estado:item.estado,
+            prazo:item.prazo,
+            responsavel:item.responsavel,
+            obs:item.obs,
+            temResposta:item.temResposta,
+            // Conteúdo extraído por IA
+            pedido:procData.pedido||null,
+            resposta:procData.resposta||null,
+            anexos:procData.anexos||[],
+            ficheiros:procData.ficheiros||{}
+          });
+          ok++;
+        }catch(e){erros++;console.error('Erro em '+item.ref+':',e.message);}
+      }
+    }
+
+    // 4. Guardar
+    await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+    setStatus(`✅ ${ok} ${sigla}(s) importado(s)`+(erros?` · ❌ ${erros} erro(s)`:''));
+    render();
+  }catch(e){
+    setStatus('❌ Erro: '+e.message);
+    console.error(e);
+  }
 };
 
 window.delRV=function(relId,idx){
@@ -3808,15 +4050,7 @@ window.chatAnswer=function(q){
 };
 
 showLogin();
-</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
+</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
 
 
-<div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
-        <div id="yt_article_summary_widget" class="yt_article_summary_widget"><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1.40123 27.3686C-0.44103 25.5284 -0.441033 22.5449 1.4012 20.7047L16.5971 5.52573L24.0098 12.9301L5.47818 31.4409L1.40123 27.3686Z" fill="#FF4E74"></path>
-        <path d="M35.1286 24.0367L16.5972 5.5258L20.6741 1.45341C22.5164 -0.386772 25.5033 -0.386775 27.3455 1.45341L42.5415 16.6323L35.1286 24.0367Z" fill="#FFF85E"></path>
-        <path d="M24.0099 35.143L42.5416 16.6323L46.6183 20.7046C48.4606 22.5448 48.4606 25.5284 46.6183 27.3686L31.4224 42.5476L24.0099 35.143Z" fill="#76FF54"></path>
-        <path d="M27.3454 46.6198C25.5032 48.4601 22.5163 48.4601 20.674 46.6198L5.47815 31.4409L12.8908 24.0366L31.4223 42.5476L27.3454 46.6198Z" fill="#5C94FF"></path>
-    </svg></div>
-        <div id="yt_article_summary_close_button" class="yt_article_summary_close_button">×</div>
-    </div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div></body></html>
+</body></html>
