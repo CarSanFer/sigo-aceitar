@@ -252,7 +252,7 @@ tr.tr-click:hover td{background:#F5F7FA}
       <input id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%; border: 1px solid rgb(216, 220, 230); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: Calibri, sans-serif; color: rgb(26, 29, 46); background: rgb(240, 242, 245);" onfocus="this.style.borderColor='#C9922A';this.style.background='#fff'" onblur="this.style.borderColor='#D8DCE6';this.style.background='#F0F2F5'">
     </div>
     <div id="login-error" style="font-size:12px;color:#B91C1C;min-height:18px;margin-bottom:8px"></div>
-    <button onclick="doLogin()" style="width: 100%; background: rgb(201, 146, 42); color: rgb(255, 255, 255); border: none; border-radius: 4px; padding: 10px; font-size: 14px; font-weight: 700; font-family: Calibri, sans-serif; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
+    <button onclick="doLogin()" style="width:100%;background:#C9922A;color:#fff;border:none;border-radius:4px;padding:10px;font-size:14px;font-weight:700;font-family:Calibri,sans-serif;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#E8A830'" onmouseout="this.style.background='#C9922A'">
       Entrar
     </button>
     <p style="text-align:center;font-size:11px;color:#9CA3AF;margin-top:16px">Problemas de acesso? Contacte o administrador.</p>
@@ -1807,10 +1807,16 @@ window.sincronizarPEPA=async function(relId,tipo){
     const listaData=await listaResp.json();
     if(!listaData.success)throw new Error(listaData.error||'Erro ao listar NAS');
     const itens=listaData.itens||[];
-    if(!itens.length){setStatus('ℹ Sem pastas '+sigla+' encontradas na NAS.');return;}
+    if(listaData._debug)console.log('DEBUG PE/PA:',listaData._debug);
+    if(!itens.length){
+      const dbg=listaData._debug;
+      const msg=dbg?`ℹ Sem ${sigla}(s) para este mês. (${dbg.totalSubpastas} pastas na NAS, ${dbg.totalItens} no Excel, path: ${dbg.pastaTipo})`:`ℹ Sem pastas ${sigla} encontradas na NAS.`;
+      setStatus(msg);return;
+    }
     setStatus(`📂 ${itens.length} ${sigla}(s) encontrado(s). A processar conteúdo...`+(listaData.excelEncontrado?' ✅ Excel lido.':' ⚠ Excel não encontrado.'));
 
-    // 2. Inicializar lista no conteúdo
+    // 2. Inicializar lista no conteúdo — garantir que conteúdo é objecto
+    if(typeof r.conteudo==='string'){try{r.conteudo=JSON.parse(r.conteudo||'{}');}catch(e){r.conteudo={};}}
     if(!r.conteudo)r.conteudo={};
     if(!r.conteudo[tipo])r.conteudo[tipo]={lista:[]};
     r.conteudo[tipo].lista=[];
