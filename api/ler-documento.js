@@ -291,7 +291,7 @@ Se um campo não existir usa "".`;
       const subpastas = await nasListar(sid, pastaTipo);
       await nasLogout(sid);
 
-      // Mapa de pastas NAS por referência
+      // Mapa de pastas NAS por referência — aceita com ou sem traço
       const mapaPasstas = {};
       for (const p of subpastas) {
         if (!p.isdir) continue;
@@ -374,12 +374,25 @@ Se um campo não existir usa "".`;
       const sid = await nasLogin();
       const ficheiros = await nasListar(sid, pastaPath);
 
-      // Encontrar o Excel na pasta (ficheiro .xlsx que não seja "Resposta")
-      // O ficheiro de resposta tem "Resposta" no nome, o pedido não
-      const fExcels = ficheiros.filter(f => !f.isdir && (f.name||'').match(/\.xlsx?$/i));
-      const fResposta = fExcels.find(f => f.name.toLowerCase().includes('resposta'));
-      const fPedido   = fExcels.find(f => !f.name.toLowerCase().includes('resposta'));
-      const ficheirosAnexo = ficheiros.filter(f => !f.isdir && !(f.name||'').match(/\.xlsx?$/i));
+      // Encontrar o Excel na pasta (ou em subpasta directa)
+      const isTemp = n => (n||'').startsWith('~$');
+      const fExcels = ficheiros.filter(f => !f.isdir && (f.name||'').match(/\.xlsx?$/i) && !isTemp(f.name));
+      let fResposta = fExcels.find(f => f.name.toLowerCase().includes('resposta'));
+      let fPedido   = fExcels.find(f => !f.name.toLowerCase().includes('resposta'));
+
+      // Se não encontrou Excel directamente, procurar em subpastas
+      if (!fResposta && !fPedido) {
+        const subpastas = ficheiros.filter(f => f.isdir);
+        for (const sub of subpastas) {
+          const subFichs = await nasListar(sid, sub.path);
+          const subExcels = subFichs.filter(f => !f.isdir && (f.name||'').match(/\.xlsx?$/i) && !isTemp(f.name));
+          if (!fResposta) fResposta = subExcels.find(f => f.name.toLowerCase().includes('resposta'));
+          if (!fPedido)   fPedido   = subExcels.find(f => !f.name.toLowerCase().includes('resposta'));
+          if (fResposta || fPedido) break;
+        }
+      }
+
+      const ficheirosAnexo = ficheiros.filter(f => !f.isdir && !(f.name||'').match(/\.xlsx?$/i) && !isTemp(f.name));
 
       // Helper: ler Excel PE da NAS e extrair campos por posição fixa
       const lerExcelPE = async (f) => {
