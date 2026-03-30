@@ -271,98 +271,100 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
   </div>
   <div class="nav-right">
-    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border-width: 1px; border-style: solid; border-color: var(--gold); border-image: initial; color: var(--gold); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
+    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.8); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
     <div class="nav-avatar" id="nav-avatar" onclick="doLogout()" style="cursor:pointer" title="Carlos Ferreira (superadmin) — Clique para sair">CF</div>
   </div>
 </nav>
 
 <div class="content" id="app">
-    <button class="back-btn" onclick="relTab='capa';render()">← Voltar ao Relatório</button>
-    <div class="page-header">
-      <div>
-        <div class="page-title">001.0 — Março 2026 · Pedidos de Aprovação</div>
-        <div style="margin-top:4px;display:flex;gap:8px;align-items:center"><span class="badge b-prep">Rascunho</span>
-          <span style="font-size:12px;color:var(--text-muted)">CES — Cesae</span>
+  <div class="page-header">
+    <div><div class="page-title">Obras</div><div class="page-count">2 obra(s)</div></div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center">
+    <input class="filter-select" style="flex:1;max-width:320px" placeholder="Pesquisar obra, sigla ou código..." value="" oninput="obrasSearch=this.value;render()">
+    <select class="filter-select" onchange="obrasFilter=this.value;render()">
+      <option selected="">Todos os Estados</option><option>Em Curso</option><option>Concluída</option><option>Suspensa</option><option>Em Preparação</option>
+    </select>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+    <div onclick="go('obras','_48gp4b2')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#A32D2D;padding:10px 14px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">4F14 · AB</div>
+        <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Anselmo Braamcamp</div>
+      </div>
+      <div style="padding:10px 14px">
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Valor de Obra</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);color:var(--gold)">4&nbsp;040&nbsp;000,00 €</span>
+    </div>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Real</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Fim Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Prorrogações</span>
+          <span style="font-size:12px;font-weight:400;color:var(--text-muted)">0</span>
         </div>
-      </div>
-      <div class="page-actions">
-        <button class="btn btn-outline btn-sm" onclick="sincronizarPEPA('_e00ucmu','pa')">🔄 Sincronizar NAS</button><button class="btn btn-outline btn-sm" style="border-color:#185FA5;color:#185FA5" onclick="submeterModulo('_e00ucmu','pa')">→ Submeter</button>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Último Relatório</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">—</span>
+    </div>
       </div>
     </div>
-    <div class="table-card"><div class="ficha-body" style="padding:14px">
-    <div id="pa-import-status-_e00ucmu" style="font-size:12px;color:var(--text-muted);margin-bottom:8px;min-height:16px"></div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
-      
-      <div style="background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center;border-top:3px solid var(--navy)">
-        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total</div>
-        <div style="font-size:22px;font-weight:400;color:var(--navy)">3</div>
+    <div onclick="go('obras','_vpg7vcj')" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
+      <div style="background:#0F6E56;padding:10px 14px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">5J07 · CES</div>
+        <div style="font-size:13px;font-weight:400;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Cesae</div>
       </div>
-      <div style="background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center;border-top:3px solid #0F6E56">
-        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Fechados</div>
-        <div style="font-size:22px;font-weight:400;color:#0F6E56">0</div>
-      </div>
-      <div style="background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center;border-top:3px solid #854F0B">
-        <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Pendentes</div>
-        <div style="font-size:22px;font-weight:400;color:#854F0B">3</div>
-      </div>
+      <div style="padding:10px 14px">
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Valor de Obra</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);color:var(--gold)">3&nbsp;714&nbsp;999,00 €</span>
     </div>
-    <div style="background:var(--surface);border-radius:var(--radius);overflow:auto;border:1px solid var(--border-light)">
-      <table style="width:100%;border-collapse:collapse;min-width:800px">
-        <thead><tr style="background:var(--navy)">
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Id</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Esp</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Descrição</th>
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Ent Exec</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Fiscaliz</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Projetista</th>
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Fiscaliz</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Fecho</th><th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap">Ações</th>
-        </tr></thead>
-        <tbody>
-          
-          <tr style="border-bottom: 0.5px solid var(--border-light);" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
-            <td style="padding:8px 12px;font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap">039.0</td>
-            <td style="padding:8px 12px;font-size:11px;color:var(--text-muted);white-space:nowrap">ARQ</td>
-            <td style="padding:8px 12px;font-size:12px;font-weight:500;max-width:250px">Argamassa Autonivelante - Edif 1</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">04/03/2026</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">04/03/2026</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap"><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:#FEF9EC;color:#854F0B">Pendente</span>
-            </td>
-            <td style="padding:8px 12px;white-space:nowrap">
-              <button onclick="abrirDetalhesPE(0,'_e00ucmu')" style="font-size:11px;padding:3px 8px;border:1px solid var(--border-light);border-radius:4px;background:var(--bg);cursor:pointer;color:var(--text)">📄 Ver</button>
-              
-            </td>
-          </tr>
-          <tr style="border-bottom: 0.5px solid var(--border-light);" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
-            <td style="padding:8px 12px;font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap">040.0</td>
-            <td style="padding:8px 12px;font-size:11px;color:var(--text-muted);white-space:nowrap">ELE</td>
-            <td style="padding:8px 12px;font-size:12px;font-weight:500;max-width:250px">Caixa de Pavimento</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">12/03/2026</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap"><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:#FEF9EC;color:#854F0B">Pendente</span>
-            </td>
-            <td style="padding:8px 12px;white-space:nowrap">
-              <button onclick="abrirDetalhesPE(1,'_e00ucmu')" style="font-size:11px;padding:3px 8px;border:1px solid var(--border-light);border-radius:4px;background:var(--bg);cursor:pointer;color:var(--text)">📄 Ver</button>
-              
-            </td>
-          </tr>
-          <tr style="border-bottom: 0.5px solid var(--border-light);" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
-            <td style="padding:8px 12px;font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap">041.0</td>
-            <td style="padding:8px 12px;font-size:11px;color:var(--text-muted);white-space:nowrap">ELE</td>
-            <td style="padding:8px 12px;font-size:12px;font-weight:500;max-width:250px">Calha de Pavimento</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">12/03/2026</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap">—</td>
-            <td style="padding:8px 12px;font-size:12px;white-space:nowrap"><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:#FEF9EC;color:#854F0B">Pendente</span>
-            </td>
-            <td style="padding:8px 12px;white-space:nowrap">
-              <button onclick="abrirDetalhesPE(2,'_e00ucmu')" style="font-size:11px;padding:3px 8px;border:1px solid var(--border-light);border-radius:4px;background:var(--bg);cursor:pointer;color:var(--text)">📄 Ver</button>
-              
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div></div></div></div>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">03/11/2025</span>
+    </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Início Real</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">17/11/2025</span>
+    </div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Fim Previsto</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">25/01/2027</span>
+    </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Prorrogações</span>
+          <span style="font-size:12px;font-weight:400;color:var(--danger)">2 prorrogações</span>
+        </div>
+        <div style="height:0.5px;background:var(--border-light);margin:4px 0"></div>
+        
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Último Relatório</span>
+      <span style="font-size:12px;font-weight:400;color:var(--text);">Março 2026</span>
+    </div>
+      </div>
+    </div></div></div>
 </div>
 
 <!-- FLOATING CHATBOT -->
@@ -3977,10 +3979,10 @@ window.chatAnswer=function(q){
 };
 
 showLogin();
-</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
+</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
 
 
-<div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
+<div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
         <div id="yt_article_summary_widget" class="yt_article_summary_widget"><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M1.40123 27.3686C-0.44103 25.5284 -0.441033 22.5449 1.4012 20.7047L16.5971 5.52573L24.0098 12.9301L5.47818 31.4409L1.40123 27.3686Z" fill="#FF4E74"></path>
         <path d="M35.1286 24.0367L16.5972 5.5258L20.6741 1.45341C22.5164 -0.386772 25.5033 -0.386775 27.3455 1.45341L42.5415 16.6323L35.1286 24.0367Z" fill="#FFF85E"></path>
