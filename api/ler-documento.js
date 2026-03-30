@@ -227,8 +227,8 @@ Se um campo não existir usa "".`;
   // ACÇÃO: listar_pe_pa  — lê Excel + lista subpastas PE ou PA
   // ════════════════════════════════════════════════════════════════════
   if (action === 'listar_pe_pa') {
-    if (!obraCodigo || !obraNome || !tipo) {
-      return res.status(400).json({ error: 'Falta parâmetros (obraCodigo, obraNome, tipo)' });
+    if (!obraCodigo || !obraNome || !tipo || !mes || !ano) {
+      return res.status(400).json({ error: 'Falta parâmetros (obraCodigo, obraNome, tipo, mes, ano)' });
     }
     const sigla = tipo.toUpperCase(); // PE ou PA
     const pastaNum = tipo === 'pe' ? '30 PE' : '40 PA';
@@ -287,8 +287,28 @@ Se um campo não existir usa "".`;
         };
       });
 
-      // Ordenar por referência
-      itens.sort((a, b) => {
+      // 4. Filtrar por mês/ano de submissão (fonte de verdade: Excel)
+      // Aceita formatos: dd/mm/yyyy, d/m/yyyy, yyyy-mm-dd, mm/yyyy, etc.
+      const mesNum = parseInt(mes);
+      const anoNum = parseInt(ano);
+
+      const dataCorresponde = (dataStr) => {
+        if (!dataStr) return false;
+        // Tentar vários formatos
+        // dd/mm/yyyy ou d/m/yyyy
+        const m1 = dataStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+        if (m1) return parseInt(m1[2]) === mesNum && parseInt(m1[3]) === anoNum;
+        // yyyy-mm-dd
+        const m2 = dataStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (m2) return parseInt(m2[2]) === mesNum && parseInt(m2[1]) === anoNum;
+        // mm/yyyy
+        const m3 = dataStr.match(/^(\d{1,2})\/(\d{4})/);
+        if (m3) return parseInt(m3[1]) === mesNum && parseInt(m3[2]) === anoNum;
+        return false;
+      };
+
+      const itensFiltrados = itens.filter(item => dataCorresponde(item.dataSubmissao));
+      itensFiltrados.sort((a, b) => {
         const [an, ar] = a.ref.split('.').map(Number);
         const [bn, br] = b.ref.split('.').map(Number);
         return an !== bn ? an - bn : ar - br;
@@ -296,7 +316,7 @@ Se um campo não existir usa "".`;
 
       return res.status(200).json({
         success: true,
-        itens,
+        itens: itensFiltrados,
         totalExcel: dadosExcel[tipo].length,
         excelEncontrado: !!excel
       });
