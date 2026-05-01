@@ -271,7 +271,7 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
   </div>
   <div class="nav-right">
-    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.8); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
+    <button id="deploy-btn" onclick="deployToGitHub()" style="background: transparent; border-width: 1px; border-style: solid; border-color: var(--gold); border-image: initial; color: var(--gold); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: Calibri, sans-serif; display: flex; align-items: center; gap: 4px; transition: 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">🚀 Deploy</button>
     <div class="nav-avatar" id="nav-avatar" onclick="doLogout()" style="cursor:pointer" title="Carlos Ferreira (superadmin) — Clique para sair">CF</div>
   </div>
 </nav>
@@ -280,122 +280,31 @@ tr.tr-click:hover td{background:#F5F7FA}
     <button class="back-btn" onclick="relTab='capa';render()">← Voltar ao Relatório</button>
     <div class="page-header">
       <div>
-        <div class="page-title">001.0 — Março 2026 · Relatórios de Visita</div>
+        <div class="page-title">003.0 — Abril 2026 · Relatórios de Visita</div>
         <div style="margin-top:4px;display:flex;gap:8px;align-items:center"><span class="badge b-prep">Rascunho</span>
           <span style="font-size:12px;color:var(--text-muted)">CES — Cesae</span>
         </div>
       </div>
       <div class="page-actions">
-        <button class="btn btn-outline" onclick="gerarDashboardRV('_3jjoae9')">📊 Dashboard</button><button class="btn btn-sm" style="background:#0F6E56;color:#fff;border:none;cursor:pointer;font-family:Calibri,sans-serif;font-size:13px;font-weight:700;padding:5px 11px;border-radius:var(--radius)" onclick="validarModulo('_3jjoae9','rv')">✓ Validar</button><button class="btn btn-outline btn-sm" style="font-size:11px" onclick="reverterModulo('_3jjoae9','rv','em_curso')">↩ Reverter</button>
+        <button class="btn btn-outline btn-sm" onclick="sincronizarNAS('_radv6gn','rv')">🔄 Sincronizar NAS</button><label style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1px solid var(--border-light);border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:700;background:var(--bg)">📎 Importar RV<input type="file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="importarRV('_radv6gn',this)" multiple=""></label><button class="btn btn-outline" onclick="gerarDashboardRV('_radv6gn')">📊 Dashboard</button><button class="btn btn-outline btn-sm" style="border-color:#185FA5;color:#185FA5" onclick="submeterModulo('_radv6gn','rv')">→ Submeter</button>
       </div>
     </div>
     <div class="table-card"><div class="ficha-body" style="padding:14px"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:14px">
     <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid #0F6E56">
         <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Normal</div>
-        <div style="font-size:22px;font-weight:400;color:#0F6E56">5</div>
+        <div style="font-size:22px;font-weight:400;color:#0F6E56">0</div>
       </div><div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid #B91C1C">
         <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Alerta</div>
-        <div style="font-size:22px;font-weight:400;color:#B91C1C">2</div>
+        <div style="font-size:22px;font-weight:400;color:#B91C1C">0</div>
       </div><div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid #854F0B">
         <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Suspenso</div>
         <div style="font-size:22px;font-weight:400;color:#854F0B">0</div>
       </div>
     <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px 14px;text-align:center;border-top:3px solid var(--navy)">
       <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total</div>
-      <div style="font-size:22px;font-weight:400;color:var(--navy)">7</div>
+      <div style="font-size:22px;font-weight:400;color:var(--navy)">0</div>
     </div>
-  </div><div style="font-size:11px;color:var(--text-muted);margin-bottom:8px" id="rv-import-status-_3jjoae9"></div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px"><div style="position:relative;background:var(--bg-card);border:2px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div onclick="abrirRV(0,'_3jjoae9','true')" style="background:#F0FDF4;border-bottom:2px solid #0F6E56;padding:8px 12px">
-        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#0F6E56">RV 024.0</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">02/03/2026</div>
-      </div>
-      <div onclick="abrirRV(0,'_3jjoae9','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        <div>☁ nublado</div>
-        
-        <div style="color:var(--text);margin-top:4px;font-weight:700">Descofragem e alvenarias</div>
-      </div>
-      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
-        
-      </div>
-    </div><div style="position:relative;background:var(--bg-card);border:2px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div onclick="abrirRV(1,'_3jjoae9','true')" style="background:#F0FDF4;border-bottom:2px solid #0F6E56;padding:8px 12px">
-        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#0F6E56">RV 025.0</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">09/03/2026</div>
-      </div>
-      <div onclick="abrirRV(1,'_3jjoae9','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        <div>☁ chuva</div>
-        
-        <div style="color:var(--text);margin-top:4px;font-weight:700">Correção do piso térreo</div>
-      </div>
-      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
-        
-      </div>
-    </div><div style="position:relative;background:var(--bg-card);border:2px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div onclick="abrirRV(2,'_3jjoae9','true')" style="background:#F0FDF4;border-bottom:2px solid #0F6E56;padding:8px 12px">
-        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#0F6E56">RV 026.0</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">11/03/2026</div>
-      </div>
-      <div onclick="abrirRV(2,'_3jjoae9','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        <div>☁ sol</div>
-        
-        <div style="color:var(--text);margin-top:4px;font-weight:700">Infraestruturas enterradas de esgotos</div>
-      </div>
-      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
-        
-      </div>
-    </div><div style="position:relative;background:var(--bg-card);border:2px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div onclick="abrirRV(3,'_3jjoae9','true')" style="background:#FEF2F2;border-bottom:2px solid #B91C1C;padding:8px 12px">
-        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#B91C1C">RV 027.0</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">16/03/2026</div>
-      </div>
-      <div onclick="abrirRV(3,'_3jjoae9','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        <div>☁ sol</div>
-        
-        <div style="color:var(--text);margin-top:4px;font-weight:700">Infraestruturas enterradas de esgotos</div>
-      </div>
-      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
-        
-      </div>
-    </div><div style="position:relative;background:var(--bg-card);border:2px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div onclick="abrirRV(4,'_3jjoae9','true')" style="background:#F0FDF4;border-bottom:2px solid #0F6E56;padding:8px 12px">
-        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#0F6E56">RV 028.0</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">18/03/2026</div>
-      </div>
-      <div onclick="abrirRV(4,'_3jjoae9','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        <div>☁ sol</div>
-        
-        <div style="color:var(--text);margin-top:4px;font-weight:700">Preparação de pavimentos e infraestruturas de esgotos</div>
-      </div>
-      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
-        
-      </div>
-    </div><div style="position:relative;background:var(--bg-card);border:2px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div onclick="abrirRV(5,'_3jjoae9','true')" style="background:#F0FDF4;border-bottom:2px solid #0F6E56;padding:8px 12px">
-        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#0F6E56">RV 029.0</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">23/03/2026</div>
-      </div>
-      <div onclick="abrirRV(5,'_3jjoae9','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        <div>☁ sol</div>
-        
-        <div style="color:var(--text);margin-top:4px;font-weight:700">Execução de redes de drenagem e alvenarias</div>
-      </div>
-      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
-        
-      </div>
-    </div><div style="position:relative;background:var(--bg-card);border:2px solid var(--border-light);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-light)'">
-      <div onclick="abrirRV(6,'_3jjoae9','true')" style="background:#FEF2F2;border-bottom:2px solid #B91C1C;padding:8px 12px">
-        <div style="font-family:monospace;font-size:13px;font-weight:700;color:#B91C1C">RV 030.0</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">25/03/2026</div>
-      </div>
-      <div onclick="abrirRV(6,'_3jjoae9','true')" style="padding:8px 12px;font-size:11px;color:var(--text-muted)">
-        <div>☁ sol</div>
-        
-        <div style="color:var(--text);margin-top:4px;font-weight:700">Execução de alvenarias e abertura de valas para esgotos</div>
-      </div>
-      <div style="padding:4px 8px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end">
-        
-      </div>
-    </div></div></div></div></div>
+  </div><div style="font-size:11px;color:var(--text-muted);margin-bottom:8px" id="rv-import-status-_radv6gn"></div><div class="empty-state">Sem relatórios de visita.</div></div></div></div>
 </div>
 
 <!-- FLOATING CHATBOT -->
@@ -3734,10 +3643,10 @@ window.chatAnswer=function(q){
 };
 
 showLogin();
-</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
+</script><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div><div id="db-overlay" style="position: fixed; inset: 0px; background: rgba(30, 58, 95, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: rgb(255, 255, 255); font-family: Calibri, sans-serif;"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:700">A carregar dados...</div></div>
 
 
-<div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
+<div id="glasp-extension-toast-container" style="position: fixed; top: 32px; right: 16px; z-index: 2147483647; display: none; flex-direction: column; align-items: flex-end; height: 0px; width: auto; margin: 0px; padding: 0px;"></div><div class="glasp-ui-wrapper" id="glasp-ui-wrapper" style="height: 0px; width: 0px; padding: 0px;"><iframe name="glasp-tooltip-iframe" id="glasp-tooltip-iframe" style="display: none;"></iframe><iframe name="glasp-sidebar-iframe" id="glasp-sidebar-iframe" style="display: none !important;width: 0px !important; min-width: 0px !important; max-width: 320px; height: 100%; background: transparent; margin: auto; position: fixed; top: 0px; right: 0px; left: auto; z-index: 9000000000000000000;border: none !important;"></iframe></div><div id="yt_article_summary_widget_wrapper" class="yt_article_summary_widget_wrapper" style="display: none; margin: auto; width: fit-content; padding: 0px; border-radius: 100%;">
         <div id="yt_article_summary_widget" class="yt_article_summary_widget"><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M1.40123 27.3686C-0.44103 25.5284 -0.441033 22.5449 1.4012 20.7047L16.5971 5.52573L24.0098 12.9301L5.47818 31.4409L1.40123 27.3686Z" fill="#FF4E74"></path>
         <path d="M35.1286 24.0367L16.5972 5.5258L20.6741 1.45341C22.5164 -0.386772 25.5033 -0.386775 27.3455 1.45341L42.5415 16.6323L35.1286 24.0367Z" fill="#FFF85E"></path>
