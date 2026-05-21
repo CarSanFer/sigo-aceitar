@@ -280,10 +280,9 @@ tr.tr-click:hover td{background:#F5F7FA}
     </div>
   </div>
   <div class="nav-right">
-    <label class="btn btn-outline btn-sm" style="cursor:pointer;background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.8);border-radius:4px;padding:3px 8px;font-size:11px;font-family:Calibri,sans-serif;display:flex;align-items:center;gap:4px" id="btn-deploy" title="Deploy para GitHub/Vercel">
+    <button id="deploy-btn" onclick="deployToGitHub()" style="background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.8);border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:Calibri,sans-serif;display:flex;align-items:center;gap:4px;transition:all .15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'">
       🚀 Deploy
-      <input type="file" style="display:none" onchange="deployToGitHub(this)">
-    </label>
+    </button>
     <div class="nav-avatar" id="nav-avatar" onclick="doLogout()" style="cursor:pointer" title="Sair">AD</div>
   </div>
 </nav>
@@ -366,53 +365,43 @@ tr.tr-click:hover td{background:#F5F7FA}
 // DEPLOY TO GITHUB
 // ================================================================
 const GITHUB_REPO = 'CarSanFer/sigo-aceitar';
+const GITHUB_FILE = 'index.html';
 
-function pathForFile(name) {
-  let clean = name.replace(/\s*\(\d+\)(?=\.[^.]+$)/, '');
-  if (clean === 'ler-documento.js') return 'api/ler-documento.js';
-  if (clean.endsWith('.sql')) return 'migrations/' + clean;
-  return clean;
-}
-
-async function deployToGitHub(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const targetPath = pathForFile(file.name);
-  const text = await file.text();
-  if (targetPath === 'index.html' && !text.trim().toLowerCase().startsWith('<!doctype html')) {
-    if (!confirm('⚠️ Este ficheiro não parece ser HTML mas vai ser enviado para index.html.\n\nIsto pode partir o site. Continuar?')) {
-      input.value = '';
-      return;
-    }
-  }
-  const btn = document.getElementById('btn-deploy');
-  const origText = btn.innerHTML;
-  btn.innerHTML = '⏳ ' + targetPath + '...';
-  btn.style.pointerEvents = 'none';
-  let token = localStorage.getItem('gh_token');
+async function deployToGitHub() {
+  const token = localStorage.getItem('gh_token');
   if (!token) {
-    token = prompt('GitHub Personal Access Token (scope: repo):');
-    if (!token) { btn.innerHTML = origText; btn.style.pointerEvents = ''; return; }
-    localStorage.setItem('gh_token', token.trim());
+    const t = prompt('Personal Access Token do GitHub:\n(será guardado localmente neste browser)');
+    if (!t) return;
+    localStorage.setItem('gh_token', t.trim());
   }
+  const ghToken = localStorage.getItem('gh_token');
+  const btn = document.getElementById('deploy-btn');
+  const origText = btn.innerHTML;
+  btn.innerHTML = '⏳ A fazer deploy...';
+  btn.disabled = true;
+
   try {
-    const bytes = new TextEncoder().encode(text);
-    let binary = '';
-    const chunkSize = 8192;
-    for (let i = 0; i < bytes.length; i += chunkSize) {
-      binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-    }
-    const encoded = btoa(binary);
-    const getResp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${targetPath}`, {
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' }
+    const getResp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
+      headers: { 'Authorization': `Bearer ${ghToken}`, 'Accept': 'application/vnd.github+json' }
     });
+    if (!getResp.ok && getResp.status !== 404) throw new Error('Erro ao aceder ao repositório. Verifica o token.');
     const existing = getResp.ok ? await getResp.json() : null;
     const sha = existing?.sha;
-    const putResp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${targetPath}`, {
+
+    // Repor botão para estado original ANTES de capturar o HTML
+    btn.innerHTML = '🚀 Deploy';
+    btn.disabled = false;
+    await new Promise(r=>setTimeout(r,50)); // aguardar render
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const encoded = btoa(unescape(encodeURIComponent(html)));
+    btn.innerHTML = '⏳ A fazer deploy...';
+    btn.disabled = true;
+
+    const putResp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
       method: 'PUT',
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      headers: { 'Authorization': `Bearer ${ghToken}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        message: `Deploy ${targetPath} — ${new Date().toLocaleString('pt-PT')}`,
+        message: `Deploy SIGO — ${new Date().toLocaleString('pt-PT')}`,
         content: encoded,
         ...(sha ? { sha } : {})
       })
@@ -421,15 +410,19 @@ async function deployToGitHub(input) {
       const err = await putResp.json();
       throw new Error(err.message || 'Erro no deploy');
     }
-    btn.innerHTML = '✅ ' + targetPath;
-    setTimeout(() => { btn.innerHTML = origText; btn.style.pointerEvents = ''; }, 3000);
-  } catch (e) {
+    btn.innerHTML = '✅ Deployed!';
+    setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; }, 3000);
+  } catch(e) {
     alert('Erro no deploy: ' + e.message);
-    localStorage.removeItem('gh_token');
     btn.innerHTML = origText;
-    btn.style.pointerEvents = '';
+    btn.disabled = false;
   }
 }
+
+window.clearGHToken = function() {
+  localStorage.removeItem('gh_token');
+  alert('Token removido.');
+};
 
 // ================================================================
 // XLSX EXPORT — uses SheetJS via CDN
@@ -491,6 +484,12 @@ const SUPA = {
   key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxaXpxdXNwbHBrYWp6ZHBocWplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzkzNjIsImV4cCI6MjA4OTQxNTM2Mn0.CJj2aIkeQt321cvxxnH2zr-k2r_bsInkxCVLAkuUi7I',
 };
 
+// Supabase SIGO — exclusivo para relatórios
+const SUPA_SIGO = {
+  url: 'https://qcdmdqtohjesaoyjwdws.supabase.co',
+  key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjZG1kcXRvaGplc2FveWp3ZHdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MTAyMDgsImV4cCI6MjA5MTk4NjIwOH0.l9NMdTw-S62sILqyBw78FzLVJDYD0Kx0hWZQmuj3Vf4',
+};
+
 // Supabase client (using REST API directly — no npm needed)
 const sb = {
   async get(table, filters='') {
@@ -534,11 +533,51 @@ const sb = {
   },
 };
 
+// Supabase client SIGO — escrita/leitura de relatórios
+const sbRel = {
+  async get(table, filters='select=*') {
+    const query = filters ? `?${filters}` : '?select=*';
+    const r = await fetch(`${SUPA_SIGO.url}/rest/v1/${table}${query}`, {
+      headers: {'apikey': SUPA_SIGO.key, 'Authorization': `Bearer ${SUPA_SIGO.key}`}
+    });
+    if (!r.ok) { const txt = await r.text(); throw new Error(`GET ${table} failed: ${r.status} ${txt}`); }
+    return r.json();
+  },
+  async post(table, data) {
+    const r = await fetch(`${SUPA_SIGO.url}/rest/v1/${table}`, {
+      method: 'POST',
+      headers: {'apikey': SUPA_SIGO.key, 'Authorization': `Bearer ${SUPA_SIGO.key}`,
+        'Content-Type': 'application/json', 'Prefer': 'return=representation'},
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) { const e = await r.text(); throw new Error(`POST ${table}: ${e}`); }
+    return r.json();
+  },
+  async patch(table, id, data) {
+    const r = await fetch(`${SUPA_SIGO.url}/rest/v1/${table}?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {'apikey': SUPA_SIGO.key, 'Authorization': `Bearer ${SUPA_SIGO.key}`,
+        'Content-Type': 'application/json', 'Prefer': 'return=representation'},
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) { const e = await r.text(); throw new Error(`PATCH ${table}: ${e}`); }
+    return r.json();
+  },
+  async delete(table, id) {
+    const r = await fetch(`${SUPA_SIGO.url}/rest/v1/${table}?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {'apikey': SUPA_SIGO.key, 'Authorization': `Bearer ${SUPA_SIGO.key}`}
+    });
+    if (!r.ok) throw new Error(`DELETE ${table} failed: ${r.status}`);
+    return true;
+  },
+};
+
 // ================================================================
 // LOCAL CACHE — populated from Supabase on load
 // ================================================================
 const DB = {
-  obras: [], clientes: [], empreiteiros: [], subempreiteiros: [],
+  obras: [], subempreiteiros: [],
   especialidades: [], tiposDoc: [], utilizadores: [], auditoria: [],
   relatorios: [], empresas: [],
   intervenientes: { donosObra: [], fiscalizacao: [], equipaObra: [], projetistas: [] },
@@ -606,23 +645,18 @@ async function loadDB() {
   console.log('loadDB called, SUPA.url:', SUPA.url);
   showLoadingOverlay('A carregar dados...');
   try {
-    // Load each table independently so one failure doesn't block the rest
-    const safe = async (table) => { try { const d=await sb.get(table); console.log('Loaded '+table+':', d.length,'rows'); return d; } catch(e) { console.error('FAILED to load '+table+':', e.message); return []; }};
-    const [obras, utils, clientes, emps, subs, esps, tdocs, rels, empresas] = await Promise.all([
+    const safe = async (table, client=sb) => { try { const d=await client.get(table); console.log('Loaded '+table+':', d.length,'rows'); return d; } catch(e) { console.error('FAILED to load '+table+':', e.message); return []; }};
+    const [obras, utils, subs, esps, tdocs, rels, empresas] = await Promise.all([
       safe('obras'),
       safe('utilizadores'),
-      safe('clientes'),
-      safe('empreiteiros'),
       safe('subempreiteiros'),
       safe('especialidades'),
       safe('tipos_doc'),
-      safe('relatorios'),
+      safe('relatorios', sbRel),
       safe('empresas'),
     ]);
     DB.obras = obras.map(mapObra);
     DB.utilizadores = utils.map(mapUtil);
-    DB.clientes = clientes;
-    DB.empreiteiros = emps;
     DB.subempreiteiros = subs;
     DB.especialidades = esps;
     DB.tiposDoc = tdocs;
@@ -1373,7 +1407,7 @@ window.validarRV=async function(relId,idx){
   if(!r.conteudo.rv)r.conteudo.rv={lista:[]};
   if(!r.conteudo.rv.validados)r.conteudo.rv.validados={};
   r.conteudo.rv.validados[idx]=!r.conteudo.rv.validados[idx];
-  await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
   render();
 };
 
@@ -1383,7 +1417,7 @@ window.validarAR=async function(relId,idx){
   if(!r.conteudo.ar)r.conteudo.ar={lista:[]};
   if(!r.conteudo.ar.validados)r.conteudo.ar.validados={};
   r.conteudo.ar.validados[idx]=!r.conteudo.ar.validados[idx];
-  await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
   render();
 };
 
@@ -1460,7 +1494,7 @@ window.delRV=function(relId,idx){
   const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
   if(!r.conteudo?.rv?.lista)return;
   r.conteudo.rv.lista.splice(idx,1);
-  sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)}).catch(console.error);
+  sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)}).catch(console.error);
   render();
 };
 
@@ -1468,7 +1502,7 @@ window.delAR=function(relId,idx){
   const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
   if(!r.conteudo?.ar?.lista)return;
   r.conteudo.ar.lista.splice(idx,1);
-  sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)}).catch(console.error);
+  sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)}).catch(console.error);
   render();
 };
 
@@ -1503,7 +1537,7 @@ window.importarRV=async function(relId,input){
       }
     }catch(e){erros++;console.error('Erro em '+file.name+':',e.message);}
   }
-  await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
   if(status)status.textContent='✅ '+ok+' RV(s) importado(s)'+(erros?' · ❌ '+erros+' erro(s)':'');
   render();
 };
@@ -1539,7 +1573,7 @@ window.importarAR=async function(relId,input){
       }
     }catch(e){erros++;console.error('Erro em '+file.name+':',e.message);}
   }
-  await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
   if(status)status.textContent='✅ '+ok+' Ata(s) importada(s)'+(erros?' · ❌ '+erros+' erro(s)':'');
   render();
 };
@@ -1729,7 +1763,7 @@ window.criarRelatorio=async function(obraId){
   };
   try{
     showLoadingOverlay('A criar...');
-    await sb.post('relatorios',{...novo,conteudo:JSON.stringify(novo.conteudo)});
+    await sbRel.post('relatorios',{...novo,conteudo:JSON.stringify(novo.conteudo)});
     DB.relatorios.push(novo);
     hideLoadingOverlay();
     closeModal();
@@ -1761,7 +1795,7 @@ window.guardarRelatorio=async function(id){
   // Os módulos de lista guardam em tempo real via addListaItem/delListaItem
   try{
     showLoadingOverlay('A guardar...');
-    await sb.patch('relatorios',id,{conteudo:JSON.stringify(r.conteudo)});
+    await sbRel.patch('relatorios',id,{conteudo:JSON.stringify(r.conteudo)});
     hideLoadingOverlay();
     auditLog('Relatório',relNumero(r),'editado');
     render();
@@ -1776,7 +1810,7 @@ async function mudarEstadoRel(id,novoEstado,label){
   if(!r)return;
   try{
     showLoadingOverlay(label+'...');
-    await sb.patch('relatorios',id,{estado:novoEstado});
+    await sbRel.patch('relatorios',id,{estado:novoEstado});
     r.estado=novoEstado;
     hideLoadingOverlay();
     auditLog('Relatório',relNumero(r),'editado','Estado: '+novoEstado);
@@ -1788,7 +1822,7 @@ window.submeterModulo=async function(relId,key){
   if(!r.conteudo)r.conteudo={};
   if(!r.conteudo.modulos)r.conteudo.modulos={};
   r.conteudo.modulos[key]='em_aprovacao';
-  await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
   auditLog('Relatório',relNumero(r),'editado','Módulo '+key.toUpperCase()+' submetido para aprovação');
   render();
 };
@@ -1798,7 +1832,7 @@ window.validarModulo=async function(relId,key){
   if(!r.conteudo)r.conteudo={};
   if(!r.conteudo.modulos)r.conteudo.modulos={};
   r.conteudo.modulos[key]='validado';
-  await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
   auditLog('Relatório',relNumero(r),'editado','Módulo '+key.toUpperCase()+' validado');
   render();
 };
@@ -1808,7 +1842,7 @@ window.reverterModulo=async function(relId,key,paraEstado){
   if(!r.conteudo)r.conteudo={};
   if(!r.conteudo.modulos)r.conteudo.modulos={};
   r.conteudo.modulos[key]=paraEstado;
-  await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
   auditLog('Relatório',relNumero(r),'editado','Módulo '+key.toUpperCase()+' revertido para '+paraEstado);
   render();
 };
@@ -1860,7 +1894,7 @@ window.sincronizarNAS=async function(relId,tipo){
     }
 
     // 4. Guardar no Supabase
-    await sb.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+    await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
     setStatus(`✅ ${ok} ${tipo==='rv'?'RV(s)':'Ata(s)'} importado(s)`+(erros?` · ❌ ${erros} erro(s)`:''));
     render();
   }catch(e){
@@ -1880,7 +1914,7 @@ window.reverterRel=id=>mudarEstadoRel(id,'rascunho','A reverter');
 async function saveRelConteudo(id){
   const r=DB.relatorios.find(x=>x.id===id);
   if(!r)return;
-  await sb.patch('relatorios',id,{conteudo:JSON.stringify(r.conteudo)});
+  await sbRel.patch('relatorios',id,{conteudo:JSON.stringify(r.conteudo)});
 }
 window.addCrono=async function(id){
   const r=DB.relatorios.find(x=>x.id===id);if(!r)return;
