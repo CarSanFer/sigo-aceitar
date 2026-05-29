@@ -367,7 +367,7 @@ tr.tr-click:hover td{background:#F5F7FA}
 // DEPLOY TO GITHUB
 // ================================================================
 const GITHUB_REPO = 'CarSanFer/sigo-aceitar';
-const APP_VERSION = 'V26.05.29.0558';
+const APP_VERSION = 'V26.05.29.0607';
 
 // Mostrar versão no navbar
 document.addEventListener('DOMContentLoaded', () => {
@@ -680,14 +680,13 @@ async function loadDB() {
   showLoadingOverlay('A carregar dados...');
   try {
     const safe = async (table, client=sb) => { try { const d=await client.get(table); console.log('Loaded '+table+':', d.length,'rows'); return d; } catch(e) { console.error('FAILED to load '+table+':', e.message); return []; }};
-    const [obras, utils, subs, esps, tdocs, rels, empresas] = await Promise.all([
+    const [obras, utils, subs, esps, tdocs, rels] = await Promise.all([
       safe('obras'),
       safe('utilizadores'),
       safe('subempreiteiros'),
       safe('especialidades'),
       safe('tipos_doc'),
       safe('relatorios', sbRel),
-      safe('empresas'),
     ]);
     DB.obras = obras.map(mapObra);
     DB.utilizadores = utils.map(mapUtil);
@@ -698,13 +697,7 @@ async function loadDB() {
       ...r,
       conteudo: typeof r.conteudo==='string'?JSON.parse(r.conteudo||'{}'):r.conteudo||{}
     }));
-    DB.empresas = empresas.map(e=>({
-      ...e,
-      representantes: typeof e.representantes==='string'?JSON.parse(e.representantes||'[]'):e.representantes||[],
-      obras: typeof e.obras==='string'?JSON.parse(e.obras||'[]'):e.obras||[],
-      documentos: typeof e.documentos==='string'?JSON.parse(e.documentos||'{}'):e.documentos||{},
-      obras_data: typeof e.obras_data==='string'?JSON.parse(e.obras_data||'{}'):e.obras_data||{},
-    }));
+    DB.empresas = [];
     DB.intervenientes.donosObra = DB.utilizadores.filter(u=>u.role==='dono_obra');
     DB.intervenientes.fiscalizacao = DB.utilizadores.filter(u=>u.role==='fiscalizacao'||u.role==='superadmin');
     DB.intervenientes.projetistas = DB.utilizadores.filter(u=>u.role==='projetista');
@@ -3747,7 +3740,12 @@ const TIPO_TABLE={obra:'obras',cliente:'clientes',empreiteiro:'empreiteiros',sub
 window.doDelete=async function(tipo,id,nome){
   try {
     const table=TIPO_TABLE[tipo];
-    if(table){ showLoadingOverlay('A eliminar...'); await sb.delete(table,id); hideLoadingOverlay(); }
+    if(table){
+      showLoadingOverlay('A eliminar...');
+      const client = tipo==='relatorio' ? sbRel : sb;
+      await client.delete(table,id);
+      hideLoadingOverlay();
+    }
     if(tipo==='obra'){DB.obras=DB.obras.filter(o=>o.id!==id);if(fichObraId===id)fichObraId=null;}
     else if(tipo==='cliente')DB.clientes=DB.clientes.filter(c=>c.id!==id);
     else if(tipo==='empreiteiro')DB.empreiteiros=DB.empreiteiros.filter(e=>e.id!==id);
