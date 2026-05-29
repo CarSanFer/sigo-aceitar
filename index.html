@@ -1867,7 +1867,7 @@ window.importarValoresExcel=async function(relId,input){
       novos.push({mes:dt.getMonth()+1,ano:dt.getFullYear(),empreiteiro:Number(row[1])||0,fiscalizacao:Number(row[2])||0,dono_obra:Number(row[3])||0,aprovado:Number(row[4])||0,cronograma:Number(row[5])||0});
     }
     if(!novos.length){alert('Nenhuma linha válida encontrada.');return;}
-    const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+    const r=DB.relatorios.find(x=>x.id===relId);if(!r){alert('Relatório não encontrado.');return;}
     if(!r.conteudo)r.conteudo={};
     if(!r.conteudo.valores)r.conteudo.valores={};
     const existentes=r.conteudo.valores.autos||[];
@@ -1877,10 +1877,16 @@ window.importarValoresExcel=async function(relId,input){
       else existentes.push(novo);
     }
     r.conteudo.valores.autos=existentes;
-    await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
-    input.value='';
-    alert(`✅ ${novos.length} registo(s) importado(s).`);
-    render();
+    try{
+      await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+      console.log('Valores guardados OK, autos:',r.conteudo.valores.autos.length);
+      input.value='';
+      alert(`✅ ${novos.length} registo(s) importado(s) com sucesso.`);
+      render();
+    }catch(e){
+      alert('Erro ao guardar: '+e.message);
+      console.error(e);
+    }
   });
 };
 
