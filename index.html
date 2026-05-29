@@ -232,6 +232,7 @@ tr.tr-click:hover td{background:#F5F7FA}
   .btn{flex:1;justify-content:center}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <!-- LOGIN SCREEN -->
@@ -1610,11 +1611,308 @@ function relTabTrabalhos(r,edit){
 
 function relTabValores(r,edit){
   const d=r.conteudo?.valores||{};
-  const crono=d.cronograma||[];
-  const autos=d.autos||[];
-  const totalPrev=crono.reduce((s,x)=>s+(Number(x.valor)||0),0);
-  const totalAprov=autos.reduce((s,x)=>s+(Number(x.valor_aprovado)||0),0);
-  const desvio=totalAprov-totalPrev;
+  const dados=(d.autos||[]).slice().sort((a,b)=>{
+    if(a.ano!==b.ano) return a.ano-b.ano;
+    return a.mes-b.mes;
+  });
+
+  const fmtE=v=>Number(v||0).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+  const fmtP=v=>(v>=0?'+':'')+Number(v||0).toFixed(1)+'%';
+  const corDev=v=>v>=0?'#0F6E56':'#A32D2D';
+  const bgDev=v=>v>=0?'#E1F5EE':'#FCEBEB';
+
+  const desvAbs=(a,b)=>b-a;
+  const desvRel=(a,b)=>a===0?0:((b-a)/Math.abs(a))*100;
+
+  // Acumulados
+  let acEmp=0,acFisc=0,acDO=0,acAprov=0,acCrono=0;
+  const linhas=dados.map((row,i)=>{
+    const emp=Number(row.empreiteiro||0);
+    const fisc=Number(row.fiscalizacao||0);
+    const do_=Number(row.dono_obra||0);
+    const aprov=Number(row.aprovado||0);
+    const crono=Number(row.cronograma||0);
+    acEmp+=emp; acFisc+=fisc; acDO+=do_; acAprov+=aprov; acCrono+=crono;
+    return {mes:row.mes,ano:row.ano,emp,fisc,do:do_,aprov,crono,acEmp,acFisc,acDO,acAprov,acCrono,i};
+  });
+
+  const idTab=`val-tab-${r.id}`;
+  const idAnalise=`val-analise-${r.id}`;
+  const chartId1=`chart-a1-${r.id}`;
+  const chartId2=`chart-a2-${r.id}`;
+
+  const thS='padding:6px 10px;color:rgba(255,255,255,.8);font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap';
+  const tdS=(aln='right')=>`padding:5px 10px;border-bottom:1px solid var(--border-light);text-align:${aln};font-size:12px;white-space:nowrap`;
+  const tdDev=(v,rel=false)=>`<td style="${tdS()};background:${bgDev(v)};color:${corDev(v)}">${rel?fmtP(v):fmtE(v)}</td>`;
+
+  // ── Tabela de dados ──────────────────────────────────────────
+  const tabelaDados=`
+    <div class="table-wrap" style="margin-bottom:16px">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="background:var(--navy)">
+          <th style="${thS};text-align:left">Mês</th>
+          <th style="${thS}">Empreiteiro</th>
+          <th style="${thS}">Fiscalização</th>
+          <th style="${thS}">Dono de Obra</th>
+          <th style="${thS}">Aprovado</th>
+          <th style="${thS}">Cronograma</th>
+          ${edit?`<th style="${thS}"></th>`:''}
+        </tr></thead>
+        <tbody>
+          ${linhas.map(l=>`<tr onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
+            <td style="${tdS('left')};font-weight:500">${fmtMesAno(l.mes,l.ano)}</td>
+            <td style="${tdS()}">${fmtE(l.emp)}</td>
+            <td style="${tdS()}">${fmtE(l.fisc)}</td>
+            <td style="${tdS()}">${fmtE(l.do)}</td>
+            <td style="${tdS()};font-weight:700">${fmtE(l.aprov)}</td>
+            <td style="${tdS()}">${fmtE(l.crono)}</td>
+            ${edit?`<td style="${tdS()}"><button onclick="delAutoV2('${r.id}',${l.i})" style="font-size:10px;color:var(--danger);background:none;border:none;cursor:pointer">✕</button></td>`:''}
+          </tr>`).join('')||`<tr><td colspan="${edit?7:6}" class="empty-state">Sem dados. Importe um Excel ou adicione manualmente.</td></tr>`}
+          ${linhas.length?`<tr style="background:var(--bg);font-weight:700;border-top:2px solid var(--border-light)">
+            <td style="${tdS('left')}">Total Acumulado</td>
+            <td style="${tdS()}">${fmtE(acEmp)}</td>
+            <td style="${tdS()}">${fmtE(acFisc)}</td>
+            <td style="${tdS()}">${fmtE(acDO)}</td>
+            <td style="${tdS()}">${fmtE(acAprov)}</td>
+            <td style="${tdS()}">${fmtE(acCrono)}</td>
+            ${edit?`<td></td>`:''}
+          </tr>`:''}
+        </tbody>
+      </table>
+    </div>`;
+
+  // ── Análise 1 — Circuito de Aprovação ───────────────────────
+  const mkA1=(l,acum)=>{
+    const emp=acum?acEmp:l?.emp||0;
+    const fisc=acum?acFisc:l?.fisc||0;
+    const do_=acum?acDO:l?.do||0;
+    const aprov=acum?acAprov:l?.aprov||0;
+    const rows=[
+      {label:'Empreiteiro → Fiscalização',a:emp,b:fisc},
+      {label:'Fiscalização → Dono de Obra',a:fisc,b:do_},
+      {label:'Dono de Obra → Aprovado',a:do_,b:aprov},
+      {label:'Empreiteiro → Aprovado (total)',a:emp,b:aprov},
+    ];
+    return `<div class="table-wrap">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="background:var(--navy)">
+          <th style="${thS};text-align:left">Comparação</th>
+          <th style="${thS}">Origem</th>
+          <th style="${thS}">Destino</th>
+          <th style="${thS}">Desvio €</th>
+          <th style="${thS}">Desvio %</th>
+        </tr></thead>
+        <tbody>${rows.map(row=>{
+          const abs=desvAbs(row.a,row.b);
+          const rel=desvRel(row.a,row.b);
+          return `<tr onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
+            <td style="${tdS('left')};font-weight:500">${row.label}</td>
+            <td style="${tdS()}">${fmtE(row.a)}</td>
+            <td style="${tdS()}">${fmtE(row.b)}</td>
+            ${tdDev(abs)}${tdDev(rel,true)}
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+  };
+
+  // ── Análise 2 — Aprovado vs Cronograma ──────────────────────
+  const mkA2=(l,acum)=>{
+    const aprov=acum?acAprov:l?.aprov||0;
+    const crono=acum?acCrono:l?.crono||0;
+    const abs=desvAbs(crono,aprov);
+    const rel=desvRel(crono,aprov);
+    return `<div class="table-wrap">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="background:var(--navy)">
+          <th style="${thS};text-align:left">Comparação</th>
+          <th style="${thS}">Cronograma</th>
+          <th style="${thS}">Aprovado</th>
+          <th style="${thS}">Desvio €</th>
+          <th style="${thS}">Desvio %</th>
+        </tr></thead>
+        <tbody>
+          <tr onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
+            <td style="${tdS('left')};font-weight:500">Aprovado vs Cronograma</td>
+            <td style="${tdS()}">${fmtE(crono)}</td>
+            <td style="${tdS()}">${fmtE(aprov)}</td>
+            ${tdDev(abs)}${tdDev(rel,true)}
+          </tr>
+        </tbody>
+      </table>
+    </div>`;
+  };
+
+  const ultimaLinha=linhas.length?linhas[linhas.length-1]:null;
+
+  return `
+  <!-- Botões de acção -->
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+    ${edit?`
+    <label style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--border-light);border-radius:var(--radius);cursor:pointer;font-size:12px;font-weight:700;background:var(--bg)">
+      📥 Importar Excel
+      <input type="file" accept=".xlsx,.xls" style="display:none" onchange="importarValoresExcel('${r.id}',this)">
+    </label>
+    <button class="btn btn-outline btn-sm" onclick="mostrarFormValor('${r.id}')">+ Adicionar Manualmente</button>
+    `:''}
+  </div>
+
+  <!-- Form manual (oculto) -->
+  ${edit?`<div id="form-valor-${r.id}" style="display:none;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px;margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Novo Registo</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:10px">
+      <div><label class="form-label" style="font-size:9px">Mês</label><select class="filter-select" id="vf-mes-${r.id}">${mesesPT.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('')}</select></div>
+      <div><label class="form-label" style="font-size:9px">Ano</label><input class="form-input" id="vf-ano-${r.id}" type="number" value="${new Date().getFullYear()}" style="text-align:right"></div>
+      <div><label class="form-label" style="font-size:9px">Empreiteiro €</label><input class="form-input" id="vf-emp-${r.id}" type="number" placeholder="0" style="text-align:right"></div>
+      <div><label class="form-label" style="font-size:9px">Fiscalização €</label><input class="form-input" id="vf-fisc-${r.id}" type="number" placeholder="0" style="text-align:right"></div>
+      <div><label class="form-label" style="font-size:9px">Dono de Obra €</label><input class="form-input" id="vf-do-${r.id}" type="number" placeholder="0" style="text-align:right"></div>
+      <div><label class="form-label" style="font-size:9px">Aprovado €</label><input class="form-input" id="vf-aprov-${r.id}" type="number" placeholder="0" style="text-align:right"></div>
+      <div><label class="form-label" style="font-size:9px">Cronograma €</label><input class="form-input" id="vf-crono-${r.id}" type="number" placeholder="0" style="text-align:right"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-gold btn-sm" onclick="addValorManual('${r.id}')">Guardar</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('form-valor-${r.id}').style.display='none'">Cancelar</button>
+    </div>
+  </div>`:''}
+
+  <!-- Dados brutos -->
+  <div class="sec-div">Dados</div>
+  ${tabelaDados}
+
+  <!-- Análises -->
+  <div class="sec-div">Análise 1 — Circuito de Aprovação</div>
+  <div style="display:flex;gap:8px;margin-bottom:10px">
+    <button id="${idAnalise}-a1-mes" class="btn btn-gold btn-sm" onclick="valToggle('${r.id}','a1','mes')">Mês Actual</button>
+    <button id="${idAnalise}-a1-acum" class="btn btn-outline btn-sm" onclick="valToggle('${r.id}','a1','acum')">Acumulado</button>
+  </div>
+  <div id="${idAnalise}-a1-mes-content">${mkA1(ultimaLinha,false)}</div>
+  <div id="${idAnalise}-a1-acum-content" style="display:none">${mkA1(null,true)}</div>
+
+  <!-- Gráfico A1 -->
+  <div style="margin-top:14px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px">
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Evolução — Circuito de Aprovação</div>
+    <canvas id="${chartId1}" height="80"></canvas>
+  </div>
+
+  <div class="sec-div" style="margin-top:14px">Análise 2 — Aprovado vs Cronograma</div>
+  <div style="display:flex;gap:8px;margin-bottom:10px">
+    <button id="${idAnalise}-a2-mes" class="btn btn-gold btn-sm" onclick="valToggle('${r.id}','a2','mes')">Mês Actual</button>
+    <button id="${idAnalise}-a2-acum" class="btn btn-outline btn-sm" onclick="valToggle('${r.id}','a2','acum')">Acumulado</button>
+  </div>
+  <div id="${idAnalise}-a2-mes-content">${mkA2(ultimaLinha,false)}</div>
+  <div id="${idAnalise}-a2-acum-content" style="display:none">${mkA2(null,true)}</div>
+
+  <!-- Gráfico A2 -->
+  <div style="margin-top:14px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px">
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Evolução — Aprovado vs Cronograma</div>
+    <canvas id="${chartId2}" height="80"></canvas>
+  </div>
+
+  <script>
+  (function(){
+    // Toggle análise mensal/acumulada
+    window.valToggle=function(relId,analise,modo){
+      const base='val-analise-'+relId+'-'+analise;
+      ['mes','acum'].forEach(m=>{
+        document.getElementById(base+'-'+m+'-content').style.display=m===modo?'':'none';
+        const btn=document.getElementById(base+'-'+m);
+        if(btn){btn.className=m===modo?'btn btn-gold btn-sm':'btn btn-outline btn-sm';}
+      });
+    };
+
+    // Gráfico A1
+    const labels=${JSON.stringify(linhas.map(l=>fmtMesAno(l.mes,l.ano)||''))};
+    const emp=${JSON.stringify(linhas.map(l=>l.emp))};
+    const fisc=${JSON.stringify(linhas.map(l=>l.fisc))};
+    const do_=${JSON.stringify(linhas.map(l=>l.do))};
+    const aprov=${JSON.stringify(linhas.map(l=>l.aprov))};
+    const crono=${JSON.stringify(linhas.map(l=>l.crono))};
+
+    if(typeof Chart!=='undefined'&&labels.length){
+      const ctx1=document.getElementById('${chartId1}');
+      if(ctx1){
+        new Chart(ctx1,{type:'line',data:{labels,datasets:[
+          {label:'Empreiteiro',data:emp,borderColor:'#3B82F6',backgroundColor:'rgba(59,130,246,.1)',tension:.3,fill:false,pointRadius:4},
+          {label:'Fiscalização',data:fisc,borderColor:'#F59E0B',backgroundColor:'rgba(245,158,11,.1)',tension:.3,fill:false,pointRadius:4},
+          {label:'Dono de Obra',data:do_,borderColor:'#8B5CF6',backgroundColor:'rgba(139,92,246,.1)',tension:.3,fill:false,pointRadius:4},
+          {label:'Aprovado',data:aprov,borderColor:'#10B981',backgroundColor:'rgba(16,185,129,.1)',tension:.3,fill:false,pointRadius:4,borderWidth:2.5},
+        ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top'},tooltip:{callbacks:{label:ctx=>' '+Number(ctx.raw).toLocaleString('pt-PT',{minimumFractionDigits:2})+' €'}}},scales:{y:{ticks:{callback:v=>Number(v).toLocaleString('pt-PT',{minimumFractionDigits:0})+' €'}}}}});
+      }
+      const ctx2=document.getElementById('${chartId2}');
+      if(ctx2){
+        new Chart(ctx2,{type:'bar',data:{labels,datasets:[
+          {label:'Cronograma',data:crono,backgroundColor:'rgba(148,163,184,.6)',borderColor:'#94A3B8',borderWidth:1},
+          {label:'Aprovado',data:aprov,backgroundColor:'rgba(16,185,129,.6)',borderColor:'#10B981',borderWidth:1},
+        ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top'},tooltip:{callbacks:{label:ctx=>' '+Number(ctx.raw).toLocaleString('pt-PT',{minimumFractionDigits:2})+' €'}}},scales:{y:{ticks:{callback:v=>Number(v).toLocaleString('pt-PT',{minimumFractionDigits:0})+' €'}}}}});
+      }
+    }
+  })();
+  </script>`;
+}
+
+// ── Importar Excel de Valores ─────────────────────────────────
+window.importarValoresExcel=async function(relId,input){
+  const file=input.files[0];if(!file)return;
+  loadXLSX(async()=>{
+    const buf=await file.arrayBuffer();
+    const wb=XLSX.read(buf,{type:'array',cellDates:true});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});
+    const novos=[];
+    for(let i=1;i<rows.length;i++){
+      const row=rows[i];
+      if(!row||!row[0])continue;
+      const dt=row[0] instanceof Date?row[0]:new Date(row[0]);
+      if(isNaN(dt))continue;
+      novos.push({mes:dt.getMonth()+1,ano:dt.getFullYear(),empreiteiro:Number(row[1])||0,fiscalizacao:Number(row[2])||0,dono_obra:Number(row[3])||0,aprovado:Number(row[4])||0,cronograma:Number(row[5])||0});
+    }
+    if(!novos.length){alert('Nenhuma linha válida encontrada.');return;}
+    const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+    if(!r.conteudo)r.conteudo={};
+    if(!r.conteudo.valores)r.conteudo.valores={};
+    const existentes=r.conteudo.valores.autos||[];
+    for(const novo of novos){
+      const idx=existentes.findIndex(x=>x.mes===novo.mes&&x.ano===novo.ano);
+      if(idx>=0)existentes[idx]={...existentes[idx],...novo};
+      else existentes.push(novo);
+    }
+    r.conteudo.valores.autos=existentes;
+    await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+    input.value='';
+    alert(`✅ ${novos.length} registo(s) importado(s).`);
+    render();
+  });
+};
+
+window.mostrarFormValor=function(relId){
+  const el=document.getElementById('form-valor-'+relId);
+  if(el)el.style.display=el.style.display==='none'?'block':'none';
+};
+
+window.addValorManual=async function(relId){
+  const g=id=>Number(document.getElementById(id)?.value)||0;
+  const gs=id=>document.getElementById(id)?.value||'';
+  const mes=g('vf-mes-'+relId)||1;
+  const ano=g('vf-ano-'+relId)||new Date().getFullYear();
+  const novo={mes,ano,empreiteiro:g('vf-emp-'+relId),fiscalizacao:g('vf-fisc-'+relId),dono_obra:g('vf-do-'+relId),aprovado:g('vf-aprov-'+relId),cronograma:g('vf-crono-'+relId)};
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  if(!r.conteudo)r.conteudo={};
+  if(!r.conteudo.valores)r.conteudo.valores={};
+  const lista=r.conteudo.valores.autos||[];
+  const idx=lista.findIndex(x=>x.mes===mes&&x.ano===ano);
+  if(idx>=0)lista[idx]={...lista[idx],...novo};else lista.push(novo);
+  r.conteudo.valores.autos=lista;
+  await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  document.getElementById('form-valor-'+relId).style.display='none';
+  render();
+};
+
+window.delAutoV2=async function(relId,idx){
+  const r=DB.relatorios.find(x=>x.id===relId);if(!r)return;
+  (r.conteudo?.valores?.autos||[]).splice(idx,1);
+  await sbRel.patch('relatorios',relId,{conteudo:JSON.stringify(r.conteudo)});
+  render();
+};
   return `
   <div class="sec-div">Cronograma Financeiro</div>
   ${edit?`<div style="display:flex;gap:8px;margin-bottom:8px">
@@ -1930,45 +2228,6 @@ async function saveRelConteudo(id){
   if(!r)return;
   await sbRel.patch('relatorios',id,{conteudo:JSON.stringify(r.conteudo)});
 }
-window.addCrono=async function(id){
-  const r=DB.relatorios.find(x=>x.id===id);if(!r)return;
-  if(!r.conteudo)r.conteudo={trabalhos:{},valores:{cronograma:[],autos:[]},prazo:{},controlo:{},fotos:[]};
-  if(!r.conteudo.valores)r.conteudo.valores={cronograma:[],autos:[]};
-  const mes=parseInt($('crono-mes')?.value)||1;
-  const ano=parseInt($('crono-ano')?.value)||new Date().getFullYear();
-  const valor=parseFloat($('crono-val')?.value)||0;
-  r.conteudo.valores.cronograma.push({mes,ano,valor});
-  r.conteudo.valores.cronograma.sort((a,b)=>a.ano*12+a.mes-(b.ano*12+b.mes));
-  try{showLoadingOverlay('A guardar...');await saveRelConteudo(id);hideLoadingOverlay();render();}
-  catch(e){hideLoadingOverlay();alert('Erro: '+e.message);}
-};
-window.delCrono=async function(id,i){
-  const r=DB.relatorios.find(x=>x.id===id);if(!r)return;
-  r.conteudo.valores.cronograma.splice(i,1);
-  try{showLoadingOverlay('A guardar...');await saveRelConteudo(id);hideLoadingOverlay();render();}
-  catch(e){hideLoadingOverlay();alert('Erro: '+e.message);}
-};
-window.addAuto=async function(id){
-  const r=DB.relatorios.find(x=>x.id===id);if(!r)return;
-  if(!r.conteudo.valores)r.conteudo.valores={cronograma:[],autos:[]};
-  const mes=parseInt($('auto-mes')?.value)||1;
-  const ano=new Date().getFullYear();
-  r.conteudo.valores.autos.push({
-    mes,ano,
-    valor_emp:parseFloat($('auto-emp')?.value)||0,
-    valor_fisc:parseFloat($('auto-fisc')?.value)||0,
-    valor_do:parseFloat($('auto-do')?.value)||0,
-    valor_aprovado:parseFloat($('auto-aprov')?.value)||0,
-  });
-  try{showLoadingOverlay('A guardar...');await saveRelConteudo(id);hideLoadingOverlay();render();}
-  catch(e){hideLoadingOverlay();alert('Erro: '+e.message);}
-};
-window.delAuto=async function(id,i){
-  const r=DB.relatorios.find(x=>x.id===id);if(!r)return;
-  r.conteudo.valores.autos.splice(i,1);
-  try{showLoadingOverlay('A guardar...');await saveRelConteudo(id);hideLoadingOverlay();render();}
-  catch(e){hideLoadingOverlay();alert('Erro: '+e.message);}
-};
 
 // ================================================================
 // RELATÓRIOS — FOTOS
