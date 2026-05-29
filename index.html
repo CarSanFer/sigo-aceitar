@@ -956,6 +956,9 @@ function go(p,extra=null){
 // MAIN RENDER
 // ================================================================
 function render(){
+  // Garantir versão no navbar
+  const _nv=document.getElementById('nav-version');
+  if(_nv&&typeof APP_VERSION!=='undefined') _nv.textContent=APP_VERSION;
   const app=$('app');
   if(relRelId){ renderFichaRelatorio(app); return; }
   if(relObraId){ renderCapaObra(app); return; }
