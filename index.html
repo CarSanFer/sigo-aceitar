@@ -1723,8 +1723,8 @@ function relTabValores(r,edit){
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">
     <div style="display:flex;gap:6px">
       <button id="${vId}-btn-dados" class="btn btn-gold btn-sm" onclick="valVistaToggle('${r.id}','dados')">📊 Dados</button>
-      <button id="${vId}-btn-a1" class="btn btn-outline btn-sm" onclick="valVistaToggle('${r.id}','a1')">📈 Análise 1</button>
-      <button id="${vId}-btn-a2" class="btn btn-outline btn-sm" onclick="valVistaToggle('${r.id}','a2')">📉 Análise 2</button>
+      <button id="${vId}-btn-a1" class="btn btn-outline btn-sm" onclick="valVistaToggle('${r.id}','a1')">📈 Aprovado vs Cronograma</button>
+      <button id="${vId}-btn-a2" class="btn btn-outline btn-sm" onclick="valVistaToggle('${r.id}','a2')">📉 Circuito de Aprovação</button>
     </div>
     ${edit?`<div style="display:flex;gap:6px">
       <label style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--border-light);border-radius:var(--radius);cursor:pointer;font-size:12px;font-weight:700;background:var(--bg)">📥 Excel<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importarValoresExcel('${r.id}',this)"></label>
@@ -1751,7 +1751,6 @@ function relTabValores(r,edit){
   <div id="${vId}-vista-dados">${tabelaDados}</div>
 
   <div id="${vId}-vista-a1" style="display:none">
-    <div class="sec-div">Análise 1 — Aprovado vs Cronograma</div>
     <div style="display:flex;gap:8px;margin-bottom:10px">
       <button id="${vId}-a1-mes" class="btn btn-gold btn-sm" onclick="valToggle('${r.id}','a1','mes')">Mês Actual</button>
       <button id="${vId}-a1-acum" class="btn btn-outline btn-sm" onclick="valToggle('${r.id}','a1','acum')">Acumulado</button>
@@ -1759,12 +1758,12 @@ function relTabValores(r,edit){
     <div id="${vId}-a1-mes-c">${mkA1(ultimaLinha,false)}</div>
     <div id="${vId}-a1-acum-c" style="display:none">${mkA1(null,true)}</div>
     <div style="margin-top:14px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px">
+      <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Evolução Mensal</div>
       <canvas id="${chartId1}" style="max-height:220px"></canvas>
     </div>
   </div>
 
   <div id="${vId}-vista-a2" style="display:none">
-    <div class="sec-div">Análise 2 — Circuito de Aprovação</div>
     <div style="display:flex;gap:8px;margin-bottom:10px">
       <button id="${vId}-a2-mes" class="btn btn-gold btn-sm" onclick="valToggle('${r.id}','a2','mes')">Mês Actual</button>
       <button id="${vId}-a2-acum" class="btn btn-outline btn-sm" onclick="valToggle('${r.id}','a2','acum')">Acumulado</button>
@@ -1772,20 +1771,20 @@ function relTabValores(r,edit){
     <div id="${vId}-a2-mes-c">${mkA2(ultimaLinha,false)}</div>
     <div id="${vId}-a2-acum-c" style="display:none">${mkA2(null,true)}</div>
     <div style="margin-top:14px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px">
+      <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Evolução Mensal</div>
       <canvas id="${chartId2}" style="max-height:220px"></canvas>
     </div>
   </div>
 
   <script>
-  setTimeout(function(){
-    if(typeof Chart==='undefined')return;
-    const labels=${labelsJ};if(!labels.length)return;
-    const opts={responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top'},tooltip:{callbacks:{label:c=>' '+Number(c.raw).toLocaleString('pt-PT',{minimumFractionDigits:2})+' \u20ac'}}},scales:{y:{ticks:{callback:v=>Number(v).toLocaleString('pt-PT')+' \u20ac'}}}};
-    const c1=document.getElementById('${chartId1}');
-    if(c1&&!c1._done){c1._done=1;new Chart(c1,{type:'bar',data:{labels,datasets:[{label:'Cronograma',data:${cronoJ},backgroundColor:'rgba(148,163,184,.5)',borderColor:'#94A3B8',borderWidth:1},{label:'Aprovado',data:${aprovJ},backgroundColor:'rgba(16,185,129,.5)',borderColor:'#10B981',borderWidth:1}]},options:opts});}
-    const c2=document.getElementById('${chartId2}');
-    if(c2&&!c2._done){c2._done=1;new Chart(c2,{type:'line',data:{labels,datasets:[{label:'Empreiteiro',data:${empJ},borderColor:'#3B82F6',tension:.3,fill:false,pointRadius:4},{label:'Fiscalização',data:${fiscJ},borderColor:'#F59E0B',tension:.3,fill:false,pointRadius:4},{label:'Dono de Obra',data:${doJ},borderColor:'#8B5CF6',tension:.3,fill:false,pointRadius:4},{label:'Aprovado',data:${aprovJ},borderColor:'#10B981',tension:.3,fill:false,pointRadius:4,borderWidth:2.5}]},options:opts});}
-  },300);
+  // Guardar dados para inicialização lazy dos gráficos
+  window._valChartData=window._valChartData||{};
+  window._valChartData['${r.id}']={
+    labels:${labelsJ},
+    aprov:${aprovJ},crono:${cronoJ},
+    emp:${empJ},fisc:${fiscJ},do_:${doJ},
+    chartId1:'${chartId1}',chartId2:'${chartId2}'
+  };
   <\/script>`;
 }
 
@@ -1800,6 +1799,19 @@ window.valVistaToggle=function(relId,vista){
     const btn=document.getElementById(vId+'-btn-'+v);
     if(btn)btn.className=v===vista?'btn btn-gold btn-sm':'btn btn-outline btn-sm';
   });
+  // Inicializar gráficos quando a vista é activada
+  if((vista==='a1'||vista==='a2')&&typeof Chart!=='undefined'){
+    const cd=window._valChartData?.[relId];
+    if(!cd||!cd.labels.length)return;
+    const opts={responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top'},tooltip:{callbacks:{label:c=>' '+Number(c.raw).toLocaleString('pt-PT',{minimumFractionDigits:2})+' €'}}},scales:{y:{ticks:{callback:v=>Number(v).toLocaleString('pt-PT')+' €'}}}};
+    if(vista==='a1'){
+      const c=document.getElementById(cd.chartId1);
+      if(c&&!c._done){c._done=1;new Chart(c,{type:'bar',data:{labels:cd.labels,datasets:[{label:'Cronograma',data:cd.crono,backgroundColor:'rgba(148,163,184,.5)',borderColor:'#94A3B8',borderWidth:1},{label:'Aprovado',data:cd.aprov,backgroundColor:'rgba(16,185,129,.5)',borderColor:'#10B981',borderWidth:1}]},options:opts});}
+    } else {
+      const c=document.getElementById(cd.chartId2);
+      if(c&&!c._done){c._done=1;new Chart(c,{type:'line',data:{labels:cd.labels,datasets:[{label:'Empreiteiro',data:cd.emp,borderColor:'#3B82F6',tension:.3,fill:false,pointRadius:4},{label:'Fiscalização',data:cd.fisc,borderColor:'#F59E0B',tension:.3,fill:false,pointRadius:4},{label:'Dono de Obra',data:cd.do_,borderColor:'#8B5CF6',tension:.3,fill:false,pointRadius:4},{label:'Aprovado',data:cd.aprov,borderColor:'#10B981',tension:.3,fill:false,pointRadius:4,borderWidth:2.5}]},options:opts});}
+    }
+  }
 };
 window.valToggle=function(relId,analise,modo){
   const base='val-'+relId+'-'+analise;
