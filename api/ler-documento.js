@@ -619,6 +619,8 @@ Se um campo não existir usa "".`;
       if (claudeData.error) throw new Error(claudeData.error.message);
       const text = claudeData.content?.map(c => c.text || '').join('').trim();
       const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('Sem JSON: ' + text.substring(0, 150));
+      const pedidoData = JSON.parse(jsonMatch[0]);
       // Extrair ref e flag "R" do nome do ficheiro
       // Formatos: "039.0 PA - Nome.xlsx" ou "R 039.0 PA - Nome.xlsx"
       const temRespostaNoNome = /^R\s/i.test(fileName || '');
