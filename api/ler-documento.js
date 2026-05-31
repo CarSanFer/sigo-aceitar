@@ -28,17 +28,30 @@ participantes (string), temas (string), temaPrincipal (string), decisoes (string
 Se um campo não existir usa "" ou [].`;
 
   const promptPE = `Extrai os dados deste Pedido de Esclarecimento (PE) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
-Campos do pedido: autor (string), enviado (dd/mm/yyyy), idArtigos (string), desenhos (string), assunto (string),
-anexos (string, lista de anexos se existirem), pedido (string, texto do pedido de esclarecimento).
+Campos do pedido: id (string, número do PE ex: "009.0"), autor (string), enviado (dd/mm/yyyy), especialidade (string, ex: EST/ARQ/ELE/HID/etc), idArtigos (string), desenhos (string), assunto (string),
+anexos (string), pedido (string, texto do pedido de esclarecimento).
 Campos da resposta (pode haver mais do que uma, devolver array "respostas"): cada elemento tem
-data (dd/mm/yyyy), autor (string), anexos (string), esclarecimento (string), observacoes (string).
+tipo (string: "Projetista" ou "Fiscalização"), data (dd/mm/yyyy), autor (string), anexos (string), esclarecimento (string), observacoes (string).
 Se um campo não existir usa "" ou [].
-Formato: { "autor":"", "enviado":"", "idArtigos":"", "desenhos":"", "assunto":"", "anexos":"", "pedido":"", "respostas":[] }`;
+Formato: { "id":"", "autor":"", "enviado":"", "especialidade":"", "idArtigos":"", "desenhos":"", "assunto":"", "anexos":"", "pedido":"", "respostas":[] }`;
 
   const promptPA = `Extrai os dados deste Pedido de Aprovação (PA) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
-Campos: referencia (string, ex: "001.0"), assunto (string), descricao (string), elementos (string, elementos submetidos a aprovação),
-disciplina (string, ex: Arquitetura/Estruturas/MEP/etc), urgente (boolean), obs (string).
-Se um campo não existir usa "" ou false.`;
+Campos do pedido:
+- id (string, número do PA ex: "039.0")
+- data (string, data de envio do pedido dd/mm/yyyy)
+- especialidade (string, ex: ARQ/EST/ELE/HID/AVAC/etc)
+- matEquip (string: "Material" ou "Equipamento" ou ambos)
+- motivo (string, descrição/motivo do pedido de aprovação)
+- previsto (string, marca ou solução prevista em projecto)
+- proposto (string, marca ou solução proposta)
+- observacoes (string, observações do pedido)
+- respostas (array, pode estar vazio): cada elemento tem:
+  - tipo (string: "Projetista" ou "Fiscalização")
+  - data (string, dd/mm/yyyy)
+  - parecer (string: "Aprovado" | "Aprovado com condições" | "Não aprovado" | "")
+  - observacoes (string)
+Se um campo não existir usa "" ou [].
+Formato: { "id":"", "data":"", "especialidade":"", "matEquip":"", "motivo":"", "previsto":"", "proposto":"", "observacoes":"", "respostas":[] }`;
 
   const promptResposta = `Extrai os dados desta Resposta a um Pedido de Esclarecimento ou Aprovação e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
 Campos: decisao (string, ex: Aprovado|Aprovado com condições|Não aprovado|Esclarecido|Esclarecimento insuficiente),
@@ -353,7 +366,7 @@ Se um campo não existir usa "".`;
         itens,
         totalExcel: dadosExcel[tipo].length,
         excelEncontrado: !!excel,
-        _debug: { pastaTipo, totalSubpastas: subpastas.length, totalExcel: dadosExcel[tipo].length, itensMes: itens.length, excelNome: excel?.name || null, ficheirosCONomes: ficheirosCO.filter(f=>!f.isdir).map(f=>f.name) }
+        _debug: { pastaTipo, totalSubpastas: subpastas.length, totalExcel: dadosExcel[tipo].length, itensMes: itens.length, excelNome: excel?.name || null, ficheirosCONomes: ficheirosCO.filter(f=>!f.isdir).map(f=>f.name), nomesPasstas: Object.keys(mapaPasstas), itensTemPasta: itens.filter(x=>x.temPasta).map(x=>x.ref) }
       });
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -606,8 +619,61 @@ Se um campo não existir usa "".`;
       if (claudeData.error) throw new Error(claudeData.error.message);
       const text = claudeData.content?.map(c => c.text || '').join('').trim();
       const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('Sem JSON: ' + text.substring(0, 150));
-      results.push({ success: true, data: JSON.parse(jsonMatch[0]), fileName });
+      // Extrair ref e flag "R" do nome do ficheiro
+      // Formatos: "039.0 PA - Nome.xlsx" ou "R 039.0 PA - Nome.xlsx"
+      const temRespostaNoNome = /^R\s/i.test(fileName || '');
+      const refMatch = (fileName || '').match(/(\d+\.?\d+)\s+(?:PE|PA)/i);
+      const ref = refMatch ? refMatch[1] : ((fileName || '').match(/^(\d+\.?\d*)/) || [])[1] || '';
+      const nomeMatch = (fileName || '').match(/\d+\.?\d+\s+(?:PE|PA)\s*[-–]?\s*(.+?)(?:\.\w+)?$/i);
+      const nomeDoFicheiro = nomeMatch ? nomeMatch[1].trim() : '';
+
+      // Construir estrutura completa compatível com o SIGO
+      let dataCompleta;
+      if (tipo === 'pe') {
+        const nome = pedidoData.assunto || nomeDoFicheiro || '';
+        dataCompleta = {
+          ref,
+          nome,
+          esp: pedidoData.especialidade || '',
+          dataSubmissao: pedidoData.enviado || pedidoData.data || '',
+          dataEnvioFisc: '',
+          dataProjetista: (pedidoData.respostas||[]).find(r=>r.tipo==='Projetista')?.data || '',
+          dataRespFisc: (pedidoData.respostas||[]).find(r=>r.tipo==='Fiscalização')?.data || '',
+          dataFecho: '',
+          obs: pedidoData.obs || '',
+          temResposta: (pedidoData.respostas||[]).length > 0,
+          pedido: pedidoData,
+          resposta: null,
+          anexos: [],
+          ficheiros: {}
+        };
+      } else if (tipo === 'pa') {
+        const nome = pedidoData.motivo || nomeDoFicheiro || '';
+        const respostas = pedidoData.respostas || [];
+        const respProj = respostas.find(r => r.tipo === 'Projetista') || {};
+        const respFisc = respostas.find(r => r.tipo === 'Fiscalização') || {};
+        dataCompleta = {
+          ref,
+          nome,
+          esp: pedidoData.especialidade || '',
+          dataSubmissao: pedidoData.data || '',
+          dataEnvioFisc: '',
+          dataProjetista: respProj.data || '',
+          dataRespFisc: respFisc.data || '',
+          dataFecho: '',
+          obs: pedidoData.observacoes || '',
+          temResposta: temRespostaNoNome || respostas.length > 0,
+          pedido: pedidoData,
+          resposta: null,
+          anexos: [],
+          ficheiros: {}
+        };
+      } else {
+        // AR, RV e outros — manter estrutura original
+        dataCompleta = pedidoData;
+      }
+
+      results.push({ success: true, data: dataCompleta, fileName });
     } catch (err) {
       results.push({ success: false, error: err.message, fileName: f.fileName });
     }
