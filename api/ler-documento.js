@@ -598,6 +598,7 @@ Se um campo não existir usa "".`;
       const prompt = getPrompt();
       const isPDF = (contentType || '').includes('pdf') || (fileName || '').toLowerCase().endsWith('.pdf');
       const isDocx = (contentType || '').includes('word') || (fileName || '').toLowerCase().match(/\.docx?$/);
+      const isXlsx = (fileName || '').toLowerCase().match(/\.xlsx?$/);
       let msgContent;
       if (isPDF) {
         msgContent = [
@@ -607,6 +608,23 @@ Se um campo não existir usa "".`;
       } else if (isDocx) {
         const result = await mammoth.extractRawText({ buffer });
         msgContent = [{ type: 'text', text: prompt + '\n\nConteúdo:\n\n' + result.value }];
+      } else if (isXlsx) {
+        // Converter Excel para texto usando SheetJS
+        const wb = XLSX.read(buffer, { type: 'buffer', cellDates: true });
+        let textoExcel = '';
+        for (const sheetName of wb.SheetNames) {
+          const ws = wb.Sheets[sheetName];
+          const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+          textoExcel += `\n[Folha: ${sheetName}]\n`;
+          for (const row of rows) {
+            const linha = row.map(c => {
+              if (c instanceof Date) return `${String(c.getDate()).padStart(2,'0')}/${String(c.getMonth()+1).padStart(2,'0')}/${c.getFullYear()}`;
+              return String(c).trim();
+            }).filter(c => c !== '').join(' | ');
+            if (linha) textoExcel += linha + '\n';
+          }
+        }
+        msgContent = [{ type: 'text', text: prompt + '\n\nConteúdo do Excel:\n\n' + textoExcel }];
       } else {
         msgContent = [{ type: 'text', text: prompt + '\n\nConteúdo:\n\n' + buffer.toString('utf-8') }];
       }
