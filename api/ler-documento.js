@@ -621,6 +621,7 @@ Se um campo não existir usa "".`;
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error('Sem JSON: ' + text.substring(0, 150));
       const pedidoData = JSON.parse(jsonMatch[0]);
+      console.log('PA pedidoData:', JSON.stringify(pedidoData).substring(0, 500));
       // Extrair ref e flag "R" do nome do ficheiro
       // Formatos: "039.0 PA - Nome.xlsx" ou "R 039.0 PA - Nome.xlsx"
       const temRespostaNoNome = /^R\s/i.test(fileName || '');
