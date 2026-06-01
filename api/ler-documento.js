@@ -53,6 +53,20 @@ Campos do pedido:
 Se um campo não existir usa "" ou [].
 Formato: { "id":"", "data":"", "especialidade":"", "matEquip":"", "motivo":"", "previsto":"", "proposto":"", "observacoes":"", "respostas":[] }`;
 
+  const promptPTQ = `Extrai os dados deste Plano Quinzenal de Trabalhos (PQ/PTQ) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
+Campos: id (string, número ex: "047.0"), semanas (string, ex: "S19 e S20"), dataInicio (string, dd/mm/yyyy), dataFim (string, dd/mm/yyyy),
+trabalhosPrevistos (array de strings, lista de trabalhos previstos), trabalhosExecutados (array de strings, trabalhos já executados se indicados),
+observacoes (string).
+Se um campo não existir usa "" ou [].
+Formato: { "id":"", "semanas":"", "dataInicio":"", "dataFim":"", "trabalhosPrevistos":[], "trabalhosExecutados":[], "observacoes":"" }`;
+
+  const promptNC = `Extrai os dados desta Não Conformidade (NC) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
+Campos: id (string, número da NC), data (string, dd/mm/yyyy), descricao (string, descrição da não conformidade),
+causa (string), acao (string, acção correctiva), responsavel (string), prazo (string, dd/mm/yyyy), estado (string: Aberto|Fechado),
+observacoes (string).
+Se um campo não existir usa "".
+Formato: { "id":"", "data":"", "descricao":"", "causa":"", "acao":"", "responsavel":"", "prazo":"", "estado":"", "observacoes":"" }`;
+
   const promptResposta = `Extrai os dados desta Resposta a um Pedido de Esclarecimento ou Aprovação e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
 Campos: decisao (string, ex: Aprovado|Aprovado com condições|Não aprovado|Esclarecido|Esclarecimento insuficiente),
 condicoes (string, condições ou observações à decisão), responsavel (string, quem assina a resposta), obs (string).
@@ -73,6 +87,8 @@ Se um campo não existir usa "".`;
     else if (subTipo === 'ar') prompt = promptAR;
     else if (subTipo === 'pe') prompt = promptPE;
     else if (subTipo === 'pa') prompt = promptPA;
+    else if (subTipo === 'ptq' || subTipo === 'pq') prompt = promptPTQ;
+    else if (subTipo === 'nc') prompt = promptNC;
     else if (subTipo === 'resposta') prompt = promptResposta;
     else if (subTipo === 'resposta_pe') prompt = promptRespostaPE;
     else prompt = customPrompt || '';
@@ -587,7 +603,9 @@ Se um campo não existir usa "".`;
     tipo === 'rv' ? promptRV :
     tipo === 'ar' ? promptAR :
     tipo === 'pe' ? promptPE :
-    tipo === 'pa' ? promptPA : ''
+    tipo === 'pa' ? promptPA :
+    tipo === 'ptq' || tipo === 'pq' ? promptPTQ :
+    tipo === 'nc' ? promptNC : ''
   );
 
   const results = [];
@@ -643,9 +661,9 @@ Se um campo não existir usa "".`;
       // Extrair ref e flag "R" do nome do ficheiro
       // Formatos: "039.0 PA - Nome.xlsx" ou "R 039.0 PA - Nome.xlsx"
       const temRespostaNoNome = /^R\s/i.test(fileName || '');
-      const refMatch = (fileName || '').match(/(\d+\.?\d+)\s+(?:PE|PA)/i);
+      const refMatch = (fileName || '').match(/(\d+\.?\d+)\s+(?:PE|PA|PQ|PTQ|NC|PB)/i);
       const ref = refMatch ? refMatch[1] : ((fileName || '').match(/^(\d+\.?\d*)/) || [])[1] || '';
-      const nomeMatch = (fileName || '').match(/\d+\.?\d+\s+(?:PE|PA)\s*[-–]?\s*(.+?)(?:\.\w+)?$/i);
+      const nomeMatch = (fileName || '').match(/\d+\.?\d+\s+(?:PE|PA|PQ|PTQ|NC|PB)\s*[-–]?\s*(.+?)(?:\.\w+)?$/i);
       const nomeDoFicheiro = nomeMatch ? nomeMatch[1].trim() : '';
 
       // Construir estrutura completa compatível com o SIGO
@@ -687,6 +705,34 @@ Se um campo não existir usa "".`;
           pedido: pedidoData,
           resposta: null,
           anexos: [],
+          ficheiros: {}
+        };
+      } else if (tipo === 'ptq' || tipo === 'pq') {
+        dataCompleta = {
+          ref: ref || pedidoData.id || '',
+          nome: pedidoData.semanas ? `Semanas ${pedidoData.semanas}` : nomeDoFicheiro || '',
+          dataInicio: pedidoData.dataInicio || '',
+          dataFim: pedidoData.dataFim || '',
+          data: pedidoData.dataInicio || '',
+          semanas: pedidoData.semanas || '',
+          trabalhosPrevistos: pedidoData.trabalhosPrevistos || [],
+          trabalhosExecutados: pedidoData.trabalhosExecutados || [],
+          observacoes: pedidoData.observacoes || '',
+          pedido: pedidoData,
+          ficheiros: {}
+        };
+      } else if (tipo === 'nc') {
+        dataCompleta = {
+          ref: ref || pedidoData.id || '',
+          nome: pedidoData.descricao || nomeDoFicheiro || '',
+          data: pedidoData.data || '',
+          causa: pedidoData.causa || '',
+          acao: pedidoData.acao || '',
+          responsavel: pedidoData.responsavel || '',
+          prazo: pedidoData.prazo || '',
+          estado: pedidoData.estado || 'Aberto',
+          observacoes: pedidoData.observacoes || '',
+          pedido: pedidoData,
           ficheiros: {}
         };
       } else {
