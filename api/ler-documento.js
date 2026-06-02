@@ -624,8 +624,42 @@ Se um campo não existir usa "".`;
           { type: 'text', text: prompt }
         ];
       } else if (isDocx) {
-        const result = await mammoth.extractRawText({ buffer });
-        msgContent = [{ type: 'text', text: prompt + '\n\nConteúdo:\n\n' + result.value }];
+        // Para RV: extrair texto E imagens
+        const images = [];
+        let imageIndex = 0;
+        const convOpts = {
+          buffer,
+          convertImage: mammoth.images.imgElement(async (image) => {
+            const base64 = await image.read('base64');
+            images.push({ base64, contentType: image.contentType || 'image/jpeg', index: imageIndex++ });
+            return { src: `__IMG_${imageIndex-1}__` };
+          })
+        };
+        const result = tipo === 'rv'
+          ? await mammoth.convertToHtml(convOpts)
+          : await mammoth.extractRawText({ buffer });
+
+        // Extrair legendas — texto imediatamente antes ou depois de cada imagem
+        if (tipo === 'rv' && images.length) {
+          const html = result.value;
+          for (const img of images) {
+            const placeholder = `__IMG_${img.index}__`;
+            const pos = html.indexOf(placeholder);
+            if (pos >= 0) {
+              // Texto após a imagem (até 300 chars, sem tags HTML)
+              const after = html.slice(pos + placeholder.length, pos + placeholder.length + 400)
+                .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120);
+              // Texto antes da imagem (até 300 chars)
+              const before = html.slice(Math.max(0, pos - 400), pos)
+                .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(-120);
+              img.legenda = (after || before || '').trim();
+            }
+          }
+        }
+
+        const text = result.value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        msgContent = [{ type: 'text', text: prompt + '\n\nConteúdo:\n\n' + text }];
+        req._rvImages = images;
       } else if (isXlsx) {
         // Converter Excel para texto usando SheetJS
         const wb = XLSX.read(buffer, { type: 'buffer', cellDates: true });
@@ -740,7 +774,7 @@ Se um campo não existir usa "".`;
         dataCompleta = pedidoData;
       }
 
-      results.push({ success: true, data: dataCompleta, fileName });
+      results.push({ success: true, data: dataCompleta, fileName, images: tipo === 'rv' ? (req._rvImages || []) : [] });
     } catch (err) {
       results.push({ success: false, error: err.message, fileName: f.fileName });
     }
