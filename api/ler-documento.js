@@ -69,9 +69,9 @@ Campos:
 - descofragem (string, prazo ou data de descofragem)
 - escoramento (string, prazo ou condições de escoramento)
 - observacoes (string)
-- estado (string: "Pendente" | "Aprovado" | "Não Aprovado")
+- observacoes (string)
 Se um campo não existir usa "".
-Formato exacto: { "id":"", "data":"", "elemento":"", "localizacao":"", "pecaBetonar":"", "volume":"", "classeBetao":"", "consistencia":"", "provetes":"", "dataBetonagem":"", "horaBetonagem":"", "descofragem":"", "escoramento":"", "observacoes":"", "estado":"Pendente" }`;
+Formato exacto: { "id":"", "data":"", "elemento":"", "localizacao":"", "pecaBetonar":"", "volume":"", "classeBetao":"", "consistencia":"", "provetes":"", "dataBetonagem":"", "horaBetonagem":"", "descofragem":"", "escoramento":"", "observacoes":"" }`;
 
   const promptPTQ = `Extrai os dados deste Plano Quinzenal de Trabalhos (PQ/PTQ) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
 Campos: id (string, número ex: "047.0"), semanas (string, ex: "S19 e S20"), dataInicio (string, dd/mm/yyyy), dataFim (string, dd/mm/yyyy),
