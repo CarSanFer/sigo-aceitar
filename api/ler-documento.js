@@ -53,6 +53,25 @@ Campos do pedido:
 Se um campo não existir usa "" ou [].
 Formato: { "id":"", "data":"", "especialidade":"", "matEquip":"", "motivo":"", "previsto":"", "proposto":"", "observacoes":"", "respostas":[] }`;
 
+  const promptPB = `Extrai os dados deste Pedido de Betonagem (PB) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown, sem formatação.
+Campos:
+- id (string, número ex: "012.0")
+- data (string, data do pedido dd/mm/yyyy)
+- elemento (string, elemento estrutural a betonar ex: "Laje Piso 3", "Pilar P1")
+- localização (string, localização na obra)
+- volume (string, volume de betão em m3)
+- classeBetao (string, ex: "C25/30")
+- dimensaoAgregado (string, ex: "20mm")
+- consistencia (string, ex: "S3", "S4")
+- aditivos (string)
+- dataBetonagem (string, data prevista dd/mm/yyyy)
+- horaBetonagem (string, hora prevista)
+- responsavelEE (string, responsável da entidade executante)
+- observacoes (string)
+- estado (string: "Pendente" | "Aprovado" | "Não Aprovado")
+Se um campo não existir usa "".
+Formato exacto: { "id":"", "data":"", "elemento":"", "localização":"", "volume":"", "classeBetao":"", "dimensaoAgregado":"", "consistencia":"", "aditivos":"", "dataBetonagem":"", "horaBetonagem":"", "responsavelEE":"", "observacoes":"", "estado":"Pendente" }`;
+
   const promptPTQ = `Extrai os dados deste Plano Quinzenal de Trabalhos (PQ/PTQ) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
 Campos: id (string, número ex: "047.0"), semanas (string, ex: "S19 e S20"), dataInicio (string, dd/mm/yyyy), dataFim (string, dd/mm/yyyy),
 trabalhosPrevistos (array de strings, lista de trabalhos previstos), trabalhosExecutados (array de strings, trabalhos já executados se indicados),
@@ -87,6 +106,7 @@ Se um campo não existir usa "".`;
     else if (subTipo === 'ar') prompt = promptAR;
     else if (subTipo === 'pe') prompt = promptPE;
     else if (subTipo === 'pa') prompt = promptPA;
+    else if (subTipo === 'pb') prompt = promptPB;
     else if (subTipo === 'ptq' || subTipo === 'pq') prompt = promptPTQ;
     else if (subTipo === 'nc') prompt = promptNC;
     else if (subTipo === 'resposta') prompt = promptResposta;
@@ -604,6 +624,7 @@ Se um campo não existir usa "".`;
     tipo === 'ar' ? promptAR :
     tipo === 'pe' ? promptPE :
     tipo === 'pa' ? promptPA :
+    tipo === 'pb' ? promptPB :
     tipo === 'ptq' || tipo === 'pq' ? promptPTQ :
     tipo === 'nc' ? promptNC : ''
   );
