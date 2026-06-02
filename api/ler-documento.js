@@ -626,40 +626,29 @@ Se um campo não existir usa "".`;
       } else if (isDocx) {
         // Para RV: extrair texto E imagens
         const images = [];
-        let imageIndex = 0;
-        const convOpts = {
-          buffer,
-          convertImage: mammoth.images.imgElement(async (image) => {
-            const base64 = await image.read('base64');
-            images.push({ base64, contentType: image.contentType || 'image/jpeg', index: imageIndex++ });
-            return { src: `__IMG_${imageIndex-1}__` };
-          })
-        };
-        const result = tipo === 'rv'
-          ? await mammoth.convertToHtml(convOpts)
-          : await mammoth.extractRawText({ buffer });
-
-        // Extrair legendas — texto imediatamente antes ou depois de cada imagem
-        if (tipo === 'rv' && images.length) {
-          const html = result.value;
-          for (const img of images) {
-            const placeholder = `__IMG_${img.index}__`;
-            const pos = html.indexOf(placeholder);
-            if (pos >= 0) {
-              // Texto após a imagem (até 300 chars, sem tags HTML)
-              const after = html.slice(pos + placeholder.length, pos + placeholder.length + 400)
-                .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120);
-              // Texto antes da imagem (até 300 chars)
-              const before = html.slice(Math.max(0, pos - 400), pos)
-                .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(-120);
-              img.legenda = (after || before || '').trim();
+        // Extrair imagens directamente do ZIP (mais fiável que mammoth.convertImage)
+        try {
+          const JSZip = (await import('jszip')).default;
+          const zip = await JSZip.loadAsync(buffer);
+          let imgIdx = 0;
+          for (const [path, file] of Object.entries(zip.files)) {
+            if (path.startsWith('word/media/') && !file.dir) {
+              const ext = path.split('.').pop().toLowerCase();
+              const ctMap = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', bmp: 'image/bmp', webp: 'image/webp' };
+              const contentType = ctMap[ext] || 'image/jpeg';
+              const base64 = await file.async('base64');
+              images.push({ base64, contentType, index: imgIdx++, legenda: '' });
             }
           }
+        } catch(zipErr) {
+          console.error('ZIP extraction error:', zipErr.message);
         }
 
-        const text = result.value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        const result = await mammoth.extractRawText({ buffer });
+        const text = result.value.replace(/\s+/g, ' ').trim();
         msgContent = [{ type: 'text', text: prompt + '\n\nConteúdo:\n\n' + text }];
         req._rvImages = images;
+        console.log(`RV images extracted: ${images.length}`);
       } else if (isXlsx) {
         // Converter Excel para texto usando SheetJS
         const wb = XLSX.read(buffer, { type: 'buffer', cellDates: true });
