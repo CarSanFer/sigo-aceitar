@@ -626,20 +626,69 @@ Se um campo não existir usa "".`;
       } else if (isDocx) {
         // Para RV: extrair texto E imagens
         const images = [];
-        // Extrair imagens directamente do ZIP (mais fiável que mammoth.convertImage)
+        // Extrair imagens do DOCX com títulos — ler estrutura de tabelas via ZIP/XML
         try {
           const JSZip = (await import('jszip')).default;
           const zip = await JSZip.loadAsync(buffer);
-          let imgIdx = 0;
-          for (const [path, file] of Object.entries(zip.files)) {
-            if (path.startsWith('word/media/') && !file.dir) {
-              const ext = path.split('.').pop().toLowerCase();
-              const ctMap = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', bmp: 'image/bmp', webp: 'image/webp' };
-              const contentType = ctMap[ext] || 'image/jpeg';
-              const base64 = await file.async('base64');
-              images.push({ base64, contentType, index: imgIdx++, legenda: '' });
+
+          // Carregar relações de imagens (word/_rels/document.xml.rels)
+          const relsXml = await zip.file('word/_rels/document.xml.rels').async('text');
+          const relMatches = [...relsXml.matchAll(/Id="(rId\d+)"[^>]+Target="([^"]+)"/g)];
+          const relMap = {}; // rId → path
+          for (const m of relMatches) {
+            if (m[2].includes('media/')) relMap[m[1]] = 'word/' + m[2].replace('../', '');
+          }
+
+          // Ler document.xml para extrair tabelas com título+imagem
+          const docXml = await zip.file('word/document.xml').async('text');
+
+          // Extrair células de tabela: <w:tc>...</w:tc>
+          const cells = [...docXml.matchAll(/<w:tc[ >]([\s\S]*?)<\/w:tc>/g)].map(m => {
+            const xml = m[1];
+            const txt = xml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+            const rids = [...xml.matchAll(/r:embed="(rId\d+)"/g)].map(x => x[1]);
+            return { txt, rids };
+          });
+
+          // Associar título (célula anterior sem imagem) a célula com imagem
+          const used = new Set();
+          for (let i = 0; i < cells.length; i++) {
+            const cell = cells[i];
+            if (cell.rids.length === 0) continue;
+            // Procurar título: célula anterior sem imagem com texto
+            let titulo = '';
+            for (let j = i - 1; j >= Math.max(0, i - 5); j--) {
+              if (cells[j].rids.length === 0 && cells[j].txt.length > 2) {
+                titulo = cells[j].txt.slice(0, 120);
+                break;
+              }
+            }
+            for (const rId of cell.rids) {
+              if (!relMap[rId] || used.has(rId)) continue;
+              used.add(rId);
+              const imgFile = zip.file(relMap[rId]);
+              if (!imgFile) continue;
+              const base64 = await imgFile.async('base64');
+              const ext = relMap[rId].split('.').pop().toLowerCase();
+              const ctMap = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif' };
+              images.push({ base64, contentType: ctMap[ext] || 'image/jpeg', legenda: titulo });
             }
           }
+
+          // Fallback: imagens sem título (logótipos, etc.) — ignorar se < 10kb
+          for (const [path, file] of Object.entries(zip.files)) {
+            if (!path.startsWith('word/media/') || file.dir) continue;
+            const rId = Object.entries(relMap).find(([k,v]) => v === path)?.[0];
+            if (rId && !used.has(rId)) {
+              const base64 = await file.async('base64');
+              if (base64.length > 13000) { // >~10kb — provavelmente foto real
+                const ext = path.split('.').pop().toLowerCase();
+                const ctMap = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif' };
+                images.push({ base64, contentType: ctMap[ext] || 'image/jpeg', legenda: '' });
+              }
+            }
+          }
+
         } catch(zipErr) {
           console.error('ZIP extraction error:', zipErr.message);
         }
@@ -648,7 +697,7 @@ Se um campo não existir usa "".`;
         const text = result.value.replace(/\s+/g, ' ').trim();
         msgContent = [{ type: 'text', text: prompt + '\n\nConteúdo:\n\n' + text }];
         req._rvImages = images;
-        console.log(`RV images extracted: ${images.length}`);
+        console.log(`RV images extracted: ${images.length}`, images.map(i => i.legenda || '(sem título)'));
       } else if (isXlsx) {
         // Converter Excel para texto usando SheetJS
         const wb = XLSX.read(buffer, { type: 'buffer', cellDates: true });
