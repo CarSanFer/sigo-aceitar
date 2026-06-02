@@ -58,19 +58,20 @@ Campos:
 - id (string, número ex: "012.0")
 - data (string, data do pedido dd/mm/yyyy)
 - elemento (string, elemento estrutural a betonar ex: "Laje Piso 3", "Pilar P1")
-- localização (string, localização na obra)
+- localizacao (string, localização na obra)
+- pecaBetonar (string, descrição detalhada da peça a betonar)
 - volume (string, volume de betão em m3)
 - classeBetao (string, ex: "C25/30")
-- dimensaoAgregado (string, ex: "20mm")
 - consistencia (string, ex: "S3", "S4")
-- aditivos (string)
+- provetes (string, número de provetes a realizar)
 - dataBetonagem (string, data prevista dd/mm/yyyy)
 - horaBetonagem (string, hora prevista)
-- responsavelEE (string, responsável da entidade executante)
+- descofragem (string, prazo ou data de descofragem)
+- escoramento (string, prazo ou condições de escoramento)
 - observacoes (string)
 - estado (string: "Pendente" | "Aprovado" | "Não Aprovado")
 Se um campo não existir usa "".
-Formato exacto: { "id":"", "data":"", "elemento":"", "localização":"", "volume":"", "classeBetao":"", "dimensaoAgregado":"", "consistencia":"", "aditivos":"", "dataBetonagem":"", "horaBetonagem":"", "responsavelEE":"", "observacoes":"", "estado":"Pendente" }`;
+Formato exacto: { "id":"", "data":"", "elemento":"", "localizacao":"", "pecaBetonar":"", "volume":"", "classeBetao":"", "consistencia":"", "provetes":"", "dataBetonagem":"", "horaBetonagem":"", "descofragem":"", "escoramento":"", "observacoes":"", "estado":"Pendente" }`;
 
   const promptPTQ = `Extrai os dados deste Plano Quinzenal de Trabalhos (PQ/PTQ) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
 Campos: id (string, número ex: "047.0"), semanas (string, ex: "S19 e S20"), dataInicio (string, dd/mm/yyyy), dataFim (string, dd/mm/yyyy),
