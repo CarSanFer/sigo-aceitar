@@ -829,6 +829,26 @@ Se um campo não existir usa "".`;
           pedido: pedidoData,
           ficheiros: {}
         };
+      } else if (tipo === 'pb') {
+        // Data do pedido vem do nome do ficheiro ex: "012.0 PB - 2026-04-21"
+        const dataFicheiroMatch = (fileName || '').match(/(\d{4}[-./]\d{2}[-./]\d{2}|\d{2}[-./]\d{2}[-./]\d{4})/);
+        let dataPedido = '';
+        if (dataFicheiroMatch) {
+          const raw = dataFicheiroMatch[1];
+          if (/^\d{4}/.test(raw)) {
+            const [y,m,d] = raw.split(/[-./]/);
+            dataPedido = `${d}/${m}/${y}`;
+          } else {
+            dataPedido = raw.replace(/[-./]/g, '/');
+          }
+        }
+        dataCompleta = {
+          ref: ref || pedidoData.id || '',
+          nome: pedidoData.elemento || nomeDoFicheiro || '',
+          dataSubmissao: dataPedido,
+          pedido: { ...pedidoData, data: dataPedido },
+          ficheiros: {}
+        };
       } else {
         // AR, RV e outros — manter estrutura original
         dataCompleta = pedidoData;
