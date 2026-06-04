@@ -677,11 +677,12 @@ Se um campo não existir usa "".`;
           for (let i = 0; i < cells.length; i++) {
             const cell = cells[i];
             if (cell.rids.length === 0) continue;
-            // Procurar título: célula anterior sem imagem com texto
+            // Procurar título: célula anterior sem imagem com texto real (até 10 posições atrás)
             let titulo = '';
-            for (let j = i - 1; j >= Math.max(0, i - 5); j--) {
-              if (cells[j].rids.length === 0 && cells[j].txt.length > 2) {
-                titulo = cells[j].txt.slice(0, 120);
+            for (let j = i - 1; j >= Math.max(0, i - 10); j--) {
+              const c = cells[j];
+              if (c.rids.length === 0 && c.txt.length > 3 && !/^[-–—\s]+$/.test(c.txt)) {
+                titulo = c.txt.slice(0, 120);
                 break;
               }
             }
