@@ -1390,7 +1390,7 @@ function relTabRV(r,edit){
   </div>`;
 
   const dashHTML=`
-    <div class="sec-div" style="margin-top:16px">📊 Dashboard — <span style="font-size:10px;font-weight:400;color:var(--text-muted)">${conteudo?.dashboards?.rv?`Gerado em ${conteudo.dashboards.rv._geradoEm||'?'} · <a href="#" onclick="gerarDashboardRV('${r.id}',true);return false" style="color:var(--gold)">Regenerar</a>`:''}</span></div>
+    <div class="sec-div" style="margin-top:16px">📊 Dashboard — <span style="font-size:10px;font-weight:400;color:var(--text-muted)">${conteudo?.dashboards?.rv?`${(conteudo.dashboards.rv._geradoEm)?`Gerado em ${ conteudo.dashboards.rv._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboardRV('${r.id}',true);return false" style="color:var(--gold)">Regenerar</a>`:''}</span></div>
     <div id="dash-inline-rv-${r.id}" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px">${conteudo?.dashboards?.rv?renderDashboardHTML(conteudo.dashboards.rv,'rv'):'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 📊 Dashboard para gerar a análise.</div>'}</div>`;
 
   return kpis+
@@ -1443,7 +1443,7 @@ function relTabAR(r,edit){
   </div>`;
 
   const dashHTMLAR=`
-    <div class="sec-div" style="margin-top:16px">📊 Dashboard — <span style="font-size:10px;font-weight:400;color:var(--text-muted)">${conteudo?.dashboards?.ar?`Gerado em ${conteudo.dashboards.ar._geradoEm||'?'} · <a href="#" onclick="gerarDashboardAR('${r.id}',true);return false" style="color:var(--gold)">Regenerar</a>`:''}</span></div>
+    <div class="sec-div" style="margin-top:16px">📊 Dashboard — <span style="font-size:10px;font-weight:400;color:var(--text-muted)">${conteudo?.dashboards?.ar?`${(conteudo.dashboards.ar._geradoEm)?`Gerado em ${ conteudo.dashboards.ar._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboardAR('${r.id}',true);return false" style="color:var(--gold)">Regenerar</a>`:''}</span></div>
     <div id="dash-inline-ar-${r.id}" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px">${conteudo?.dashboards?.ar?renderDashboardHTML(conteudo.dashboards.ar,'ar'):'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 📊 Dashboard para gerar a análise.</div>'}</div>`;
 
   return kpis+
@@ -1573,7 +1573,7 @@ window.gerarDashboardRV=async function(relId,regenerar=false){
   // Se já existe análise e não é regeneração, mostrar modal com dados guardados
   if(conteudo?.dashboards?.rv && !regenerar){
     const html=renderDashboardHTML(conteudo.dashboards.rv,'rv');
-    showModal('📊 Dashboard RV',`<div style="font-size:10px;color:var(--text-muted);margin-bottom:10px">Análise gerada em ${conteudo.dashboards.rv._geradoEm||'?'}</div>${html}`,[
+    showModal('📊 Dashboard RV',`<div style="font-size:10px;color:var(--text-muted);margin-bottom:10px">Análise gerada em ${conteudo.dashboards.rv._geradoEm||''}</div>${html}`,[
       {label:'Fechar',cls:'btn-outline',fn:'closeModal()'},
       {label:'🔄 Regenerar',cls:'btn-gold',fn:`gerarDashboardRV('${relId}',true);closeModal()`}
     ],'modal-lg');
@@ -1611,7 +1611,7 @@ window.gerarDashboardAR=async function(relId,regenerar=false){
 
   if(conteudo?.dashboards?.ar && !regenerar){
     const html=renderDashboardHTML(conteudo.dashboards.ar,'ar');
-    showModal('📊 Dashboard AR',`<div style="font-size:10px;color:var(--text-muted);margin-bottom:10px">Análise gerada em ${conteudo.dashboards.ar._geradoEm||'?'}</div>${html}`,[
+    showModal('📊 Dashboard AR',`<div style="font-size:10px;color:var(--text-muted);margin-bottom:10px">Análise gerada em ${conteudo.dashboards.ar._geradoEm||''}</div>${html}`,[
       {label:'Fechar',cls:'btn-outline',fn:'closeModal()'},
       {label:'🔄 Regenerar',cls:'btn-gold',fn:`gerarDashboardAR('${relId}',true);closeModal()`}
     ],'modal-lg');
@@ -1925,7 +1925,7 @@ function relTabPE(r,edit){
 
   // Dashboard do Mês
   const dashMes=conteudo?.dashboards?.pe;
-  const dashMesHTML=`<div class="sec-div" style="margin-top:16px">📊 Dashboard — <span style="font-size:10px;font-weight:400;color:var(--text-muted)">${dashMes?`Gerado em ${dashMes._geradoEm||'?'} · <a href="#" onclick="gerarDashboard('${r.id}','pe',true);return false" style="color:var(--gold)">Regenerar</a>`:''}</span></div>
+  const dashMesHTML=`<div class="sec-div" style="margin-top:16px">📊 Dashboard — <span style="font-size:10px;font-weight:400;color:var(--text-muted)">${dashMes?`${(dashMes._geradoEm)?`Gerado em ${ dashMes._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboard('${r.id}','pe',true);return false" style="color:var(--gold)">Regenerar</a>`:''}</span></div>
   <div id="dash-inline-pe-${r.id}" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px">${dashMes?renderDashboardHTML(dashMes,'pe'):'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 📊 Dashboard para gerar a análise.</div>'}</div>`;
 
   // ── Vista Acumulado ─────────────────────────────────────────────
@@ -1991,7 +1991,7 @@ function relTabPE(r,edit){
 
   const vistaAcumIA=`
     <div id="dash-inline-pe-acum-${r.id}" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px">
-      ${dashPE?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">Gerado em ${dashPE._geradoEm||'?'} · <a href="#" onclick="gerarDashboardAcum('${r.id}','pe',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashPE,'pe')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 🤖 Gerar para obter a análise acumulada.</div>'}
+      ${dashPE?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">${(dashPE._geradoEm)?`Gerado em ${ dashPE._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboardAcum('${r.id}','pe',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashPE,'pe')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 🤖 Gerar para obter a análise acumulada.</div>'}
     </div>
     ${!dashPE?`<div style="margin-top:10px"><button class="btn btn-gold" onclick="gerarDashboardAcum('${r.id}','pe')">🤖 Gerar Análise Acumulada</button></div>`:''}`;
 
@@ -2008,7 +2008,7 @@ function relTabPE(r,edit){
   // Vista 2 — Análise Mensal
   const vistaMesDash=`
     <div id="dash-inline-pe-${r.id}" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px">
-      ${dashMes?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">Gerado em ${dashMes._geradoEm||'?'} · <a href="#" onclick="gerarDashboard('${r.id}','pe',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashMes,'pe')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 📊 Gerar para obter a análise mensal.</div>'}
+      ${dashMes?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">${(dashMes._geradoEm)?`Gerado em ${ dashMes._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboard('${r.id}','pe',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashMes,'pe')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 📊 Gerar para obter a análise mensal.</div>'}
     </div>
     ${!dashMes?`<div style="margin-top:10px"><button class="btn btn-gold" onclick="gerarDashboard('${r.id}','pe')">📊 Gerar Análise Mensal</button></div>`:''}`;
 
@@ -2235,7 +2235,7 @@ function relTabPA(r,edit){
 
   const vistaAcumIA=`
     <div id="dash-inline-pa-acum-${r.id}" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px">
-      ${dashPA?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">Gerado em ${dashPA._geradoEm||'?'} \u00b7 <a href="#" onclick="gerarDashboardAcum('${r.id}','pa',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashPA,'pa')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em \ud83e\udd16 Gerar para obter a an\u00e1lise acumulada.</div>'}
+      ${dashPA?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">${(dashPA._geradoEm)?`Gerado em ${ dashPA._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboardAcum('${r.id}','pa',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashPA,'pa')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em \ud83e\udd16 Gerar para obter a an\u00e1lise acumulada.</div>'}
     </div>
     ${!dashPA?`<div style="margin-top:10px"><button class="btn btn-gold" onclick="gerarDashboardAcum('${r.id}','pa')">\ud83e\udd16 Gerar An\u00e1lise Acumulada</button></div>`:''}`;
 
@@ -2254,7 +2254,7 @@ function relTabPA(r,edit){
   // Vista 2 -- An\u00e1lise Mensal
   const vistaMesDash=`
     <div id="dash-inline-pa-${r.id}" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px">
-      ${dashMes?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">Gerado em ${dashMes._geradoEm||'?'} \u00b7 <a href="#" onclick="gerarDashboard('${r.id}','pa',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashMes,'pa')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em \ud83d\udcca Gerar para obter a an\u00e1lise mensal.</div>'}
+      ${dashMes?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">${(dashMes._geradoEm)?`Gerado em ${ dashMes._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboard('${r.id}','pa',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashMes,'pa')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em \ud83d\udcca Gerar para obter a an\u00e1lise mensal.</div>'}
     </div>
     ${!dashMes?`<div style="margin-top:10px"><button class="btn btn-gold" onclick="gerarDashboard('${r.id}','pa')">\ud83d\udcca Gerar An\u00e1lise Mensal</button></div>`:''}`;
 
@@ -2511,7 +2511,7 @@ function relTabPB(r,edit){
 
   const vistaAcumIA=`
     <div id="dash-inline-pb-acum-${r.id}" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px">
-      ${dashPB?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">Gerado em ${dashPB._geradoEm||'?'} · <a href="#" onclick="gerarDashboardAcumPB('${r.id}',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashPB,'pb')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 🤖 Gerar para obter a análise acumulada.</div>'}
+      ${dashPB?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">${(dashPB._geradoEm)?`Gerado em ${ dashPB._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboardAcumPB('${r.id}',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashPB,'pb')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 🤖 Gerar para obter a análise acumulada.</div>'}
     </div>
     ${!dashPB?`<div style="margin-top:10px"><button class="btn btn-gold" onclick="gerarDashboardAcumPB('${r.id}')">🤖 Gerar Análise Acumulada</button></div>`:''}`;
 
@@ -2526,7 +2526,7 @@ function relTabPB(r,edit){
 
   const vistaMesDash=`
     <div id="dash-inline-pb-${r.id}" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px">
-      ${dashMes?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">Gerado em ${dashMes._geradoEm||'?'} · <a href="#" onclick="gerarDashboard('${r.id}','pb',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashMes,'pb')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 📊 Gerar para obter a análise mensal.</div>'}
+      ${dashMes?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">${(dashMes._geradoEm)?`Gerado em ${ dashMes._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboard('${r.id}','pb',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashMes,'pb')}`:'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 📊 Gerar para obter a análise mensal.</div>'}
     </div>
     ${!dashMes?`<div style="margin-top:10px"><button class="btn btn-gold" onclick="gerarDashboard('${r.id}','pb')">📊 Gerar Análise Mensal</button></div>`:''}`;
 
@@ -3075,7 +3075,7 @@ function relTabGenerico(r,edit,tipo,sigla,nomeItem){
   return kpis+
     `<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px" id="${tipo}-import-status-${r.id}"></div>`+
     (lista.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${cards}</div>`:`<div class="empty-state">Sem registos de ${nomeItem}.</div>`)+
-    `<div class="sec-div" style="margin-top:16px">📊 Dashboard${conteudo?.dashboards?.[tipo]?` — <span style="font-size:10px;font-weight:400;color:var(--text-muted)">Gerado em ${conteudo.dashboards[tipo]._geradoEm||'?'} · <a href="#" onclick="gerarDashboard('${r.id}','${tipo}',true);return false" style="color:var(--gold)">Regenerar</a></span>`:''}</div>`+
+    `<div class="sec-div" style="margin-top:16px">📊 Dashboard${conteudo?.dashboards?.[tipo]?` — <span style="font-size:10px;font-weight:400;color:var(--text-muted)">${(conteudo.dashboards[tipo]._geradoEm)?`Gerado em ${ conteudo.dashboards[tipo]._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboard('${r.id}','${tipo}',true);return false" style="color:var(--gold)">Regenerar</a></span>`:''}</div>`+
     `<div id="dash-inline-${tipo}-${r.id}" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px">${conteudo?.dashboards?.[tipo]?renderDashboardHTML(conteudo.dashboards[tipo],tipo):'<div style="padding:16px;text-align:center;color:var(--text-muted)">Clique em 📊 Dashboard para gerar a análise.</div>'}</div>`;
 }
 
@@ -3663,7 +3663,7 @@ function relTabValores(r,edit){
   // Dashboard guardado
   const dashVal=conteudo?.dashboards?.valores;
   const dashValHTML=dashVal
-    ?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">Gerado em ${dashVal._geradoEm||'?'} · <a href="#" onclick="gerarDashboardValores('${r.id}',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashVal,'valores')}`
+    ?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">${(dashVal._geradoEm)?`Gerado em ${ dashVal._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboardValores('${r.id}',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashVal,'valores')}`
     :'<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:12px">Clique em 📊 Dashboard para gerar.</div>';
 
   // Guardar dados para gráficos
@@ -3725,7 +3725,7 @@ function relTabValores(r,edit){
       ${tcList.length?`<tr style="background:var(--bg);font-weight:700;border-top:2px solid var(--border-light)">${td('Total',true,'left')}<td></td><td></td>${td(fmtE(tcLProp),true)}${td(fmtE(tcLFisc),true)}<td></td>${td(fmtE(tcLAprov),true)}<td></td>${edit==='true'?'<td></td>':''}</tr>`:''}
       </tbody></table></div>`;
   const dashValTC=conteudo?.dashboards?.valoresTC;
-  const dashValTCHTML=dashValTC?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">Gerado em ${dashValTC._geradoEm||'?'} · <a href="#" onclick="gerarDashboardValoresTC('${r.id}',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashValTC,'valores')}`:'<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:12px">Clique em 📊 Dashboard para gerar.</div>';
+  const dashValTCHTML=dashValTC?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">${(dashValTC._geradoEm)?`Gerado em ${ dashValTC._geradoEm } \u00b7 `:''}<a href="#" onclick="gerarDashboardValoresTC('${r.id}',true);return false" style="color:var(--gold)">Regenerar</a></div>${renderDashboardHTML(dashValTC,'valores')}`:'<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:12px">Clique em 📊 Dashboard para gerar.</div>';
 
 
   return `
