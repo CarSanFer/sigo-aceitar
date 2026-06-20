@@ -1263,7 +1263,6 @@ function renderFichaRelatorio(app){
     </div>
     <div class="page-actions">
       ${todosValidados&&canAdmin()?`<button class="btn btn-sm" style="background:#0F6E56;color:#fff;border:none;cursor:pointer;font-family:Calibri,sans-serif;font-size:13px;font-weight:700;padding:5px 11px;border-radius:var(--radius)" onclick="disponibilizarRel('${r.id}')">✉ Enviar ao Dono de Obra</button>`:''}
-      <button class="btn btn-outline btn-sm" onclick="gerarDashboardGeral('${r.id}')" style="font-weight:700">📊 Dashboard Geral${dashGeral?` <span style="font-size:10px;font-weight:400;color:var(--text-muted)">· Regenerar</span>`:''}</button>
     </div>
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px">${cards}</div>
@@ -1273,14 +1272,7 @@ function renderFichaRelatorio(app){
     <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:var(--border-light);display:inline-block"></span>Em Curso (${REL_MODULOS.filter(m=>estadoMod(m.key)==='em_curso').length})</span>
     <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#6366F1;display:inline-block"></span>N/A (${REL_MODULOS.filter(m=>estadoMod(m.key)==='na').length})</span>
   </div>
-  ${dashGeral?`
-  <div style="margin-top:16px;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:16px">
-    <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📊 Dashboard Geral — <span style="font-weight:400">Gerado em ${dashGeral._geradoEm||'?'}</span></div>
-    ${renderDashboardHTML(dashGeral,'geral')}
-  </div>`:`
-  <div id="dash-geral-loading-${r.id}" style="display:none;margin-top:16px;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:20px;text-align:center;color:var(--text-muted)">
-    ⏳ A gerar Dashboard Geral com IA...
-  </div>`}`;
+`;
 }
 
 function relTabLista(r,edit,key,titulo){
