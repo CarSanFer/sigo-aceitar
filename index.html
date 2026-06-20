@@ -1007,6 +1007,7 @@ function canEditRel(r){
   return r.estado==='rascunho' && (currentUser?.role==='fiscalizacao'||currentUser?.role==='superadmin');
 }
 function relVisivelParaUser(r){
+  if(r.is_stealth&&!canAdmin()) return false;
   if(canAdmin()||currentUser?.role==='fiscalizacao') return true;
   if(currentUser?.role==='dono_obra') return r.estado==='disponibilizado';
   return false;
