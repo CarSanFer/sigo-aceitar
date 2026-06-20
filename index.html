@@ -994,8 +994,7 @@ let relObraId=null, relRelId=null, relTab='capa';
 const mesesPT=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 function fmtMesAno(mes,ano){return mesesPT[(mes||1)-1]+' '+ano;}
 function relNumero(r){
-  const _rc=typeof r.conteudo==='string'?JSON.parse(r.conteudo||'{}'):r.conteudo||{};
-  return (_rc._stealth&&canAdmin()?'🔒 ':'')+String(r.numero||0).padStart(3,'0')+'.'+String(r.versao||0);
+  return (r.is_stealth&&canAdmin()?'🔒 ':'')+String(r.numero||0).padStart(3,'0')+'.'+String(r.versao||0);
 }
 function relBadge(estado){
   const m={rascunho:'b-prep',revisao:'b-em-curso',aprovado:'b-concluida',disponibilizado:'b-fiscal'};
