@@ -681,7 +681,7 @@ async function loadDB() {
       safe('subempreiteiros'),
       safe('especialidades'),
       safe('tipos_doc'),
-      safe('relatorios', sbRel, 'select=id,obra_id,mes,ano,estado'),
+      safe('relatorios', sbRel, 'select=id,obra_id,mes,ano,numero,versao,estado,is_stealth'),
     ]);
     DB.obras = obras.map(mapObra);
     DB.utilizadores = utils.map(mapUtil);
@@ -994,7 +994,7 @@ let relObraId=null, relRelId=null, relTab='capa';
 const mesesPT=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 function fmtMesAno(mes,ano){return mesesPT[(mes||1)-1]+' '+ano;}
 function relNumero(r){
-  return (r.is_stealth&&canAdmin()?'🔒 ':'')+String(r.numero||0).padStart(3,'0')+'.'+String(r.versao||0);
+  return (r.is_stealth&&currentUser?.email==='carlos.ferreira@aceitar.pt'?'🔒 ':'')+String(r.numero||0).padStart(3,'0')+'.'+String(r.versao||0);
 }
 function relBadge(estado){
   const m={rascunho:'b-prep',revisao:'b-em-curso',aprovado:'b-concluida',disponibilizado:'b-fiscal'};
@@ -1007,7 +1007,7 @@ function canEditRel(r){
   return r.estado==='rascunho' && (currentUser?.role==='fiscalizacao'||currentUser?.role==='superadmin');
 }
 function relVisivelParaUser(r){
-  if(r.is_stealth&&!canAdmin()) return false;
+  if(r.is_stealth&&currentUser?.email!=='carlos.ferreira@aceitar.pt') return false;
   if(canAdmin()||currentUser?.role==='fiscalizacao') return true;
   if(currentUser?.role==='dono_obra') return r.estado==='disponibilizado';
   return false;
