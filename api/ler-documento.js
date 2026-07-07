@@ -26,9 +26,8 @@ Se um campo não existir usa "".`;
 
   const promptAR = `Extrai os dados desta Ata de Reunião e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
 Campos: num (string), data (dd/mm/yyyy), trabObra (string), tipos (array: "Normal" e/ou "Alerta crítico"),
-participantes (string), temas (string), temaPrincipal (string), decisoes (string), pendentes (string),
-criticidade (string, exatamente um de: "Crítico" | "Atenção" | "Normal"; avalia pelo IMPACTO e NÃO pela quantidade de pontos: "Crítico" se houver bloqueio de execução, questão de segurança, ou algo que ameace um marco/prazo contratual; "Atenção" se houver risco relevante sem bloqueio; "Normal" se forem apenas pontos de rotina ou nenhum pendente),
-analise (string, UMA frase curta com no máximo 15 palavras que justifica a criticidade atribuída, ex: "Obra parada à espera de parecer da fiscalização sobre a impermeabilização").
+participantes (string), temas (string), temaPrincipal (string), decisoes (string),
+pendentes (array de objetos — cada ponto em aberto no formato { "ponto": "descrição breve do ponto", "severidade": "Crítico"|"Risco"|"Rotina", "dimensao": "Prazo"|"Custo"|"Qualidade"|"Segurança"|"Contratual" }; regras: "Crítico" se bloqueia a execução, envolve segurança, ou ameaça um marco/prazo contratual; "Risco" se pode agravar-se sem tratamento mas não bloqueia agora; "Rotina" se é acompanhamento normal sem risco relevante).
 Se um campo não existir usa "" ou [].`;
 
   const promptPE = `Extrai os dados deste Pedido de Esclarecimento (PE) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
