@@ -750,14 +750,24 @@ Se um campo não existir usa "".`;
       const claudeResp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 2000, messages: [{ role: 'user', content: msgContent }] }),
+        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 4096, messages: [{ role: 'user', content: msgContent }] }),
       });
       const claudeData = await claudeResp.json();
       if (claudeData.error) throw new Error(claudeData.error.message);
       const text = claudeData.content?.map(c => c.text || '').join('').trim();
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error('Sem JSON: ' + text.substring(0, 150));
-      const pedidoData = JSON.parse(jsonMatch[0]);
+      let pedidoData;
+      try {
+        pedidoData = JSON.parse(jsonMatch[0]);
+      } catch (parseErr) {
+        // Reparar erros comuns de JSON gerado pela IA e tentar de novo
+        const reparado = jsonMatch[0]
+          .replace(/,\s*([}\]])/g, '$1')   // vírgulas a mais antes de } ou ]
+          .replace(/}\s*{/g, '},{')          // vírgula em falta entre objetos
+          .replace(/]\s*\[/g, '],[');        // vírgula em falta entre arrays
+        pedidoData = JSON.parse(reparado);   // se ainda falhar, propaga o erro original
+      }
       console.log('PA pedidoData:', JSON.stringify(pedidoData).substring(0, 500));
       // Extrair ref e flag "R" do nome do ficheiro
       // Formatos: "039.0 PA - Nome.xlsx" ou "R 039.0 PA - Nome.xlsx"
