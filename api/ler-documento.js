@@ -253,6 +253,42 @@ Se um campo não existir usa "".`;
   // ════════════════════════════════════════════════════════════════════
   // ACÇÃO: listar (AR/RV — lógica original)
   // ════════════════════════════════════════════════════════════════════
+  if (action === 'analisar_atas') {
+    const atas = req.body.atas || [];
+    if (!atas.length) return res.status(400).json({ error: 'Sem atas para analisar' });
+    const linhas = atas.map(a => {
+      const pend = Array.isArray(a.pendentes)
+        ? a.pendentes.map(p => (p && typeof p === 'object' ? `- [${p.severidade || '?'}${p.dimensao ? '/' + p.dimensao : ''}] ${p.ponto || ''}` : `- ${p}`)).join('\n')
+        : (a.pendentes || '');
+      return `ATA ${a.num || '?'} (${a.data || 's/data'}):\n${pend || '(sem pontos)'}`;
+    }).join('\n\n');
+    const promptAnalise = `És um analista de obra. Recebes os PONTOS EM ABERTO de várias atas de reunião, por ordem cronológica. Reconcilia-os: identifica cada PROBLEMA distinto e segue o seu ciclo de vida ao longo das atas, reconhecendo o MESMO problema mesmo que descrito com palavras diferentes de uma ata para outra (correspondência semântica).
+Para cada problema devolve: ponto (descrição breve e estável), dimensao (Prazo|Custo|Qualidade|Segurança|Contratual), severidade atual (Crítico|Risco|Rotina), estado ("Aberto" se ainda persiste na última ata, "Resolvido" se deixou de aparecer), surgiuEm (número da ata onde surgiu), resolvidoEm (número da ata onde foi resolvido, ou "" se aberto), atasEmAberto (número de atas em que esteve/está em aberto).
+Devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown, no formato:
+{ "pontos": [ { "ponto":"", "dimensao":"", "severidade":"", "estado":"Aberto", "surgiuEm":"", "resolvidoEm":"", "atasEmAberto":0 } ] }
+
+ATAS:
+${linhas}`;
+    try {
+      const claudeResp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 4096, messages: [{ role: 'user', content: promptAnalise }] }),
+      });
+      const claudeData = await claudeResp.json();
+      if (claudeData.error) throw new Error(claudeData.error.message);
+      const text = (claudeData.content || []).map(c => c.text || '').join('').trim();
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('Sem JSON: ' + text.substring(0, 150));
+      let out;
+      try { out = JSON.parse(jsonMatch[0]); }
+      catch (e) { out = JSON.parse(jsonMatch[0].replace(/,\s*([}\]])/g, '$1').replace(/}\s*{/g, '},{').replace(/]\s*\[/g, '],[')); }
+      return res.status(200).json({ success: true, analise: out });
+    } catch (e) {
+      return res.status(200).json({ success: false, error: e.message });
+    }
+  }
+
   if (action === 'listar') {
     if (!obraCodigo || !obraNome || !mes || !ano || !tipo) {
       return res.status(400).json({ error: 'Falta parâmetros' });
