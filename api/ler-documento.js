@@ -130,7 +130,7 @@ Se um campo não existir usa "".`;
     const claudeResp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1500, messages: [{ role: 'user', content: msgContent }] }),
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: [{ role: 'user', content: msgContent }] }),
     });
     const claudeData = await claudeResp.json();
     if (claudeData.error) throw new Error(claudeData.error.message);
@@ -661,31 +661,32 @@ Se um campo não existir usa "".`;
             if (m[2].includes('media/')) relMap[m[1]] = 'word/' + m[2].replace('../', '');
           }
 
-          // Ler document.xml para extrair legendas + imagens
+          // Ler document.xml para extrair tabelas com título+imagem
           const docXml = await zip.file('word/document.xml').async('text');
 
-          // No Word, cada bloco de fotos tem a LINHA DE LEGENDAS primeiro e a
-          // LINHA DE IMAGENS a seguir. As legendas são células sombreadas com o
-          // tom do template (fill="B8C1E9"). Emparelhamos por ordem/coluna:
-          // 1.ª legenda -> 1.ª foto, 2.ª legenda -> 2.ª foto, etc.
-          const legendaApos = (pos) => {
-            const fim = docXml.indexOf('</w:tc>', pos);
-            const slice = docXml.slice(pos, fim < 0 ? pos + 4000 : fim);
-            const ts = [...slice.matchAll(/<w:t[^>]*>([\s\S]*?)<\/w:t>/g)].map(x => x[1]);
-            return ts.join('').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120);
-          };
+          // Extrair células de tabela: <w:tc>...</w:tc>
+          const cells = [...docXml.matchAll(/<w:tc[ >]([\s\S]*?)<\/w:tc>/g)].map(m => {
+            const xml = m[1];
+            const txt = xml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+            const rids = [...xml.matchAll(/r:embed="(rId\d+)"/g)].map(x => x[1]);
+            return { txt, rids };
+          });
 
+          // Associar título (célula anterior sem imagem) a célula com imagem
           const used = new Set();
-          const evRe = /fill="B8C1E9"|r:embed="(rId\d+)"/g;
-          let ev, captions = [], capPos = 0, lastWasImage = false;
-          while ((ev = evRe.exec(docXml))) {
-            if (ev[0][0] === 'f') {            // legenda (célula sombreada)
-              if (lastWasImage) { captions = []; capPos = 0; lastWasImage = false; }
-              captions.push(legendaApos(ev.index));
-            } else {                            // imagem
-              const rId = ev[1];
-              const titulo = captions[capPos] || '';
-              capPos++; lastWasImage = true;
+          for (let i = 0; i < cells.length; i++) {
+            const cell = cells[i];
+            if (cell.rids.length === 0) continue;
+            // Procurar título: célula anterior sem imagem com texto real (até 10 posições atrás)
+            let titulo = '';
+            for (let j = i - 1; j >= Math.max(0, i - 10); j--) {
+              const c = cells[j];
+              if (c.rids.length === 0 && c.txt.length > 3 && !/^[-–—\s]+$/.test(c.txt)) {
+                titulo = c.txt.slice(0, 120);
+                break;
+              }
+            }
+            for (const rId of cell.rids) {
               if (!relMap[rId] || used.has(rId)) continue;
               used.add(rId);
               const imgFile = zip.file(relMap[rId]);
@@ -743,7 +744,7 @@ Se um campo não existir usa "".`;
       const claudeResp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, messages: [{ role: 'user', content: msgContent }] }),
+        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 2000, messages: [{ role: 'user', content: msgContent }] }),
       });
       const claudeData = await claudeResp.json();
       if (claudeData.error) throw new Error(claudeData.error.message);
