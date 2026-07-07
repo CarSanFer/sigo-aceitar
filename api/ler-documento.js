@@ -75,10 +75,13 @@ Formato exacto: { "id":"", "data":"", "elemento":"", "localizacao":"", "pecaBeto
 
   const promptPTQ = `Extrai os dados deste Plano Quinzenal de Trabalhos (PQ/PTQ) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
 Campos: id (string, número ex: "047.0"), semanas (string, ex: "S19 e S20"), dataInicio (string, dd/mm/yyyy), dataFim (string, dd/mm/yyyy),
-trabalhosPrevistos (array de strings, lista de trabalhos previstos), trabalhosExecutados (array de strings, trabalhos já executados se indicados),
-observacoes (string).
+trabalhosPrevistos (array de strings, secção "Actividades / Trabalhos a Executar" — lista de atividades previstas),
+maoObra (array de strings, secção "Carga de Mão de Obra / Trabalhadores em Obra" — cada entrada com a especialidade e o subempreiteiro entre parênteses se indicado, ex: "Pladur (Romildo Bruno Putti)", "Eletricista (Peixotos)"),
+equipamentos (array de strings, secção "Carga de Equipamentos / Equipamentos em Obra", ex: "Andaime", "AVAC"),
+trabalhosExecutados (array de strings, trabalhos já executados se indicados),
+observacoes (string, apenas notas gerais que não caibam nos campos acima).
 Se um campo não existir usa "" ou [].
-Formato: { "id":"", "semanas":"", "dataInicio":"", "dataFim":"", "trabalhosPrevistos":[], "trabalhosExecutados":[], "observacoes":"" }`;
+Formato: { "id":"", "semanas":"", "dataInicio":"", "dataFim":"", "trabalhosPrevistos":[], "maoObra":[], "equipamentos":[], "trabalhosExecutados":[], "observacoes":"" }`;
 
   const promptNC = `Extrai os dados desta Não Conformidade (NC) e devolve APENAS um objecto JSON válido, sem texto antes ou depois, sem markdown.
 Campos: id (string, número da NC), data (string, dd/mm/yyyy), descricao (string, descrição da não conformidade),
@@ -811,6 +814,8 @@ Se um campo não existir usa "".`;
           data: pedidoData.dataInicio || '',
           semanas: pedidoData.semanas || '',
           trabalhosPrevistos: pedidoData.trabalhosPrevistos || [],
+          maoObra: pedidoData.maoObra || [],
+          equipamentos: pedidoData.equipamentos || [],
           trabalhosExecutados: pedidoData.trabalhosExecutados || [],
           observacoes: pedidoData.observacoes || '',
           pedido: pedidoData,
